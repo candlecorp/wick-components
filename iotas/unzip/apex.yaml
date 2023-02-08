@@ -1,0 +1,22 @@
+spec: apex.axdl
+config:
+  build_dir: build
+plugins:
+  - https://raw.githubusercontent.com/nanobus/iota/main/codegen/src/rust/plugin.ts
+tasks:
+  build > codegen:
+    description: Compile a release build
+    cmds:
+      - cargo +nightly build --release --target=wasm32-unknown-unknown
+      - mkdir -p $apex_config_build_dir
+      - cp ./target/wasm32-unknown-unknown/release/$apex_config_name.wasm $apex_config_build_dir/
+  debug > codegen:
+    description: Compile a debug build
+    cmds:
+      - cargo +nightly build --target=wasm32-wasi
+      - mkdir -p $apex_config_build_dir
+      - cp ./target/wasm32-wasi/debug/$apex_config_name.wasm $apex_config_build_dir/
+  codegen:
+    description: Run code generators
+    cmds:
+      - apex generate

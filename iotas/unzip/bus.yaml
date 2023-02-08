@@ -1,0 +1,21 @@
+id: zip-test
+version: 0.0.1
+main: build/unzip.wasm
+spec: apex.axdl
+providers:
+  unzip.Writer:
+    write:
+      steps:
+        - uses: '@blob/write'
+          with:
+            resource: outdir
+            key: 'input.dest'
+            codec: bytes
+  unzip.Reader:
+    read:
+      steps:
+        - uses: '@blob/read'
+          with:
+            resource: pwd
+            key: 'input.source'
+            codec: bytes

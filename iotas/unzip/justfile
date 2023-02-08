@@ -1,0 +1,10 @@
+build:
+  apex run generate
+  apex run build
+
+debug:
+  apex run debug
+
+test:
+  echo '{"source":"zip64.zip"}' | nanobus invoke bus.yaml unzip.Unzip::unzip
+  if [[ $(ls out | wc -l) -eq 2 ]]; then echo ok; else exit 1; fi

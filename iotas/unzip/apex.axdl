@@ -1,0 +1,14 @@
+
+namespace "unzip"
+
+interface Unzip @service @uses([Writer, Reader]) {
+  unzip(source: string): void
+}
+
+interface Reader @provider {
+  read(source: string): stream bytes
+}
+
+interface Writer @provider {
+  write(dest: string, contents: stream bytes): void
+}
