@@ -1,0 +1,15 @@
+import * from "@apexlang/core"
+
+namespace "csv.v1"
+
+interface CSV @service {
+  parse(options: Options, input: stream bytes): stream {string : string}
+}
+
+type Options {
+  delimiter: string = ","
+  quote_char: string = "\""
+  row_separator: string = "\n"
+  escape_char: string = "\\"
+  header_row: bool = false
+}
