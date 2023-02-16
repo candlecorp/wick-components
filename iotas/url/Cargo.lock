@@ -45,6 +45,9 @@ name = "bytes"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89b2fd2a0dcf38d7971e2194b6b6eebab45ae01067456a7fd93d5547a61b70be"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "cfg-if"
@@ -208,6 +211,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "itoa"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
+
+[[package]]
 name = "libc"
 version = "0.2.139"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -252,6 +261,15 @@ name = "once_cell"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
+
+[[package]]
+name = "ordered-float"
+version = "2.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7940cf2ca942593318d07fcf2596cdca60a85c9e7fab408a5e21a4f9dcd40d87"
+dependencies = [
+ "num-traits",
+]
 
 [[package]]
 name = "parking_lot"
@@ -331,6 +349,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ryu"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b4b9743ed687d4b4bcedf9ff5eaa7398495ae14e61cba0a295704edbc7decde"
+
+[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -352,6 +376,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde-value"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f3a1a3341211875ef120e117ea7fd5228530ae7e7036a779fdc9117be6b3282c"
+dependencies = [
+ "ordered-float",
+ "serde",
+]
+
+[[package]]
 name = "serde_bytes"
 version = "0.11.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -369,6 +403,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.93"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cad406b69c91885b5107daf2c29572f6c8cdb3c66826821e286c533490c0bc76"
+dependencies = [
+ "itoa",
+ "ryu",
+ "serde",
 ]
 
 [[package]]
@@ -509,9 +554,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9268b99523b0205c7e8973de317510454c4646583872d2bda766cd55561f5b60"
+checksum = "f2f2f44b3b03a72a3f0ba7b981aa64de1ded5a6ee2fb321bd1be2acd1e8263e4"
 dependencies = [
  "bytes",
  "crossbeam-channel",
@@ -519,47 +564,63 @@ dependencies = [
  "futures",
  "futures-executor",
  "futures-util",
+ "once_cell",
  "parking_lot",
  "pin-project-lite",
  "tokio",
  "tracing",
  "wasmrs-codec",
+ "wasmrs-frames",
  "wasmrs-runtime",
  "wasmrs-rx",
 ]
 
 [[package]]
 name = "wasmrs-codec"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fca40bb9adb0cec5f8c8c0a84e7770e992134c3fec8d7142296c007486d6d518"
+checksum = "cf83ae34e7391eaaeb53024c55c1733ee73b9c1c5e2b1d41a658646f4632078d"
 dependencies = [
  "serde",
  "wasm-msgpack",
+ "wasmrs-frames",
+]
+
+[[package]]
+name = "wasmrs-frames"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0754449952ea7c5554c23fbc43e104879eb5d9cd56a172b34404042a2a303768"
+dependencies = [
+ "bytes",
 ]
 
 [[package]]
 name = "wasmrs-guest"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a2367862f0f8b629aa79ead7bd89bf3ea02e89757192cd9d9ea2d997679bda7"
+checksum = "01086fec7b5c795e2ee98ba342de67de7d7dde5de749dfba91be4df5012add22"
 dependencies = [
  "bytes",
+ "cfg-if",
  "futures-executor",
  "futures-util",
  "serde",
+ "serde-value",
+ "serde_json",
  "tracing",
  "wasmrs",
  "wasmrs-codec",
+ "wasmrs-frames",
  "wasmrs-runtime",
  "wasmrs-rx",
 ]
 
 [[package]]
 name = "wasmrs-runtime"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c31c41dc66c9ac05f539f13a727a6f2e91e6dab5bfb0141d7ac59979cbf09a2d"
+checksum = "63e902410fa037333a94d2bdcbc17f14b1ee9198a30323bc3253963874ef0e18"
 dependencies = [
  "bytes",
  "crossbeam-channel",
@@ -570,13 +631,14 @@ dependencies = [
  "parking_lot",
  "pin-project-lite",
  "tokio",
+ "wasmrs-frames",
 ]
 
 [[package]]
 name = "wasmrs-rx"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16afa19d0e63763a0ae822c57f2d77d7593ab0ad0c8430dcc328c3788b031bb0"
+checksum = "7f5f546ddf2071a4516a779f604a7ce039eb9ab63573009a94292bd53271718b"
 dependencies = [
  "bytes",
  "crossbeam-channel",

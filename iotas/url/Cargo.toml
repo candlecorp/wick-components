@@ -15,7 +15,7 @@ opt-level = "z"
 panic = "abort"
 
 [dependencies]
-wasmrs-guest = "0.2"
+wasmrs-guest = "0.3.0"
 thiserror = "1.0"
 serde = { version = "1", default-features = false, features = ["derive"] }
 async-trait = "0.1"

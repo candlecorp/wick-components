@@ -1,0 +1,7 @@
+id: csv
+version: 0.0.1
+spec: apex.axdl
+main: build/csv.wasm
+package:
+  registry: reg.candle.run
+  org: common
