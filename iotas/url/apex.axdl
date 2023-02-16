@@ -1,0 +1,17 @@
+import * from "@apexlang/core"
+
+namespace "url.v1"
+
+interface Url @service {
+  parse(url: string): URL
+}
+
+type URL {
+  protocol: string,
+  host: string,
+  port: u32,
+  path: string,
+  path_fragements: [string],
+  query: string,
+  query_params: {string: string},
+}

@@ -1,0 +1,7 @@
+spec: apex.axdl
+config:
+  name: csv
+  package: iotacsv
+  module: github.com/candlecorp/iotacsv
+plugins:
+  - "https://raw.githubusercontent.com/nanobus/iota/native_iotas/codegen/src/tinygo/plugin.ts"
