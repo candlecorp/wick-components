@@ -1,5 +1,5 @@
 [package]
-name = "url"
+name = "uri"
 version = "0.1.0"
 edition = "2021"
 
@@ -15,9 +15,10 @@ opt-level = "z"
 panic = "abort"
 
 [dependencies]
-wasmrs-guest = "0.3.0"
+wasmrs-guest = "0.4"
 thiserror = "1.0"
 serde = { version = "1", default-features = false, features = ["derive"] }
 async-trait = "0.1"
+url = "2.2"
 
 [dev-dependencies]

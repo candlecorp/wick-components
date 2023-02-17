@@ -1,0 +1,21 @@
+import * from "@apexlang/core"
+
+namespace "uri.v1"
+
+interface Uri @service {
+  parse(url: string): URI
+}
+
+type URI {
+  scheme: string,
+  host: string,
+  port: u32?,
+  path: string,
+  path_components: [string],
+  path_extension: string,
+  query: string,
+  query_params: {string: string},
+  fragment: string,
+  username: string?,
+  password: string?,
+}

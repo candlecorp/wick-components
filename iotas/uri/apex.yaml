@@ -1,0 +1,5 @@
+spec: apex.axdl
+config:
+  name: uri
+plugins:
+  - "/Users/fshaikh/Developer/candlecorp/iota/codegen/src/rust/plugin.ts"

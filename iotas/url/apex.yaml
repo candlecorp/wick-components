@@ -1,5 +1,0 @@
-spec: apex.axdl
-config:
-  name: url
-plugins:
-  - 'https://deno.land/x/iota_codegen@v0.0.3/rust/plugin.ts'

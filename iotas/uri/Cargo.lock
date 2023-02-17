@@ -94,6 +94,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "form_urlencoded"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9c384f161156f5260c24a097c56119f9be8c798586aecc13afbcbe7b7e26bf8"
+dependencies = [
+ "percent-encoding",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -211,6 +220,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "idna"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e14ddfc70884202db2244c223200c204c2bda1bc6e0998d11b5e024d657209e6"
+dependencies = [
+ "unicode-bidi",
+ "unicode-normalization",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -258,9 +277,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.17.0"
+version = "1.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
+checksum = "b7e5500299e16ebb147ae15a00a942af264cf3688f47923b8fc2cd5858f23ad3"
 
 [[package]]
 name = "ordered-float"
@@ -299,6 +318,12 @@ name = "paste"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d01a5bd0424d00070b0098dd17ebca6f961a959dead1dbcbbbc1d1cd8d3deeba"
+
+[[package]]
+name = "percent-encoding"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
 
 [[package]]
 name = "pin-project-lite"
@@ -478,6 +503,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "tinyvec"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "87cc5ceb3875bb20c2890005a4e226a4651264a5c75edb2421b52861a0a0cb50"
+dependencies = [
+ "tinyvec_macros",
+]
+
+[[package]]
+name = "tinyvec_macros"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+
+[[package]]
 name = "tokio"
 version = "1.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -522,19 +562,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "unicode-bidi"
+version = "0.3.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d54675592c1dbefd78cbd98db9bacd89886e1ca50692a0692baefffdeb92dd58"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "84a22b9f218b40614adcb3f4ff08b703773ad44fa9423e4e0d346d5db86e4ebc"
 
 [[package]]
-name = "url"
+name = "unicode-normalization"
+version = "0.1.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c5713f0fc4b5db668a2ac63cdb7bb4469d8c9fed047b1d0292cc7b0ce2ba921"
+dependencies = [
+ "tinyvec",
+]
+
+[[package]]
+name = "uri"
 version = "0.1.0"
 dependencies = [
  "async-trait",
  "serde",
  "thiserror",
+ "url",
  "wasmrs-guest",
+]
+
+[[package]]
+name = "url"
+version = "2.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d68c799ae75762b8c3fe375feb6600ef5602c883c5d21eb51c09f22b83c4643"
+dependencies = [
+ "form_urlencoded",
+ "idna",
+ "percent-encoding",
 ]
 
 [[package]]
@@ -554,9 +621,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2f2f44b3b03a72a3f0ba7b981aa64de1ded5a6ee2fb321bd1be2acd1e8263e4"
+checksum = "208f914090f2a19568eb0f5543a136cefcaf62b005d42d02059dd15b89916ccb"
 dependencies = [
  "bytes",
  "crossbeam-channel",
@@ -577,9 +644,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-codec"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf83ae34e7391eaaeb53024c55c1733ee73b9c1c5e2b1d41a658646f4632078d"
+checksum = "47b2b42d227ab736895867f7d1673399bed25c853837562b182834478d78a8a6"
 dependencies = [
  "serde",
  "wasm-msgpack",
@@ -588,18 +655,18 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-frames"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0754449952ea7c5554c23fbc43e104879eb5d9cd56a172b34404042a2a303768"
+checksum = "3f9d535b1d465e6aaac1095e458f4f822fc645651401d994797ea26e842a3949"
 dependencies = [
  "bytes",
 ]
 
 [[package]]
 name = "wasmrs-guest"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01086fec7b5c795e2ee98ba342de67de7d7dde5de749dfba91be4df5012add22"
+checksum = "3628f5d6ac9b2b9e164df79e80b3ca8bf2d308ff0b025a7e4e17d82bd8270943"
 dependencies = [
  "bytes",
  "cfg-if",
@@ -618,9 +685,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-runtime"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "63e902410fa037333a94d2bdcbc17f14b1ee9198a30323bc3253963874ef0e18"
+checksum = "b9b02ab3d6470f847cf42b194a5e39179df9cae3a6dac00250c94f4328285d29"
 dependencies = [
  "bytes",
  "crossbeam-channel",
@@ -636,9 +703,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-rx"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f5f546ddf2071a4516a779f604a7ce039eb9ab63573009a94292bd53271718b"
+checksum = "5faa091087963884d0e04f5cb18a9f2d2a894bda04c71adf6721fb494d4d2ffa"
 dependencies = [
  "bytes",
  "crossbeam-channel",

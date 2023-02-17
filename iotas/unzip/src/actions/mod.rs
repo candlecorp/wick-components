@@ -41,23 +41,19 @@ pub(crate) struct UnzipComponent();
 impl UnzipComponent {
     fn unzip_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
         let (tx, rx) = runtime::oneshot();
-
         let input = deserialize_helper(input);
-
-        let task = async move {
+        spawn(async move {
             let input_payload = match input.await {
-                Ok(i) => i,
+                Ok(o) => o,
                 Err(e) => {
                     let _ = tx.send(Err(e));
                     return;
                 }
             };
-
-            #[allow(unused)]
             fn des(
                 mut map: std::collections::BTreeMap<String, Value>,
-            ) -> Result<unzip_service::unzip::Inputs, Error> {
-                Ok(unzip_service::unzip::Inputs {
+            ) -> Result<unzip_service::unzip::Input, Error> {
+                Ok(unzip_service::unzip::Input {
                     source: <String as serde::Deserialize>::deserialize(
                         map.remove("source").ok_or_else(|| {
                             wasmrs_guest::Error::MissingInput("source".to_owned())
@@ -66,28 +62,23 @@ impl UnzipComponent {
                     .map_err(|e| wasmrs_guest::Error::Decode(e.to_string()))?,
                 })
             }
-
-            let input = match des(input_payload) {
-                Ok(i) => i,
+            let _ = UnzipComponent::unzip(match des(input_payload) {
+                Ok(o) => o,
                 Err(e) => {
                     let _ = tx.send(Err(PayloadError::application_error(e.to_string())));
                     return;
                 }
-            };
-
-            let _ = UnzipComponent::unzip(input)
-                .await
-                .map(|result| {
-                    Ok(serialize(&result)
-                        .map(|bytes| Payload::new_data(None, Some(bytes.into())))?)
-                })
-                .map(|output| {
-                    let _ = tx.send(output);
-                });
-        };
-
-        spawn(task);
-
+            })
+            .await
+            .map(|result| {
+                serialize(&result)
+                    .map(|b| Payload::new_data(None, Some(b.into())))
+                    .map_err(|e| PayloadError::application_error(e.to_string()))
+            })
+            .map(|output| {
+                let _ = tx.send(output);
+            });
+        });
         Ok(Mono::from_future(async move { rx.await? }))
     }
 }
@@ -96,16 +87,16 @@ impl UnzipComponent {
 
 pub(crate) trait UnzipService {
     async fn unzip(
-        inputs: unzip_service::unzip::Inputs,
-    ) -> Result<unzip_service::unzip::Outputs, GenericError>;
+        input: unzip_service::unzip::Input,
+    ) -> Result<unzip_service::unzip::Output, GenericError>;
 }
 
 #[async_trait::async_trait(?Send)]
 impl UnzipService for UnzipComponent {
     async fn unzip(
-        inputs: unzip_service::unzip::Inputs,
-    ) -> Result<unzip_service::unzip::Outputs, GenericError> {
-        Ok(crate::actions::unzip::unzip::task(inputs).await?)
+        input: unzip_service::unzip::Input,
+    ) -> Result<unzip_service::unzip::Output, GenericError> {
+        Ok(crate::actions::unzip::unzip::task(input).await?)
     }
 }
 
@@ -117,11 +108,12 @@ pub mod unzip_service {
         #[allow(unused_imports)]
         pub(crate) use super::*;
 
-        pub(crate) struct Inputs {
+        #[allow(unused)]
+        pub(crate) struct Input {
             pub(crate) source: String,
         }
 
-        pub(crate) type Outputs = ();
+        pub(crate) type Output = ();
     }
 }
 
@@ -131,16 +123,14 @@ pub mod reader {
     use super::*;
 
     pub(crate) fn read(
-        inputs: read::Inputs,
-    ) -> impl Stream<Item = Result<read::Outputs, PayloadError>> {
-        //) -> wasmrs_guest::Flux<read::Outputs, PayloadError> {
+        input: read::Input,
+    ) -> impl Stream<Item = Result<read::Output, PayloadError>> {
         let op_id_bytes = READER_READ_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(_) => unreachable!(),
-        };
+        let payload = wasmrs_guest::serialize(&input)
+            .map(|bytes| Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()))
+            .unwrap();
         Host::default().request_stream(payload).map(|result| {
-            result.map(|payload| Ok(deserialize::<read::Outputs>(&payload.data.unwrap())?))?
+            result.map(|payload| Ok(deserialize::<read::Output>(&payload.data.unwrap())?))?
         })
     }
 
@@ -148,11 +138,11 @@ pub mod reader {
         use super::*;
 
         #[derive(serde::Serialize, serde::Deserialize)]
-        pub struct Inputs {
+        pub struct Input {
             pub(crate) source: String,
         }
 
-        pub(crate) type Outputs = wasmrs_guest::Bytes;
+        pub(crate) type Output = wasmrs_guest::Bytes;
     }
 }
 
@@ -162,30 +152,28 @@ pub mod writer {
     use super::*;
 
     pub(crate) fn write(
-        mut inputs: write::Inputs,
-    ) -> impl Stream<Item = Result<write::Outputs, PayloadError>> {
-        //) -> wasmrs_guest::Flux<write::Outputs, PayloadError> {
+        mut input: write::Input,
+    ) -> impl Stream<Item = Result<write::Output, PayloadError>> {
         let op_id_bytes = WRITER_WRITE_INDEX_BYTES.as_slice();
-
         let (tx, rx) = Flux::new_channels();
-
         #[derive(serde::Serialize, serde::Deserialize)]
         #[serde(untagged)]
         enum OpInputs {
             Params(write::InputFirst),
             Contents(wasmrs_guest::Bytes),
         }
-
-        let first = OpInputs::Params(write::InputFirst { dest: inputs.dest });
+        let first = OpInputs::Params(write::InputFirst { dest: input.dest });
 
         let tx_inner = tx.clone();
         spawn(async move {
-            while let Some(payload) = inputs.contents.next().await {
-                if let Err(e) = payload {
-                    tx_inner.error(e);
-                    continue;
-                }
-                let payload = payload.unwrap();
+            while let Some(payload) = input.contents.next().await {
+                let payload = match payload {
+                    Ok(o) => o,
+                    Err(e) => {
+                        let _ = tx_inner.error(e);
+                        continue;
+                    }
+                };
                 let message = OpInputs::Contents(payload);
                 let payload = wasmrs_guest::serialize(&message)
                     .map(|b| Payload::new_data(None, Some(b.into())))
@@ -197,19 +185,18 @@ pub mod writer {
         let payload = wasmrs_guest::serialize(&first)
             .map(|b| Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), b.into()))
             .map_err(|e| PayloadError::application_error(e.to_string()));
-        tx.send_result(payload);
+        let _ = tx.send_result(payload);
 
         Host::default().request_channel(rx).map(|result| {
-            result.map(|payload| Ok(deserialize::<write::Outputs>(&payload.data.unwrap())?))?
+            result.map(|payload| Ok(deserialize::<write::Output>(&payload.data.unwrap())?))?
         })
     }
 
     pub(crate) mod write {
         use super::*;
 
-        pub struct Inputs {
+        pub struct Input {
             pub(crate) dest: String,
-
             pub(crate) contents: FluxReceiver<wasmrs_guest::Bytes, PayloadError>,
         }
 
@@ -218,7 +205,7 @@ pub mod writer {
             pub(crate) dest: String,
         }
 
-        pub(crate) type Outputs = ();
+        pub(crate) type Output = ();
     }
 }
 

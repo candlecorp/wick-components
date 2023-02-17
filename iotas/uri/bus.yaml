@@ -1,0 +1,22 @@
+id: ncc-processor
+version: 0.0.1
+main: build/uri.wasm
+spec: ./apex.axdl
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ":8080"
+      routers:
+        - uses: nanobus.transport.http.router/v1
+          with:
+            routes:
+              - method: POST
+                uri: /parse
+                handler: uri.v1.Uri::parse
+interfaces:
+providers:
+authorization:
+  uri.v1.Uri:
+    parse:
+      unauthenticated: true
