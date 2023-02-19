@@ -606,9 +606,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-msgpack"
-version = "0.3.3"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4b349e5d6d85a74f7c2bc11ed7950677a8f189e3abb3809deb2ecd2dfc0fc200"
+checksum = "331d27c247317742c4aaeecbe1dddbea20e6f7bc7398944cf859c87a02f6ce33"
 dependencies = [
  "byteorder",
  "heapless",
@@ -644,10 +644,11 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-codec"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47b2b42d227ab736895867f7d1673399bed25c853837562b182834478d78a8a6"
+checksum = "cb9e1902fdaf6f26f5a113a5efb5fa19b5b85270e4ec51979cd6425d34289d98"
 dependencies = [
+ "heapless",
  "serde",
  "wasm-msgpack",
  "wasmrs-frames",

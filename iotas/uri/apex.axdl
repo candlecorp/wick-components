@@ -9,13 +9,14 @@ interface Uri @service {
 type URI {
   scheme: string,
   host: string,
+  host_segments: [string],
   port: u32?,
   path: string,
-  path_components: [string],
+  path_segments: [string],
   path_extension: string,
   query: string,
   query_params: {string: string},
-  fragment: string,
+  fragment: string?,
   username: string?,
   password: string?,
 }

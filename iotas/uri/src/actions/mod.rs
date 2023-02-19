@@ -122,12 +122,14 @@ pub struct Uri {
     pub scheme: String,
     #[serde(rename = "host")]
     pub host: String,
+    #[serde(rename = "host_segments")]
+    pub host_segments: Vec<String>,
     #[serde(rename = "port")]
     pub port: Option<u32>,
     #[serde(rename = "path")]
     pub path: String,
-    #[serde(rename = "path_components")]
-    pub path_components: Vec<String>,
+    #[serde(rename = "path_segments")]
+    pub path_segments: Vec<String>,
     #[serde(rename = "path_extension")]
     pub path_extension: String,
     #[serde(rename = "query")]
@@ -135,7 +137,7 @@ pub struct Uri {
     #[serde(rename = "query_params")]
     pub query_params: std::collections::HashMap<String, String>,
     #[serde(rename = "fragment")]
-    pub fragment: String,
+    pub fragment: Option<String>,
     #[serde(rename = "username")]
     pub username: Option<String>,
     #[serde(rename = "password")]
