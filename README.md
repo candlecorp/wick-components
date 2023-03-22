@@ -1,1 +1,1 @@
-# iotas
+# Wick Components
