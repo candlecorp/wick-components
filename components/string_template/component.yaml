@@ -1,0 +1,25 @@
+---
+name: "string-template"
+kind: wick/component@v1
+metadata:
+  description: "A template engine for creating strings using Liquid syntax."
+  authors: ["Candle Corporation"]
+  licenses: ["Apache-2.0"]
+  documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components.  Liquid template documentation available at https://shopify.github.io/liquid/.
+  version: "0.0.1"
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/string_template.signed.wasm
+  operations:
+    - name: render
+      inputs:
+        - name: template
+          type: string
+        - name: parameters
+          type:
+            map:
+              key: string
+              value: Value
+      outputs:
+        - name: output
+          type: string
