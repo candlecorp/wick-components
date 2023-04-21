@@ -21,7 +21,7 @@ component:
         - name: result
           type: bool
         - name: matches
-          type: { list: { type: { list: { type: string } } } }
+          type: { list: { type: string } }
           optional: true
 tests:
   - name: regex

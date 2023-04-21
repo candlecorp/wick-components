@@ -28,22 +28,29 @@ impl OpRematch for Component {
                 }
             };
             let mut matches: Vec<Vec<String>> = Vec::new();
+            let mut match_found = false;
+
+            outputs.matches.open_bracket();
             //use regex to match the pattern and input and return a vec of matches and captures
             for cap in re.captures_iter(&input) {
                 let mut captures: Vec<String> = Vec::new();
                 for i in 0..min(cap.len(), 10) {
                     captures.push(cap[i].to_string());
                 }
+                if !match_found {
+                    outputs.result.send(&true);
+                    outputs.result.done();
+                    match_found = true;
+                }
+                outputs.matches.send(&captures);
                 matches.push(captures);
             }
-            if matches.len() > 0 {
-                outputs.matches.send(&matches);
-                outputs.result.send(&true);
-            } else {
+            outputs.matches.close_bracket();
+            if matches.len() == 0 {
                 outputs.result.send(&false);
+                outputs.result.done();
             }
         }
-        outputs.result.done();
         outputs.matches.done();
         Ok(())
     }
