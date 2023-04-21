@@ -6,7 +6,7 @@ metadata:
   authors: ["Candle Corporation"]
   licenses: ["Apache-2.0"]
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: "0.0.1"
+  version: "0.0.2"
 component:
   kind: wick/component/wasmrs@v1
   ref: build/regex.signed.wasm
