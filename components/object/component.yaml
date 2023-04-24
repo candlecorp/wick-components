@@ -1,0 +1,67 @@
+---
+name: "object"
+kind: wick/component@v1
+metadata:
+  description: "A parser that will take differnet types of contents and parse them into a common object that can be used in the wick flow."
+  authors: ["Candle Corporation"]
+  licenses: ["Apache-2.0"]
+  documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
+  version: "0.0.1"
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/object.signed.wasm
+  operations:
+    - name: serialize
+      inputs:
+        - name: content
+          type: string
+        - name: content_type
+          type: string
+      outputs:
+        - name: output
+          type: Value
+    - name: new
+      inputs:
+        - name: key
+          type: string
+        - name: value
+          type: Value
+      outputs:
+        - name: output
+          type: Value
+    - name: select
+      inputs:
+        - name: object
+          type: Value
+        - name: key
+          type: string
+      outputs:
+        - name: output
+          type: Value
+tests:
+  - name: new-test
+    operation: new
+    input:
+      - name: key
+        message: name
+      - name: value
+        data: "John"
+    output:
+      - name: output
+        data: '{"name":"John"}'
+      - name: output
+        flags:
+          done: true
+  - name: new-test
+    operation: new
+    input:
+      - name: key
+        message: name
+      - name: value
+        data: "John"
+    output:
+      - name: output
+        data: '{"name":"John"}'
+      - name: output
+        flags:
+          done: true
