@@ -8,50 +8,28 @@ mod wick {
 use wick::*;
 
 #[async_trait::async_trait(?Send)]
-impl OpRematch for Component {
-    async fn rematch(
+impl OpMatch for Component {
+    async fn match_(
         mut input: WickStream<String>,
-        mut pattern: WickStream<String>,
-        mut outputs: OpRematchOutputs,
+        mut outputs: OpMatchOutputs,
+        ctx: Context<OpMatchConfig>,
     ) -> wick::Result<()> {
-        while let (Some(Ok(input)), Some(Ok(pattern_string))) =
-            (input.next().await, pattern.next().await)
-        {
-            println!("Pattern: {}", pattern_string);
-            let re = match Regex::new(&pattern_string) {
+        let pattern = ctx.config.pattern.clone();
+        while let Some(Ok(input)) = input.next().await {
+            println!("Pattern: {}", pattern);
+            let re = match Regex::new(&pattern) {
                 Ok(re) => re,
                 Err(e) => {
                     return Err(wick_component::anyhow::anyhow!(
                         "Invalid Regex Pattern: {}",
                         e
-                    ))
+                    ));
                 }
             };
-            let mut matches: Vec<Vec<String>> = Vec::new();
-            let mut match_found = false;
 
-            outputs.matches.open_bracket();
-            //use regex to match the pattern and input and return a vec of matches and captures
-            for cap in re.captures_iter(&input) {
-                let mut captures: Vec<String> = Vec::new();
-                for i in 0..min(cap.len(), 10) {
-                    captures.push(cap[i].to_string());
-                }
-                if !match_found {
-                    outputs.result.send(&true);
-                    outputs.result.done();
-                    match_found = true;
-                }
-                outputs.matches.send(&captures);
-                matches.push(captures);
-            }
-            outputs.matches.close_bracket();
-            if matches.len() == 0 {
-                outputs.result.send(&false);
-                outputs.result.done();
-            }
+            outputs.result.send(&re.is_match(&input));
+            outputs.result.done();
         }
-        outputs.matches.done();
         Ok(())
     }
 }
