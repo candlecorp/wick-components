@@ -1,41 +1,40 @@
 ---
-name: "regex"
+name: 'regex'
 kind: wick/component@v1
 metadata:
-  description: "A regular expression component for matching and capturing strings."
-  authors: ["Candle Corporation"]
-  licenses: ["Apache-2.0"]
+  description: 'A regular expression component for matching and capturing strings.'
+  authors: ['Candle Corporation']
+  licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: "0.0.2"
+  version: '0.0.2'
 component:
   kind: wick/component/wasmrs@v1
   ref: build/regex.signed.wasm
   operations:
-    - name: rematch
+    - name: match
+      with:
+        - name: pattern
+          type: string
       inputs:
         - name: input
-          type: string
-        - name: pattern
           type: string
       outputs:
         - name: result
           type: bool
-        - name: matches
-          type: { list: { type: string } }
-          optional: true
 tests:
   - name: regex
-    operation: rematch
+    operation: match
+    with:
+      pattern: '(:?(\w+)\s*)'
     input:
       - name: input
-        data: "This is a string.  It is not very long."
-      - name: pattern
-        data: '(\w+)' # match words
+        data: 'This is a string.  It is not very long.'
     output:
       - name: result
         data: true
-      - name: matches
-        data: '[["This"], ["is"], ["a"], ["string"], ["It"], ["is"], ["not"], ["very"], ["long"]]'
+      - name: result
+        flags:
+          done: true
 
     # - name: search
     #   inputs:
