@@ -1,0 +1,45 @@
+---
+name: 'liquid-json'
+kind: wick/component@v1
+metadata:
+  description: 'A component for rendering liquid templates as structured JSON.'
+  authors: ['Candle Corporation']
+  licenses: ['Apache-2.0']
+  documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
+  version: '0.0.2'
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/liquid_json.signed.wasm
+  operations:
+    - name: render
+      with:
+        - name: template
+          type: object
+      inputs:
+        - name: input
+          type: object
+      outputs:
+        - name: output
+          type: object
+tests:
+  - name: render
+    operation: render
+    with:
+      template:
+        status: '{{status}}'
+        body:
+          result: '{{ result }}'
+    input:
+      - name: input
+        data:
+          result: 'This is my result'
+          status: 200
+    output:
+      - name: output
+        data:
+          status: 200
+          body:
+            result: 'This is my result'
+      - name: output
+        flags:
+          done: true
