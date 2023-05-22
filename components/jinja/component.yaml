@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
+---
+name: 'jinja'
+kind: wick/component@v1
+metadata:
+  version: '0.0.2'
+component:
+  kind: wick/component/wasmrs@v1
+  ref: ./build/jinja.signed.wasm
+
+  operations:
+    - name: render
+      with:
+        - name: template
+          type: string
+      inputs:
+        - name: data
+          type: object
+      outputs:
+        - name: output
+          type: string
+tests:
+  - name: basic
+    operation: render
+    with:
+      template: 'Hello {{ name }}!'
+    input:
+      - name: data
+        data:
+          name: 'jinja'
+    output:
+      - name: output
+        data: 'Hello jinja!'
+      - name: output
+        flags:
+          done: true
