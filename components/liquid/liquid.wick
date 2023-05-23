@@ -1,25 +1,41 @@
 ---
-name: "string-template"
+name: "liquid"
 kind: wick/component@v1
 metadata:
   description: "A template engine for creating strings using Liquid syntax."
   authors: ["Candle Corporation"]
   licenses: ["Apache-2.0"]
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components.  Liquid template documentation available at https://shopify.github.io/liquid/.
-  version: "0.0.1"
+  version: "0.1.0"
+package:
+  registry:
+    registry: registry.candle.dev
+    namespace: common
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/string_template.signed.wasm
+  ref: build/liquid.signed.wasm
   operations:
     - name: render
-      inputs:
+      with:
         - name: template
           type: string
+      inputs:
         - name: parameters
-          type:
-            map:
-              key: string
-              value: Value
+          type: object
       outputs:
         - name: output
           type: string
+tests:
+  - name: liquid
+    operation: render
+    with:
+      template: "This is a {{ adjective }} string.  It is {{ length }} very long."
+    input:
+      - name: parameters
+        data: { "adjective": "nice", "length": "not" }
+    output:
+      - name: output
+        data: "This is a nice string.  It is not very long."
+      - name: output
+        flags:
+          done: true

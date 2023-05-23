@@ -1,5 +1,5 @@
 [package]
-name = "string-template"
+name = "liquid"
 version = "0.1.0"
 edition = "2021"
 
@@ -16,12 +16,14 @@ panic = "abort"
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = "*"
-wasmrs-guest = { version = "*", features = [] }
+# wick-component = "0.15"
+wick-component = { path = "/Users/fshaikh/Developer/candlecorp/wick/crates/wick/wick-component" }
+wasmrs-guest = { version = "0.11", features = [] }
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
 async-trait = "0.1"
-liquid = "0.26.1"
+liquid = "0.26"
+serde_json = "1"
 
 [build-dependencies]
-wick-component-codegen = { version = "*" }
+# wick-component-codegen = { version = "*" }
+wick-component-codegen = { path = "/Users/fshaikh/Developer/candlecorp/wick/crates/wick/wick-component-codegen" }

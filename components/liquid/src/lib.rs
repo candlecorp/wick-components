@@ -1,26 +1,25 @@
 use liquid::ParserBuilder;
 use serde_json::Value;
-use std::collections::HashMap;
 use wasmrs_guest::*;
 mod wick {
     wick_component::wick_import!();
 }
 use wick::*;
 
-// Implement the render operation for the StringTemplate component
 #[async_trait::async_trait(?Send)]
 impl OpRender for Component {
     async fn render(
-        mut template: WickStream<String>,
-        mut parameters: WickStream<HashMap<String, Value>>,
+        mut input: WickStream<Value>,
         mut outputs: OpRenderOutputs,
+        ctx: Context<OpRenderConfig>,
     ) -> wick::Result<()> {
+        let template_string = ctx.config.template.clone();
+        println!("Template: {:?}", template_string);
+
         // Create a Liquid parser
         let parser = ParserBuilder::with_stdlib().build().unwrap();
 
-        while let (Some(Ok(template_string)), Some(Ok(params))) =
-            (template.next().await, parameters.next().await)
-        {
+        while let Some(Ok(input)) = input.next().await {
             // Parse the template string
             let liquid_template = match parser.parse(&template_string) {
                 Ok(t) => t,
@@ -32,9 +31,9 @@ impl OpRender for Component {
                 }
             };
 
-            println!("params: {:?}", params);
+            println!("params: {:?}", input);
 
-            let globals = liquid::object!(&params);
+            let globals = liquid::object!(&input);
 
             println!("globals: {:?}", globals);
 
@@ -58,17 +57,3 @@ impl OpRender for Component {
         Ok(())
     }
 }
-
-// Here is the component definition
-// - name: render
-//   inputs:
-//     - name: template
-//       type: string
-//     - name: parameters
-//       type:
-//         map:
-//           key: string
-//           value: any
-//   outputs:
-//     - name: output
-//       type: string

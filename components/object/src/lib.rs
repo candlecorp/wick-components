@@ -5,6 +5,7 @@ use wasmrs_guest::*;
 mod wick {
     wick_component::wick_import!();
 }
+use jsonpath_lib::select;
 use wick::*;
 
 // Implement the "new" operation
@@ -31,23 +32,27 @@ impl OpNew for Component {
 impl OpSelect for Component {
     async fn select(
         mut object: WickStream<Value>,
-        mut key: WickStream<String>,
+        mut path: WickStream<String>,
         mut outputs: OpSelectOutputs,
     ) -> wick::Result<()> {
-        while let (Some(Ok(object)), Some(Ok(key))) = (object.next().await, key.next().await) {
-            if let Value::Object(ref map) = object {
-                if let Some(value) = map.get(&key) {
-                    outputs.output.send(value);
-                } else {
-                    return Err(wick_component::anyhow::anyhow!(
-                        "Key not found in the object: {}",
-                        key
-                    ));
-                }
+        while let (Some(Ok(object_value)), Some(Ok(path_string))) =
+            (object.next().await, path.next().await)
+        {
+            let selected_values = select(&object_value, &path_string).map_err(|e| {
+                wick_component::anyhow::anyhow!("Error selecting value by path: {}", e)
+            })?;
+
+            if let Some(first_selected_value) = selected_values.first() {
+                outputs.output.send(first_selected_value);
             } else {
-                return Err(wick_component::anyhow::anyhow!("Invalid input object"));
+                outputs.output.done();
+                return Err(wick_component::anyhow::anyhow!(
+                    "No value found at the specified path"
+                ));
             }
         }
+
+        // Signal that the output stream is done
         outputs.output.done();
         Ok(())
     }
@@ -81,10 +86,26 @@ impl OpSerialize for Component {
                 }
                 "application/xml" => {
                     let content_str = content_string.as_str();
-                    let parsed = from_str(content_str).map_err(|e| {
-                        wick_component::anyhow::anyhow!("Error parsing XML content: {}", e)
-                    })?;
-                    serde_json::to_value(parsed).map_err(|e| {
+                    let parsed: HashMap<String, Value> =
+                        from_str::<HashMap<String, Value>>(content_str).or_else(|_| {
+                            // Wrap the content with a root element and try parsing again
+                            let wrapped_content = format!("<root>{}</root>", content_str);
+                            from_str(&wrapped_content).map_err(|e| {
+                                wick_component::anyhow::anyhow!("Error parsing XML content: {}", e)
+                            })
+                        })?;
+
+                    // Flatten the nested "$value" fields
+                    let mut flattened_parsed = HashMap::new();
+                    for (key, value) in parsed.iter() {
+                        if let Value::Object(ref inner_map) = value {
+                            if let Some(inner_value) = inner_map.get("$value") {
+                                flattened_parsed.insert(key.to_string(), inner_value.clone());
+                            }
+                        }
+                    }
+
+                    serde_json::to_value(flattened_parsed).map_err(|e| {
                         wick_component::anyhow::anyhow!("Error converting XML to JSON: {}", e)
                     })?
                 }
@@ -135,7 +156,7 @@ impl OpSerialize for Component {
 //   inputs:
 //     - name: object
 //       type: Value
-//     - name: key
+//     - name: path
 //       type: string
 //   outputs:
 //     - name: output
