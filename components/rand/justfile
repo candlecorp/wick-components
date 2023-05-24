@@ -11,3 +11,5 @@ setup:
     mkdir -p build
 clean:
   cargo clean
+test:
+  wick test component.yaml

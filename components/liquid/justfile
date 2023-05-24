@@ -9,5 +9,7 @@ debug: setup
     wick wasm sign ./build/{{project_name}}.wasm liquid.wick
 setup:
     mkdir -p build
+test:
+  wick test liquid.wick
 clean:
   cargo clean

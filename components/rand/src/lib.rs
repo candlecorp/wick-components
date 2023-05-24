@@ -13,14 +13,13 @@ impl OpInt for Component {
     async fn int(
         mut min: WickStream<u32>,
         mut max: WickStream<u32>,
-        mut seed: WickStream<u32>,
         mut outputs: OpIntOutputs,
+        ctx: Context<OpIntConfig>,
     ) -> wick::Result<()> {
-        while let (Some(Ok(min)), Some(Ok(max)), Some(Ok(seed))) =
-            (min.next().await, max.next().await, seed.next().await)
-        {
+        let seed = ctx.seed.unwrap();
+        while let (Some(Ok(min)), Some(Ok(max))) = (min.next().await, max.next().await) {
             println!("Received min: {}, max: {}", min, max);
-            let mut rng = SmallRng::seed_from_u64(seed as u64);
+            let mut rng = SmallRng::seed_from_u64(seed);
             let rando = rng.gen_range(min..max);
             outputs.output.send(&(rando));
         }

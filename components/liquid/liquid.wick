@@ -1,12 +1,13 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
 ---
-name: "liquid"
+name: 'liquid'
 kind: wick/component@v1
 metadata:
-  description: "A template engine for creating strings using Liquid syntax."
-  authors: ["Candle Corporation"]
-  licenses: ["Apache-2.0"]
+  description: 'A template engine for creating strings using Liquid syntax.'
+  authors: ['Candle Corporation']
+  licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components.  Liquid template documentation available at https://shopify.github.io/liquid/.
-  version: "0.1.0"
+  version: '0.1.0'
 package:
   registry:
     registry: registry.candle.dev
@@ -29,13 +30,13 @@ tests:
   - name: liquid
     operation: render
     with:
-      template: "This is a {{ adjective }} string.  It is {{ length }} very long."
+      template: 'This is a {{ adjective }} string.  It is {{ length }} very long.'
     input:
       - name: parameters
-        data: { "adjective": "nice", "length": "not" }
+        data: { 'adjective': 'nice', 'length': 'not' }
     output:
       - name: output
-        data: "This is a nice string.  It is not very long."
+        data: 'This is a nice string.  It is not very long.'
       - name: output
         flags:
           done: true

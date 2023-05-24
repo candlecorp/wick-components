@@ -15,6 +15,7 @@ impl OpNew for Component {
         mut key: WickStream<String>,
         mut value: WickStream<Value>,
         mut outputs: OpNewOutputs,
+        _ctx: Context<OpNewConfig>,
     ) -> wick::Result<()> {
         if let (Some(Ok(key)), Some(Ok(value))) = (key.next().await, value.next().await) {
             let mut new_object = HashMap::new();
@@ -34,6 +35,7 @@ impl OpSelect for Component {
         mut object: WickStream<Value>,
         mut path: WickStream<String>,
         mut outputs: OpSelectOutputs,
+        _ctx: Context<OpSelectConfig>,
     ) -> wick::Result<()> {
         while let (Some(Ok(object_value)), Some(Ok(path_string))) =
             (object.next().await, path.next().await)
@@ -64,6 +66,7 @@ impl OpSerialize for Component {
         mut content: WickStream<String>,
         mut content_type: WickStream<String>,
         mut outputs: OpSerializeOutputs,
+        _ctx: Context<OpSerializeConfig>,
     ) -> wick::Result<()> {
         while let (Some(Ok(content_string)), Some(Ok(content_type_string))) =
             (content.next().await, content_type.next().await)
