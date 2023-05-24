@@ -1,8 +1,9 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
 ---
-name: "rand"
+name: 'rand'
 kind: wick/component@v1
 metadata:
-  version: "0.0.1"
+  version: '0.0.1'
 component:
   kind: wick/component/wasmrs@v1
   ref: build/rand.signed.wasm
@@ -12,8 +13,6 @@ component:
         - name: min
           type: u32
         - name: max
-          type: u32
-        - name: seed
           type: u32
       outputs:
         - name: output

@@ -9,5 +9,7 @@ debug: setup
     wick wasm sign ./build/{{project_name}}.wasm component.yaml
 setup:
     mkdir -p build
+test:
+  wick test component.yaml
 clean:
   cargo clean

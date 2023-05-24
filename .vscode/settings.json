@@ -1,0 +1,10 @@
+{
+  "yaml.schemas": {
+    "https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json": [
+      "components/*/*.yaml",
+      "*.wick",
+      "component.yaml",
+      "app.yaml"
+    ]
+  }
+}

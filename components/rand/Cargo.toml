@@ -16,11 +16,11 @@ panic = "abort"
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = "*"
+wick-component = { git = "https://github.com/candlecorp/wick.git" }
 wasmrs-guest = { version = "*", features = [] }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
-rand = { version = "0.8", default-features = false, features = ["small_rng"]}
+rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 
 [build-dependencies]
-wick-component-codegen = { version = "*" }
+wick-component-codegen = { git = "https://github.com/candlecorp/wick.git" }
