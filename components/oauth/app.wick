@@ -1,0 +1,62 @@
+---
+kind: wick/app@v1
+name: oauth_app
+metadata:
+  description: Demo oauth app
+  version: 0.0.1
+package:
+  registry:
+    registry: registry.candle.dev
+    namespace: fawadasaurus
+resources:
+  - name: http
+    resource:
+      kind: wick/resource/tcpport@v1
+      port: 8080
+      address: 0.0.0.0
+  - name: oauth-server
+    resource:
+      kind: wick/resource/url@v1
+      url: https://login.microsoftonline.com/758dad5b-cadb-4d9d-b1c3-d7a1e172e305/oauth2/v2.0
+import:
+  - name: OAUTHDB
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./db.wick
+  - name: http_client
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./http-with.wick
+      provide:
+        url: oauth-server
+      with:
+        - client_id: abc
+        - client_secret: 123
+        - redirect_url: http://1234
+  - name: oauth_client
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./oauth.wick
+      provide:
+        db: OAUTHDB
+        http: http_client
+triggers:
+  - kind: wick/trigger/http@v1
+    resource: http
+    routers:
+      - kind: wick/router/rest@v1
+        path: /api/
+        routes:
+          - uri: "/oidc/authenticate"
+            operation: oauth_client::authenticate
+            methods:
+              - GET
+            description: "Check cookie, redirct to azure"
+          - uri: "/oidc/callback"
+            operation: 
+              name: user::insert
+              with:
+                - db: OAUTHDB
+            methods:
+              - POST
+            description: "Sets cookie"

@@ -1,0 +1,47 @@
+---
+kind: wick/component@v1
+name: slack
+requires:
+  - name: url
+    kind: wick/resource/url@v1
+with:
+  - name: client_id
+    type: string
+  - name: client_secret
+    type: string
+  - name: redirect_url
+    type: string
+component:
+  kind: wick/component/http@v
+  resource: oauth-server
+  operations:
+    - name: check_code
+      inputs:
+        - name: authorization_code
+          type: string
+      method: Post
+      codec: FormData
+      path: /token
+      body:
+        client_id: '{{client_id}}'
+        client_secret: '{{client_secret}}'
+        code: '{{authorization_code}}'
+        redirect_uri: '{{redirect_uri}}'
+        grant_type: "authorization_code"
+    - name: refresh_token
+      with:
+        - name: client_id
+          type: string
+        - name: client_secret
+          type: string
+      inputs:
+        - name: refresh_token
+          type: string
+      method: Post
+      codec: FormData
+      path: /token
+      body:
+        client_id: '{{client_id}}'
+        client_secret: '{{client_secret}}'
+        refresh_token: '{{refresh_token}}'
+        grant_type: "refresh_token"

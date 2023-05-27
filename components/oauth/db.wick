@@ -1,0 +1,30 @@
+name: oauth_db
+kind: wick/component@v1
+resources:
+  - name: DBADDR
+    resource:
+      kind: wick/resource/url@v1
+      # pass $* values as environment variables to the pod
+      url: postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+component:
+  kind: wick/component/sql@v1
+  resource: DBADDR
+  tls: false
+  operations:
+    - name: insert_card
+      inputs:
+        - name: card_number
+          type: string
+        - name: card_type
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        INSERT INTO cards (card_number, card_type)
+        VALUES ($1, $2)
+        ON CONFLICT (card_number) DO UPDATE SET card_number = cards.card_number
+        RETURNING id
+      arguments:
+        - card_number
+        - card_type
