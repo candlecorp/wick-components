@@ -1,0 +1,66 @@
+---
+name: 'oauth'
+kind: wick/component@v1
+requires:
+  - name: db
+    kind: wick/interface@v1
+    interface:
+      operations:
+        - name: insert_card
+          inputs:
+            - name: card_number
+              type: string
+          outputs:
+            - name: output
+              type: object
+        - name: insert_transaction
+          inputs:
+            - name: transaction_time
+              type: string
+            - name: total_amount
+              type: f32
+            - name: card_id
+              type: i32
+          outputs:
+            - name: output
+              type: object
+        - name: insert_item
+          inputs:
+            - name: item
+              type: string
+            - name: transaction_id
+              type: u32
+          outputs:
+            - name: output
+              type: object
+  - name: http
+    kind: wick/interface@v1
+    interface: 
+      inputs:
+        - name: authorization_code
+          type: string
+      outputs: 
+        - name: response
+          type: object
+        - name: body
+          type: object
+metadata:
+  version: '0.0.1'
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.0.1
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/oauth.signed.wasm
+  operations:
+    - name: store_session
+      inputs:
+        - name: input
+          type: http::HttpRequest
+      outputs:
+        - name: request
+          type: http::HttpRequest?
+        - name: response
+          type: http::HttpResponse?
