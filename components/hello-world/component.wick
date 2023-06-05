@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'greeting'
+kind: wick/component@v1
+metadata:
+  version: '0.0.1'
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/hello_world.signed.wasm
+  operations:
+    - name: greet
+      inputs:
+        - name: name
+          type: string
+      outputs:
+        - name: output
+          type: string
+tests:
+  - cases:
+      - name: 'greet'
+        operation: 'greet'
+        input:
+          - name: name
+            value: 'wick'
+        output:
+          - name: output
+            value: 'Hello, wick'
