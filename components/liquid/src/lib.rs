@@ -1,18 +1,20 @@
 use liquid::ParserBuilder;
 use serde_json::Value;
-use wasmrs_guest::*;
+
 mod wick {
     wick_component::wick_import!();
 }
 use wick::*;
 
 #[async_trait::async_trait(?Send)]
-impl OpRender for Component {
+impl RenderOperation for Component {
+type Error=anyhow::Error;
+ type Outputs=render::Outputs; type Config=render::Config;
     async fn render(
         mut input: WickStream<Value>,
-        mut outputs: OpRenderOutputs,
-        ctx: Context<OpRenderConfig>,
-    ) -> wick::Result<()> {
+        mut outputs: Self::Outputs,
+        ctx: Context<Self::Config>,
+    ) -> anyhow::Result<()> {
         let template_string = ctx.config.template.clone();
         println!("Template: {:?}", template_string);
 
@@ -24,7 +26,7 @@ impl OpRender for Component {
             let liquid_template = match parser.parse(&template_string) {
                 Ok(t) => t,
                 Err(e) => {
-                    return Err(wick_component::anyhow::anyhow!(
+                    return Err(anyhow::anyhow!(
                         "Invalid template string: {}",
                         e
                     ))
@@ -41,7 +43,7 @@ impl OpRender for Component {
             let rendered = match liquid_template.render(&globals) {
                 Ok(r) => r,
                 Err(e) => {
-                    return Err(wick_component::anyhow::anyhow!(
+                    return Err(anyhow::anyhow!(
                         "Error rendering template: {}",
                         e
                     ))
