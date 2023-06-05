@@ -40,86 +40,88 @@ component:
         - name: output
           type: object
 tests:
-  - name: new-test
-    operation: new
-    input:
-      - name: key
-        data: 'name'
-      - name: value
-        data: 'John'
-    output:
-      - name: output
-        data: { 'name': 'John' }
-      - name: output
-        flags:
-          done: true
-  - name: select-test
-    operation: select
-    input:
-      - name: object
-        data: { 'name': 'John', 'age': 130, 'city': 'New York' }
-      - name: path
-        data: '$.city'
-    output:
-      - name: output
-        data: 'New York'
-      - name: output
-        flags:
-          done: true
-  - name: select-nested-test
-    operation: select
-    input:
-      - name: object
-        data:
-          {
-            'name': 'John',
-            'age': 130,
-            'location': { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
-          }
-      - name: path
-        data: '$.location.city'
-    output:
-      - name: output
-        data: 'New York'
-      - name: output
-        flags:
-          done: true
-  - name: serialize-test-json
-    operation: serialize
-    input:
-      - name: content
-        data: '{ "name": "John", "age": 130, "city": "New York" }'
-      - name: content_type
-        data: 'application/json'
-    output:
-      - name: output
-        data: { 'name': 'John', 'age': 130, 'city': 'New York' }
-      - name: output
-        flags:
-          done: true
-  - name: serialize-test-xml
-    operation: serialize
-    input:
-      - name: content
-        data: '<person><name>John</name><age>130</age><city>New York</city></person>'
-      - name: content_type
-        data: 'application/xml'
-    output:
-      - name: output
-        data: { 'name': 'John', 'age': '130', 'city': 'New York' }
-      - name: output
-        flags:
-          done: true
-  - name: serialize-test-form-encode
-    operation: serialize
-    input:
-      - name: content
-        data: 'name=John&age=130&city=New%20York'
-      - name: content_type
-        data: 'application/x-www-form-urlencoded'
-    output:
-      - name: output
-        data: { 'name': 'John', 'age': '130', 'city': 'New York' }
-      - name: output
-        flags:
-          done: true
+  - cases:
+      - name: new-test
+        operation: new
+        input:
+          - name: key
+            data: 'name'
+          - name: value
+            data: 'John'
+        output:
+          - name: output
+            data: { 'name': 'John' }
+          - name: output
+            flags:
+              done: true
+      - name: select-test
+        operation: select
+        input:
+          - name: object
+            data: { 'name': 'John', 'age': 130, 'city': 'New York' }
+          - name: path
+            data: '$.city'
+        output:
+          - name: output
+            data: 'New York'
+          - name: output
+            flags:
+              done: true
+      - name: select-nested-test
+        operation: select
+        input:
+          - name: object
+            data:
+              {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
+              }
+          - name: path
+            data: '$.location.city'
+        output:
+          - name: output
+            data: 'New York'
+          - name: output
+            flags:
+              done: true
+      - name: serialize-test-json
+        operation: serialize
+        input:
+          - name: content
+            data: '{ "name": "John", "age": 130, "city": "New York" }'
+          - name: content_type
+            data: 'application/json'
+        output:
+          - name: output
+            data: { 'name': 'John', 'age': 130, 'city': 'New York' }
+          - name: output
+            flags:
+              done: true
+      - name: serialize-test-xml
+        operation: serialize
+        input:
+          - name: content
+            data: '<person><name>John</name><age>130</age><city>New York</city></person>'
+          - name: content_type
+            data: 'application/xml'
+        output:
+          - name: output
+            data: { 'name': 'John', 'age': '130', 'city': 'New York' }
+          - name: output
+            flags:
+              done: true
+      - name: serialize-test-form-encode
+        operation: serialize
+        input:
+          - name: content
+            data: 'name=John&age=130&city=New%20York'
+          - name: content_type
+            data: 'application/x-www-form-urlencoded'
+        output:
+          - name: output
+            data: { 'name': 'John', 'age': '130', 'city': 'New York' }
+          - name: output
+            flags:
+              done: true

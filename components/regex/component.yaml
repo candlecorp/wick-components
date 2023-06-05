@@ -23,19 +23,20 @@ component:
         - name: result
           type: bool
 tests:
-  - name: regex
-    operation: match
-    with:
-      pattern: '(:?(\w+)\s*)'
-    input:
-      - name: input
-        data: 'This is a string.  It is not very long.'
-    output:
-      - name: result
-        data: true
-      - name: result
-        flags:
-          done: true
+  - cases:
+      - name: regex
+        operation: match
+        with:
+          pattern: '(:?(\w+)\s*)'
+        input:
+          - name: input
+            data: 'This is a string.  It is not very long.'
+        output:
+          - name: result
+            data: true
+          - name: result
+            flags:
+              done: true
 
     # - name: search
     #   inputs:
