@@ -1,0 +1,48 @@
+name: oauth_http
+kind: wick/component@v1
+resources:
+  - name: token_endpoint
+    resource:
+      kind: wick/resource/url@v1
+      url: $OAUTH_TOKEN_ENDPOINT
+component:
+  kind: wick/component/http@v1
+  resource: token_endpoint
+  operations:
+    - name: get_token
+      inputs:
+        - name: client_id
+          type: string
+        - name: client_secret
+          type: string
+        - name: access_code
+          type: string
+        - name: redirect_uri
+          type: string
+      method: Post
+      codec: FormData
+      headers:
+        "Content-Type": ["application/x-www-form-urlencoded"]
+      body:
+        client_id: "{{client_id}}"
+        client_secret: "{{client_secret}}"
+        code: "{{access_code}}"
+        redirect_uri: "{{redirect_uri}}"
+        grant_type: "authorization_code"
+    - name: refresh_token
+      inputs:
+        - name: client_id
+          type: string
+        - name: client_secret
+          type: string
+        - name: refresh_token
+          type: string
+      method: Post
+      codec: FormData
+      headers:
+        "Content-Type": ["application/x-www-form-urlencoded"]
+      body:
+        client_id: "{{client_id}}"
+        client_secret: "{{client_secret}}"
+        refresh_token: "{{refresh_token}}"
+        grant_type: "refresh_token"
