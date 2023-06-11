@@ -87,7 +87,6 @@ requires:
           outputs:
             - name: output
               type: object
-
   - name: httpclient
     interface:
       operations:
