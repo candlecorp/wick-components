@@ -27,16 +27,17 @@ component:
         - name: output
           type: string
 tests:
-  - name: liquid
-    operation: render
-    with:
-      template: 'This is a {{ adjective }} string.  It is {{ length }} very long.'
-    input:
-      - name: parameters
-        data: { 'adjective': 'nice', 'length': 'not' }
-    output:
-      - name: output
-        data: 'This is a nice string.  It is not very long.'
-      - name: output
-        flags:
-          done: true
+  - cases:
+      - name: liquid
+        operation: render
+        with:
+          template: 'This is a {{ adjective }} string.  It is {{ length }} very long.'
+        input:
+          - name: parameters
+            data: { 'adjective': 'nice', 'length': 'not' }
+        output:
+          - name: output
+            data: 'This is a nice string.  It is not very long.'
+          - name: output
+            flags:
+              done: true

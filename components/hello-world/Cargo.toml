@@ -1,5 +1,5 @@
 [package]
-name = "liquid-json"
+name = "hello-world"
 version = "0.1.0"
 edition = "2021"
 
@@ -16,11 +16,10 @@ panic = "abort"
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
+wick-component = { git = "https://github.com/candlecorp/wick.git" }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
-liquid-json = { version = "0.2.0", features = ["serde"] }
-anyhow = { version = "1.0" }
+anyhow = { version = "1" }
 
 [build-dependencies]
-wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
+wick-component-codegen = { git = "https://github.com/candlecorp/wick.git" }

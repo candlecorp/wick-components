@@ -1,5 +1,5 @@
 [package]
-name = "liquid-json"
+name = "cookies"
 version = "0.1.0"
 edition = "2021"
 
@@ -19,7 +19,7 @@ crate-type = ["cdylib"]
 wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
-liquid-json = { version = "0.2.0", features = ["serde"] }
+basic-cookies = "0.1.4"
 anyhow = { version = "1.0" }
 
 [build-dependencies]

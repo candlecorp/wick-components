@@ -21,16 +21,18 @@ component:
           type: string
 tests:
   - name: basic
-    operation: render
-    with:
-      template: 'Hello {{ name }}!'
-    input:
-      - name: data
-        data:
-          name: 'jinja'
-    output:
-      - name: output
-        data: 'Hello jinja!'
-      - name: output
-        flags:
-          done: true
+    cases:
+      - name: basic
+        operation: render
+        with:
+          template: 'Hello {{ name }}!'
+        input:
+          - name: data
+            data:
+              name: 'jinja'
+        output:
+          - name: output
+            data: 'Hello jinja!'
+          - name: output
+            flags:
+              done: true

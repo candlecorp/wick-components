@@ -1,16 +1,20 @@
-use wasmrs_guest::*;
+
 mod wick {
     wick_component::wick_import!();
 }
 use wick::*;
 
 #[async_trait::async_trait(?Send)]
-impl OpRender for Component {
+impl RenderOperation for Component {
+  type Error=anyhow::Error;
+  type Outputs= render::Outputs;
+  type Config = render::Config;
+
     async fn render(
         mut data: WickStream<Value>,
-        mut outputs: OpRenderOutputs,
-        ctx: Context<OpRenderConfig>,
-    ) -> wick::Result<()> {
+        mut outputs: Self::Outputs,
+        ctx: Context<Self::Config>,
+    ) -> anyhow::Result<()> {
         let tpl = ctx.config.template.clone();
         let mut env = minijinja::Environment::new();
         env.add_template("root", &tpl).unwrap();

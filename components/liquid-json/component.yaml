@@ -23,24 +23,25 @@ component:
         - name: output
           type: object
 tests:
-  - name: render
-    operation: render
-    with:
-      template:
-        status: '{{status}}'
-        body:
-          result: '{{ result }}'
-    input:
-      - name: input
-        data:
-          result: 'This is my result'
-          status: 200
-    output:
-      - name: output
-        data:
-          status: 200
-          body:
-            result: 'This is my result'
-      - name: output
-        flags:
-          done: true
+  - cases:
+      - name: render
+        operation: render
+        with:
+          template:
+            status: '{{status}}'
+            body:
+              result: '{{ result }}'
+        input:
+          - name: input
+            data:
+              result: 'This is my result'
+              status: 200
+        output:
+          - name: output
+            data:
+              status: 200
+              body:
+                result: 'This is my result'
+          - name: output
+            flags:
+              done: true

@@ -1,7 +1,7 @@
 use serde_json::Value;
 use serde_xml_rs::from_str;
 use std::collections::HashMap;
-use wasmrs_guest::*;
+
 mod wick {
     wick_component::wick_import!();
 }
@@ -10,13 +10,15 @@ use wick::*;
 
 // Implement the "new" operation
 #[async_trait::async_trait(?Send)]
-impl OpNew for Component {
+impl NewOperation for Component {
+type Error=anyhow::Error;
+ type Outputs=new::Outputs; type Config=new::Config;
     async fn new(
         mut key: WickStream<String>,
         mut value: WickStream<Value>,
-        mut outputs: OpNewOutputs,
-        _ctx: Context<OpNewConfig>,
-    ) -> wick::Result<()> {
+        mut outputs: Self::Outputs,
+        _ctx: Context<Self::Config>,
+    ) -> anyhow::Result<()> {
         if let (Some(Ok(key)), Some(Ok(value))) = (key.next().await, value.next().await) {
             let mut new_object = HashMap::new();
             new_object.insert(key, value);
@@ -30,25 +32,27 @@ impl OpNew for Component {
 
 // Implement the "select" operation
 #[async_trait::async_trait(?Send)]
-impl OpSelect for Component {
+impl SelectOperation for Component {
+type Error=anyhow::Error;
+ type Outputs=select::Outputs; type Config=select::Config;
     async fn select(
         mut object: WickStream<Value>,
         mut path: WickStream<String>,
-        mut outputs: OpSelectOutputs,
-        _ctx: Context<OpSelectConfig>,
-    ) -> wick::Result<()> {
+        mut outputs: Self::Outputs,
+        _ctx: Context<Self::Config>,
+    ) -> anyhow::Result<()> {
         while let (Some(Ok(object_value)), Some(Ok(path_string))) =
             (object.next().await, path.next().await)
         {
             let selected_values = select(&object_value, &path_string).map_err(|e| {
-                wick_component::anyhow::anyhow!("Error selecting value by path: {}", e)
+                anyhow::anyhow!("Error selecting value by path: {}", e)
             })?;
 
             if let Some(first_selected_value) = selected_values.first() {
                 outputs.output.send(first_selected_value);
             } else {
                 outputs.output.done();
-                return Err(wick_component::anyhow::anyhow!(
+                return Err(anyhow::anyhow!(
                     "No value found at the specified path"
                 ));
             }
@@ -61,13 +65,15 @@ impl OpSelect for Component {
 }
 
 #[async_trait::async_trait(?Send)]
-impl OpSerialize for Component {
+impl SerializeOperation for Component {
+type Error=anyhow::Error;
+ type Outputs=serialize::Outputs; type Config=serialize::Config;
     async fn serialize(
         mut content: WickStream<String>,
         mut content_type: WickStream<String>,
-        mut outputs: OpSerializeOutputs,
-        _ctx: Context<OpSerializeConfig>,
-    ) -> wick::Result<()> {
+        mut outputs: Self::Outputs,
+        _ctx: Context<Self::Config>,
+    ) -> anyhow::Result<()> {
         while let (Some(Ok(content_string)), Some(Ok(content_type_string))) =
             (content.next().await, content_type.next().await)
         {
@@ -76,7 +82,7 @@ impl OpSerialize for Component {
                 "application/json" => {
                     let content_str = content_string.as_str();
                     serde_json::from_str(content_str).map_err(|e| {
-                        wick_component::anyhow::anyhow!("Error parsing JSON content: {}", e)
+                        anyhow::anyhow!("Error parsing JSON content: {}", e)
                     })?
                 }
                 "application/x-www-form-urlencoded" => {
@@ -84,7 +90,7 @@ impl OpSerialize for Component {
                     let parsed_params: HashMap<String, String> = params.into_owned().collect();
                     // Convert the parsed params to a serde_json::Value
                     serde_json::to_value(parsed_params).map_err(|e| {
-                        wick_component::anyhow::anyhow!("Error converting params to JSON: {}", e)
+                        anyhow::anyhow!("Error converting params to JSON: {}", e)
                     })?
                 }
                 "application/xml" => {
@@ -94,7 +100,7 @@ impl OpSerialize for Component {
                             // Wrap the content with a root element and try parsing again
                             let wrapped_content = format!("<root>{}</root>", content_str);
                             from_str(&wrapped_content).map_err(|e| {
-                                wick_component::anyhow::anyhow!("Error parsing XML content: {}", e)
+                                anyhow::anyhow!("Error parsing XML content: {}", e)
                             })
                         })?;
 
@@ -109,17 +115,17 @@ impl OpSerialize for Component {
                     }
 
                     serde_json::to_value(flattened_parsed).map_err(|e| {
-                        wick_component::anyhow::anyhow!("Error converting XML to JSON: {}", e)
+                        anyhow::anyhow!("Error converting XML to JSON: {}", e)
                     })?
                 }
                 "text/plain" => {
                     //turn content_string into serde_json::Value
                     serde_json::to_value(content_string).map_err(|e| {
-                        wick_component::anyhow::anyhow!("Error converting text to JSON: {}", e)
+                        anyhow::anyhow!("Error converting text to JSON: {}", e)
                     })?
                 }
                 _ => {
-                    return Err(wick_component::anyhow::anyhow!(
+                    return Err(anyhow::anyhow!(
                         "Unsupported content type: {}",
                         content_type_string
                     ))

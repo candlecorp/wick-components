@@ -476,7 +476,7 @@ source = "git+https://github.com/candlecorp/wick.git?branch=main#692c9632ae600fa
 dependencies = [
  "lazy_static",
  "nom",
- "regex",
+ "regex 1.8.4",
  "serde",
  "serde_json",
  "thiserror",
@@ -851,18 +851,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 
 [[package]]
-name = "jinja"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "minijinja",
- "serde",
- "wick-component",
- "wick-component-codegen",
-]
-
-[[package]]
 name = "js-sys"
 version = "0.3.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -934,7 +922,7 @@ dependencies = [
  "num-traits",
  "pest",
  "pest_derive",
- "regex",
+ "regex 1.8.4",
  "serde",
  "time",
 ]
@@ -960,7 +948,7 @@ dependencies = [
  "liquid-core",
  "liquid-lib",
  "once_cell",
- "regex",
+ "regex 1.8.4",
  "serde",
  "serde_json",
  "thiserror",
@@ -976,7 +964,7 @@ dependencies = [
  "liquid-core",
  "once_cell",
  "percent-encoding",
- "regex",
+ "regex 1.8.4",
  "time",
  "unicode-segmentation",
 ]
@@ -1008,15 +996,6 @@ name = "mime"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
-
-[[package]]
-name = "minijinja"
-version = "0.32.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e813a9b613280e7d9e5be27ab556530d7c5562d26e5e6ef586e2c4512d34550d"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "minimal-lexical"
@@ -1095,7 +1074,7 @@ dependencies = [
  "jwt",
  "lazy_static",
  "olpc-cjson",
- "regex",
+ "regex 1.8.4",
  "reqwest",
  "serde",
  "serde_json",
@@ -1283,6 +1262,18 @@ dependencies = [
  "getrandom",
  "redox_syscall",
  "thiserror",
+]
+
+[[package]]
+name = "regex"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "regex 1.8.4",
+ "serde",
+ "wick-component",
+ "wick-component-codegen",
 ]
 
 [[package]]
@@ -2268,7 +2259,7 @@ dependencies = [
  "option-utils",
  "parking_lot",
  "property",
- "regex",
+ "regex 1.8.4",
  "serde",
  "serde-value",
  "serde-with-expand-env",
@@ -2306,7 +2297,7 @@ dependencies = [
  "flate2",
  "oci-distribution",
  "once_cell",
- "regex",
+ "regex 1.8.4",
  "serde",
  "serde_json",
  "serde_yaml",
