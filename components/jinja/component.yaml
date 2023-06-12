@@ -3,11 +3,14 @@
 name: 'jinja'
 kind: wick/component@v1
 metadata:
-  version: '0.0.2'
+  version: '0.0.4'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: jsoverson
 component:
   kind: wick/component/wasmrs@v1
   ref: ./build/jinja.signed.wasm
-
   operations:
     - name: render
       with:
