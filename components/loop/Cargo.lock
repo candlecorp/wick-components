@@ -47,7 +47,7 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 [[package]]
 name = "asset-container"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "bitflags 2.3.1",
  "futures",
@@ -173,16 +173,6 @@ dependencies = [
  "num-traits",
  "serde",
  "winapi",
-]
-
-[[package]]
-name = "cookie"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7efb37c3e1ccb1ff97164ad95ac1606e8ccd35b3fa0a7d99a304c7f4a428cc24"
-dependencies = [
- "time",
- "version_check",
 ]
 
 [[package]]
@@ -330,7 +320,7 @@ dependencies = [
 [[package]]
 name = "derive-asset-container"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -468,7 +458,7 @@ dependencies = [
 [[package]]
 name = "flow-component"
 version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "anyhow",
  "futures",
@@ -483,7 +473,7 @@ dependencies = [
 [[package]]
 name = "flow-expression-parser"
 version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "lazy_static",
  "nom",
@@ -909,9 +899,9 @@ checksum = "f92be4933c13fd498862a9e02a3055f8a8d9c039ce33db97306fd5a6caa7f29b"
 
 [[package]]
 name = "liquid"
-version = "0.26.3"
+version = "0.26.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eefc214b0f57977e0036be6646a7ef9799b14456ae77a84808ddbe0c4cf326fb"
+checksum = "69f68ae1011499ae2ef879f631891f21c78e309755f4a5e483c4a8f12e10b609"
 dependencies = [
  "doc-comment",
  "liquid-core",
@@ -922,9 +912,9 @@ dependencies = [
 
 [[package]]
 name = "liquid-core"
-version = "0.26.3"
+version = "0.26.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf5bf9a2ede54bdea60a387ded9bc9236d594210afb73ab55f4cbd53599711d3"
+checksum = "79e0724dfcaad5cfb7965ea0f178ca0870b8d7315178f4a7179f5696f7f04d5f"
 dependencies = [
  "anymap2",
  "itertools",
@@ -940,9 +930,9 @@ dependencies = [
 
 [[package]]
 name = "liquid-derive"
-version = "0.26.3"
+version = "0.26.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2438da425fd380eb2719a2a5880149697eea32a160e83b63e7848c1bee300406"
+checksum = "fc2fb41a9bb4257a3803154bdf7e2df7d45197d1941c9b1a90ad815231630721"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -967,9 +957,9 @@ dependencies = [
 
 [[package]]
 name = "liquid-lib"
-version = "0.26.3"
+version = "0.26.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4feb5c6363bdac5b5238725e296ed9efbe88576f07819970519f29ee29d0b11e"
+checksum = "e2a17e273a6fb1fb6268f7a5867ddfd0bd4683c7e19b51084f3d567fad4348c0"
 dependencies = [
  "itertools",
  "liquid-core",
@@ -992,9 +982,20 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.18"
+version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "518ef76f2f87365916b142844c16d8fefd85039bc5699050210a7778ee1cd1de"
+checksum = "b06a4cde4c0f271a446782e3eff8de789548ce57dbc8eca9292c27f4a42004b4"
+
+[[package]]
+name = "loop"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "serde",
+ "wick-component",
+ "wick-component-codegen",
+]
 
 [[package]]
 name = "memchr"
@@ -1070,20 +1071,6 @@ checksum = "0fac9e2da13b5eb447a6ce3d392f23a29d8694bff781bf03a16cd9ac8697593b"
 dependencies = [
  "hermit-abi",
  "libc",
-]
-
-[[package]]
-name = "oauth"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.21.2",
- "cookie",
- "serde",
- "urlencoding",
- "wick-component",
- "wick-component-codegen",
 ]
 
 [[package]]
@@ -1468,12 +1455,11 @@ dependencies = [
 [[package]]
 name = "seeded-random"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "parking_lot",
  "rand",
  "rand_chacha",
- "uuid",
 ]
 
 [[package]]
@@ -1619,9 +1605,9 @@ dependencies = [
 
 [[package]]
 name = "sha256"
-version = "1.1.3"
+version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f9f8b5de2bac3a4ae28e9b611072a8e326d9b26c8189c0972d4c321fa684f1f"
+checksum = "08a975c1bc0941703000eaf232c4d8ce188d8d5408d6344b6b2c8c6262772828"
 dependencies = [
  "hex",
  "sha2",
@@ -2008,18 +1994,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "urlencoding"
-version = "2.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8db7427f936968176eaa7cdf81b7f98b980b18495ec28f1b5791ac3bfe3eea9"
-
-[[package]]
-name = "uuid"
-version = "1.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "345444e32442451b267fc254ae85a209c64be56d2890e601a0c37ff0c3c5ecd2"
-
-[[package]]
 name = "version_check"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2269,7 +2243,7 @@ dependencies = [
 [[package]]
 name = "wick-asset-reference"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "asset-container",
  "bytes",
@@ -2285,9 +2259,8 @@ dependencies = [
 [[package]]
 name = "wick-component"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
- "chrono",
  "flow-component",
  "paste",
  "serde_json",
@@ -2304,7 +2277,7 @@ dependencies = [
 [[package]]
 name = "wick-component-codegen"
 version = "0.4.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "anyhow",
  "bitflags 2.3.1",
@@ -2324,7 +2297,7 @@ dependencies = [
 [[package]]
 name = "wick-config"
 version = "0.26.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "asset-container",
  "derive-asset-container",
@@ -2357,7 +2330,7 @@ dependencies = [
 [[package]]
 name = "wick-interface-types"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "nom",
  "serde",
@@ -2369,7 +2342,7 @@ dependencies = [
 [[package]]
 name = "wick-oci-utils"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "bytes",
  "flate2",
@@ -2390,7 +2363,7 @@ dependencies = [
 [[package]]
 name = "wick-packet"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "base64 0.21.2",
  "base64-serde",
@@ -2415,7 +2388,7 @@ dependencies = [
 [[package]]
 name = "wick-xdg"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=datetime#b0a9bef2b2c07b2c13aa31a299af3fd6890afbf2"
+source = "git+https://github.com/candlecorp/wick.git#495734dc37a29801ca2c68c77da60d0b30905303"
 dependencies = [
  "thiserror",
  "xdg",
