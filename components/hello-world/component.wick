@@ -8,6 +8,7 @@ package:
   registry:
     host: registry.candle.dev
     namespace: common
+
 component:
   kind: wick/component/wasmrs@v1
   ref: build/hello_world.signed.wasm
