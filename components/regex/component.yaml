@@ -7,7 +7,7 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.1.0'
+  version: '0.2.0'
 package:
   registry:
     host: registry.candle.dev
@@ -26,6 +26,26 @@ component:
       outputs:
         - name: result
           type: bool
+    - name: capture
+      with:
+        - name: pattern
+          type: string
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: result
+          type: 'string[]'
+    # - name: captures
+    #   with:
+    #     - name: pattern
+    #       type: string
+    #   inputs:
+    #     - name: input
+    #       type: string
+    #   outputs:
+    #     - name: captures
+    #       type: 'string[][]'
 tests:
   - cases:
       - name: regex
@@ -38,6 +58,19 @@ tests:
         outputs:
           - name: result
             value: true
+          - name: result
+            flags:
+              done: true  
+      - name: regex_capture
+        operation: capture
+        with:
+          pattern: '(:?(\w+)\s*)'
+        inputs:
+          - name: input
+            value: 'This is a string.  It is not very long.'
+        outputs:
+          - name: result
+            value: ["This ","This ","This"]
           - name: result
             flags:
               done: true
