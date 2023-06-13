@@ -13,3 +13,5 @@ test:
   wick test liquid.wick
 clean:
   cargo clean
+publish:
+  wick reg push liquid.wick

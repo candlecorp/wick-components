@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'liquid-json'
 kind: wick/component@v1
@@ -7,7 +7,11 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.0.2'
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
 component:
   kind: wick/component/wasmrs@v1
   ref: build/liquid_json.signed.wasm
@@ -31,14 +35,14 @@ tests:
             status: '{{status}}'
             body:
               result: '{{ result }}'
-        input:
+        inputs:
           - name: input
-            data:
+            value:
               result: 'This is my result'
               status: 200
-        output:
+        outputs:
           - name: output
-            data:
+            value:
               status: 200
               body:
                 result: 'This is my result'

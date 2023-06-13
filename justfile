@@ -26,6 +26,9 @@ build:
 test:
   just run-child-task test
 
+publish:
+  just run-child-task publish
+
 clean:
   just run-child-task clean
   rm components/*/Cargo.lock

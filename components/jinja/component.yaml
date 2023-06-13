@@ -1,9 +1,13 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'jinja'
 kind: wick/component@v1
 metadata:
-  version: '0.0.2'
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
 component:
   kind: wick/component/wasmrs@v1
   ref: ./build/jinja.signed.wasm
@@ -26,13 +30,13 @@ tests:
         operation: render
         with:
           template: 'Hello {{ name }}!'
-        input:
+        inputs:
           - name: data
-            data:
+            value:
               name: 'jinja'
-        output:
+        outputs:
           - name: output
-            data: 'Hello jinja!'
+            value: 'Hello jinja!'
           - name: output
             flags:
               done: true

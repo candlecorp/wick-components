@@ -13,3 +13,5 @@ test:
     wick test component.wick
 clean:
   cargo clean
+publish:
+  wick reg push component.wick
