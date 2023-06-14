@@ -74,6 +74,19 @@ tests:
           - name: result
             flags:
               done: true
+      - name: regex_multi_capture
+        operation: capture
+        with:
+          pattern: 'Store(\d+)/(\d+\.zip)'
+        inputs:
+          - name: input
+            value: 'https://mycontainer.blob.core.windows.net/pvc-abc123/bla/Store0044/20230220.zip'
+        outputs:
+          - name: result
+            value: ["Store0044/20230220.zip", "0044","20230220.zip"]
+          - name: result
+            flags:
+              done: true
 
     # - name: search
     #   inputs:
