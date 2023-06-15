@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'object'
 kind: wick/component@v1
@@ -7,7 +7,11 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.0.1'
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
 component:
   kind: wick/component/wasmrs@v1
   ref: build/object.signed.wasm
@@ -43,35 +47,35 @@ tests:
   - cases:
       - name: new-test
         operation: new
-        input:
+        inputs:
           - name: key
-            data: 'name'
+            value: 'name'
           - name: value
-            data: 'John'
-        output:
+            value: 'John'
+        outputs:
           - name: output
-            data: { 'name': 'John' }
+            value: { 'name': 'John' }
           - name: output
             flags:
               done: true
       - name: select-test
         operation: select
-        input:
+        inputs:
           - name: object
-            data: { 'name': 'John', 'age': 130, 'city': 'New York' }
+            value: { 'name': 'John', 'age': 130, 'city': 'New York' }
           - name: path
-            data: '$.city'
-        output:
+            value: '$.city'
+        outputs:
           - name: output
-            data: 'New York'
+            value: 'New York'
           - name: output
             flags:
               done: true
       - name: select-nested-test
         operation: select
-        input:
+        inputs:
           - name: object
-            data:
+            value:
               {
                 'name': 'John',
                 'age': 130,
@@ -79,49 +83,49 @@ tests:
                   { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
               }
           - name: path
-            data: '$.location.city'
-        output:
+            value: '$.location.city'
+        outputs:
           - name: output
-            data: 'New York'
+            value: 'New York'
           - name: output
             flags:
               done: true
       - name: serialize-test-json
         operation: serialize
-        input:
+        inputs:
           - name: content
-            data: '{ "name": "John", "age": 130, "city": "New York" }'
+            value: '{ "name": "John", "age": 130, "city": "New York" }'
           - name: content_type
-            data: 'application/json'
-        output:
+            value: 'application/json'
+        outputs:
           - name: output
-            data: { 'name': 'John', 'age': 130, 'city': 'New York' }
+            value: { 'name': 'John', 'age': 130, 'city': 'New York' }
           - name: output
             flags:
               done: true
       - name: serialize-test-xml
         operation: serialize
-        input:
+        inputs:
           - name: content
-            data: '<person><name>John</name><age>130</age><city>New York</city></person>'
+            value: '<person><name>John</name><age>130</age><city>New York</city></person>'
           - name: content_type
-            data: 'application/xml'
-        output:
+            value: 'application/xml'
+        outputs:
           - name: output
-            data: { 'name': 'John', 'age': '130', 'city': 'New York' }
+            value: { 'name': 'John', 'age': '130', 'city': 'New York' }
           - name: output
             flags:
               done: true
       - name: serialize-test-form-encode
         operation: serialize
-        input:
+        inputs:
           - name: content
-            data: 'name=John&age=130&city=New%20York'
+            value: 'name=John&age=130&city=New%20York'
           - name: content_type
-            data: 'application/x-www-form-urlencoded'
-        output:
+            value: 'application/x-www-form-urlencoded'
+        outputs:
           - name: output
-            data: { 'name': 'John', 'age': '130', 'city': 'New York' }
+            value: { 'name': 'John', 'age': '130', 'city': 'New York' }
           - name: output
             flags:
               done: true

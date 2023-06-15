@@ -19,7 +19,6 @@ crate-type = ["cdylib"]
 wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
-rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 anyhow = { version = "1.0" }
 
 [build-dependencies]

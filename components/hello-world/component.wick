@@ -1,9 +1,14 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'greeting'
 kind: wick/component@v1
 metadata:
-  version: '0.0.1'
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+
 component:
   kind: wick/component/wasmrs@v1
   ref: build/hello_world.signed.wasm
@@ -19,9 +24,9 @@ tests:
   - cases:
       - name: 'greet'
         operation: 'greet'
-        input:
+        inputs:
           - name: name
             value: 'wick'
-        output:
+        outputs:
           - name: output
             value: 'Hello, wick'
