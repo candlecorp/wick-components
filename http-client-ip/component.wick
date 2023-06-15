@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'http_client_ip'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.2.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: candle
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/http_client_ip.signed.wasm
+  operations:
+    - name: get_ip
+      inputs:
+        - name: request
+          type: http::HttpRequest
+      outputs:
+        - name: ip
+          type: string
+tests:
+  - name: get_ip
+    cases:
+      - name: from xff
+        operation: get_ip
+        inputs:
+          - name: request
+            value:
+              method: Get
+              scheme: Http
+              path: "/"
+              uri: "http://localhost:8080/"
+              version: Http11
+              authority: "localhost:8080"
+              remote_addr: "127.0.0.1"
+              query_parameters: {}
+              headers:
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+                accept:
+                  - "*/*"
+                "x-forwarded-for": 
+                  - "99.108.2.98"
+        outputs:
+          - name: ip
+            value: "99.108.2.98"
+          - name: ip
+            flags:
+              done: true
+      - name: from remote addr
+        operation: get_ip
+        inputs:
+          - name: request
+            value:
+              method: Get
+              scheme: Http
+              path: "/"
+              uri: "http://localhost:8080/"
+              version: Http11
+              authority: "localhost:8080"
+              remote_addr: "99.108.2.98"
+              query_parameters: {}
+              headers:
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+                accept:
+                  - "*/*"
+        outputs:
+          - name: ip
+            value: "99.108.2.98"
+          - name: ip
+            flags:
+              done: true
