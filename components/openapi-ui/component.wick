@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: http-router
+kind: wick/component@v1
+metadata:
+  version: '1'
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.2.0
+component:
+  kind: wick/component/wasmrs@v1
+  ref: ./build/openapi_ui.signed.wasm
+  with:
+    - name: schema_url
+      type: string
+  operations:
+    - name: serve
+      inputs:
+        - name: request
+          type: http::HttpRequest
+        - name: body
+          type: bytes
+      outputs:
+        - name: body
+          type: bytes
+        - name: response
+          type: http::HttpResponse
