@@ -1,0 +1,20 @@
+project_name := "openapi_ui"
+build: setup
+    cargo build --release --target=wasm32-unknown-unknown
+    cp ./target/wasm32-unknown-unknown/release/*.wasm ./build/
+    wick wasm sign ./build/{{project_name}}.wasm component.wick
+debug: setup
+    cargo +nightly build --target=wasm32-wasi
+    cp ./target/wasm32-wasi/debug/*.wasm ./build/
+    wick wasm sign ./build/{{project_name}}.wasm component.wick
+setup:
+    mkdir -p build
+openapi:
+  curl $(npm view swagger-ui-dist dist.tarball) -o swagger-ui-dist.tar.gz
+  tar -xzf swagger-ui-dist.tar.gz
+clean:
+  cargo clean
+test:
+  wick test component.wick
+publish:
+  wick reg push component.wick
