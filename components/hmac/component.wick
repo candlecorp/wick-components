@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: hmac
+kind: wick/component@v1
+package:
+  registry:
+    host: 'registry.candle.dev'
+    namespace: 'common'
+metadata:
+  version: 0.0.1
+import: []
+component:
+  kind: wick/component/wasmrs@v1
+  ref: ./build/hmac.signed.wasm
+  with:
+    - name: secret
+      type: bytes
+  operations:
+    - name: from_bytes
+      inputs:
+        - name: input
+          type: bytes
+      outputs:
+        - name: output
+          type: bytes
+    - name: from_string
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: output
+          type: bytes
+tests:
+  - with:
+      secret: '{{ "This is my secret" | base64_encode }}'
+    cases:
+      - name: from_bytes
+        operation: from_bytes
+        inputs:
+          - name: input
+            value: "{{ 'This is my message' | base64_encode }}"
+        outputs:
+          - name: output
+            value: NOMax++lE1s1ipwDXKpp0WfL6aAXz/DP479t83z5+1M=
+      - name: from_string
+        operation: from_string
+        inputs:
+          - name: input
+            value: 'This is my message'
+        outputs:
+          - name: output
+            value: NOMax++lE1s1ipwDXKpp0WfL6aAXz/DP479t83z5+1M=
