@@ -1,12 +1,12 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'cookies'
 kind: wick/component@v1
 metadata:
-  version: '0.0.1'
+  version: '0.1.0'
 package:
   registry:
-    registry: registry.candle.dev
+    host: registry.candle.dev
     namespace: jsoverson
 component:
   kind: wick/component/wasmrs@v1
@@ -29,9 +29,9 @@ tests:
         operation: get
         with:
           name: 'cookie2'
-        input:
+        inputs:
           - name: input
-            data: 'cookie1=foo; cookie2=bar; cookie3=baz'
-        output:
+            value: 'cookie1=foo; cookie2=bar; cookie3=baz'
+        outputs:
           - name: output
-            data: 'bar'
+            value: 'bar'

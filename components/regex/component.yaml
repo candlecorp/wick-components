@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'regex'
 kind: wick/component@v1
@@ -7,7 +7,11 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.0.2'
+  version: '0.2.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
 component:
   kind: wick/component/wasmrs@v1
   ref: build/regex.signed.wasm
@@ -22,18 +26,64 @@ component:
       outputs:
         - name: result
           type: bool
+    - name: capture
+      with:
+        - name: pattern
+          type: string
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: result
+          type: 'string[]'
+    # - name: captures
+    #   with:
+    #     - name: pattern
+    #       type: string
+    #   inputs:
+    #     - name: input
+    #       type: string
+    #   outputs:
+    #     - name: captures
+    #       type: 'string[][]'
 tests:
   - cases:
       - name: regex
         operation: match
         with:
           pattern: '(:?(\w+)\s*)'
-        input:
+        inputs:
           - name: input
-            data: 'This is a string.  It is not very long.'
-        output:
+            value: 'This is a string.  It is not very long.'
+        outputs:
           - name: result
-            data: true
+            value: true
+          - name: result
+            flags:
+              done: true  
+      - name: regex_capture
+        operation: capture
+        with:
+          pattern: '(:?(\w+)\s*)'
+        inputs:
+          - name: input
+            value: 'This is a string.  It is not very long.'
+        outputs:
+          - name: result
+            value: ["This ","This ","This"]
+          - name: result
+            flags:
+              done: true
+      - name: regex_multi_capture
+        operation: capture
+        with:
+          pattern: 'Store(\d+)/(\d+\.zip)'
+        inputs:
+          - name: input
+            value: 'https://mycontainer.blob.core.windows.net/pvc-abc123/bla/Store0044/20230220.zip'
+        outputs:
+          - name: result
+            value: ["Store0044/20230220.zip", "0044","20230220.zip"]
           - name: result
             flags:
               done: true

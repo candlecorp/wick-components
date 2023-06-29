@@ -1,9 +1,13 @@
-# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/0.8.0/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'rand'
 kind: wick/component@v1
 metadata:
-  version: '0.0.1'
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
 component:
   kind: wick/component/wasmrs@v1
   ref: build/rand.signed.wasm

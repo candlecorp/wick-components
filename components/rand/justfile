@@ -13,3 +13,5 @@ clean:
   cargo clean
 test:
   wick test component.yaml
+publish:
+  wick reg push component.yaml

@@ -13,3 +13,5 @@ clean:
   cargo clean
 test:
   wick test object.wick
+publish:
+  wick reg push object.wick
