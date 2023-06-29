@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'string'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/string.signed.wasm
+  operations:
+    - name: concatenate
+      inputs:
+        - name: left
+          type: string
+        - name: right
+          type: string
+      outputs:
+        - name: output
+          type: string
+tests:
+  - name: test_concat
+    cases:
+      - name: concatenate
+        operation: concatenate
+        inputs:
+          - name: left
+            value: 'hello '
+          - name: right
+            value: 'world'
+        outputs:
+          - name: output
+            value: 'hello world'
+          - name: output
+            flags:
+              done: true
