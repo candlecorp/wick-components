@@ -6,7 +6,7 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.1.0'
+  version: '0.2.0'
 package:
   registry:
     host: registry.candle.dev
@@ -156,6 +156,32 @@ tests:
               }
           - name: value
             value: { 'zip': '44444' }
+        outputs:
+          - name: output
+            value: {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA', 'zip': '44444' },
+              }
+          - name: output
+            flags:
+              done: true
+      - name: push-string
+        operation: push
+        with:
+          path: '$.location.zip'
+        inputs:
+          - name: input
+            value:
+              {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
+              }
+          - name: value
+            value: '44444'
         outputs:
           - name: output
             value: {

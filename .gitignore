@@ -1,4 +1,4 @@
-/components/*/target
+/components/*/target/*
 .wick
 /components/*/build/*
 /archive

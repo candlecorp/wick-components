@@ -18,35 +18,30 @@ resources:
   - name: httpserver
     resource:
       kind: wick/resource/tcpport@v1
-      port: 8080
+      port: "8080"
       address: 0.0.0.0
   - name: DIR
     resource:
       kind: wick/resource/volume@v1
       path: ./www
 import:
-  - name: OAUTHDB
-    component:
-      kind: wick/component/manifest@v1
-      ref: ./oauth-db.wick
-  - name: OAUTHHTTP
-    component:
-      kind: wick/component/manifest@v1
-      ref: ./oauth-http.wick
-  - name: oauth
+  - name: oauth_composite
     component:
       kind: wick/component/manifest@v1
       ref: ./oauth.wick
       with:
-        auth_endpoint: $OAUTH_AUTH_ENDPOINT
-        redirect_uri: http://localhost:8080/oidc/callback
+        auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
+        token_endpoint: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
+        redirect_uri: http://localhost:8081/oidc/callback
         session_cookie_name: sid
-        client_id: $OAUTH_CLIENT_ID
-        client_secret: $OAUTH_CLIENT_SECRET
-        scope: $OAUTH_SCOPE
-      provide:
-        dbclient: OAUTHDB
-        httpclient: OAUTHHTTP
+        client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
+        client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
+        scope: "openid profile email"
+        db_user: '{{ ctx.env.OAUTH_DB_USER }}'
+        db_password: '{{ ctx.env.OAUTH_DB_PASSWORD }}'
+        db_host: '{{ ctx.env.OAUTH_DB_HOST }}'
+        db_port: '{{ ctx.env.OAUTH_DB_PORT }}'
+        db_name: '{{ ctx.env.OAUTH_DB_NAME }}'
 triggers:
   - kind: wick/trigger/http@v1
     resource: httpserver
@@ -54,7 +49,8 @@ triggers:
       - kind: wick/router/static@v1
         middleware:
           request:
-            - oauth::auth
+            - oauth_composite::auth
+            - oauth_composite::oidc
         path: /
         volume: DIR
         fallback: index.html

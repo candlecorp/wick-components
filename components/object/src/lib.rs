@@ -1,4 +1,3 @@
-use serde_json::Value;
 use serde_xml_rs::from_str;
 use std::collections::HashMap;
 use std::collections::LinkedList;
@@ -26,7 +25,7 @@ impl NewOperation for Component {
 
             let mut new_object = HashMap::new();
             new_object.insert(key, value);
-            let new_object_json = serde_json::to_value(new_object)?;
+            let new_object_json = wick_component::to_value(new_object)?;
             outputs.output.send(&new_object_json);
         }
         outputs.output.done();
@@ -84,14 +83,14 @@ impl SerializeOperation for Component {
             let parsed_content: Value = match content_type_string.as_str() {
                 "application/json" => {
                     let content_str = content_string.as_str();
-                    serde_json::from_str(content_str)
+                    wick_component::from_str(content_str)
                         .map_err(|e| anyhow::anyhow!("Error parsing JSON content: {}", e))?
                 }
                 "application/x-www-form-urlencoded" => {
                     let params = url::form_urlencoded::parse(content_string.as_bytes());
                     let parsed_params: HashMap<String, String> = params.into_owned().collect();
                     // Convert the parsed params to a serde_json::Value
-                    serde_json::to_value(parsed_params)
+                    wick_component::to_value(parsed_params)
                         .map_err(|e| anyhow::anyhow!("Error converting params to JSON: {}", e))?
                 }
                 "application/xml" => {
@@ -114,12 +113,12 @@ impl SerializeOperation for Component {
                         }
                     }
 
-                    serde_json::to_value(flattened_parsed)
+                    wick_component::to_value(flattened_parsed)
                         .map_err(|e| anyhow::anyhow!("Error converting XML to JSON: {}", e))?
                 }
                 "text/plain" => {
                     //turn content_string into serde_json::Value
-                    serde_json::to_value(content_string)
+                    wick_component::to_value(content_string)
                         .map_err(|e| anyhow::anyhow!("Error converting text to JSON: {}", e))?
                 }
                 _ => {
@@ -149,13 +148,23 @@ fn extend_object_at_path(root: &mut Value, mut path: LinkedList<&str>, new_value
         }
         let next = root.get_mut(segment).unwrap();
         extend_object_at_path(next, path, new_value);
-    } else if let Value::Object(map) = root {
-        if let Value::Object(new_map) = new_value {
-            for (k, v) in new_map {
-                map.insert(k, v);
+    } else {
+        match new_value {
+            Value::Object(new_map) => {
+                if let Value::Object(map) = root {
+                    for (k, v) in new_map {
+                        map.insert(k, v);
+                    }
+                } else {
+                    panic!("Root value must be an object when new value is an object");
+                }
             }
-        } else {
-            panic!("New value must be an object");
+            Value::String(new_string) => {
+                *root = Value::String(new_string);
+            }
+            _ => {
+                panic!("New value must be an object or a string");
+            }
         }
     }
 }

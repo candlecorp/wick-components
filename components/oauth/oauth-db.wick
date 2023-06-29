@@ -5,9 +5,20 @@ resources:
     resource:
       kind: wick/resource/url@v1
       # pass $* values as environment variables to the pod
-      url: postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+      url: "postgres://{{ ctx.root_config.db_user }}:{{ ctx.root_config.db_password }}@{{ ctx.root_config.db_host }}:{{ ctx.root_config.db_port }}/{{ ctx.root_config.db_name }}"
 component:
   kind: wick/component/sql@v1
+  with:
+    - name: db_user
+      type: string
+    - name: db_password
+      type: string
+    - name: db_host
+      type: string
+    - name: db_port
+      type: string
+    - name: db_name
+      type: string
   resource: db_url
   tls: false
   #   id VARCHAR(50) PRIMARY KEY,
@@ -64,6 +75,17 @@ component:
           type: object
       query: |
         select expires_at, access_token from oauth_sessions where id = $1
+      arguments:
+        - session_id
+    - name: get_oidc_claims
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        select claims from oidc_claims where session_id = $1
       arguments:
         - session_id
     - name: update_session

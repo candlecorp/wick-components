@@ -202,8 +202,6 @@ impl AuthOperation for Component {
                     //call token http component using get_token function
                     let (mut get_token_response, mut get_token_response_body) =
                         ctx.provided().httpclient.get_token(
-                            once(config.client_id.clone()),
-                            once(config.client_secret.clone()),
                             once(access_code.to_string()),
                             once(config.redirect_uri.clone()),
                         )?;
@@ -292,6 +290,7 @@ impl AuthOperation for Component {
                     cookies.push(session_cookie);
 
                     let response = build_redirect_response(&location, Some(cookies));
+                    println!("response: {:?}", response);
                     outputs.response.send(&response);
                     continue;
                 }
@@ -311,6 +310,7 @@ impl AuthOperation for Component {
                             timestamp,
                         );
                         outputs.response.send(&response);
+                        println!("response: {:?}", response);
                         continue;
                     }
 
@@ -322,7 +322,6 @@ impl AuthOperation for Component {
                         .get_session(once(session_id.clone()))?;
 
                     while let Some(response) = get_session_response.next().await {
-                        println!("response: {:?}", response);
                         let response = propagate_if_error!(response, outputs, continue);
 
                         //session does not exist redirect to login
@@ -370,6 +369,95 @@ impl AuthOperation for Component {
                 }
             }
         }
+        //This should always be at the end. This lets the downstream components know that the stream is finished and there will not be any more messages.
+        outputs.response.done();
+        outputs.request.done();
+        println!("done");
+        Ok(())
+    }
+}
+
+#[async_trait::async_trait(?Send)]
+impl OidcOperation for Component {
+    type Error = anyhow::Error;
+    type Outputs = oidc::Outputs;
+    type Config = oidc::Config;
+
+    async fn oidc(
+        mut input: WickStream<HttpRequest>,
+        mut outputs: Self::Outputs,
+        ctx: Context<Self::Config>,
+    ) -> Result<(), Self::Error> {
+        // initial setup for frequently used variables
+        let config: &RootConfig = ctx.root_config();
+        let rng = &ctx.inherent.rng;
+        let timestamp = ctx.inherent.timestamp;
+
+        while let Some(input) = input.next().await {
+            //ensure request is not an error
+            let input = propagate_if_error!(input, outputs, continue);
+
+            //get cookies
+            let cookies = parse_cookies_header(input.headers.clone(), &config.session_cookie_name);
+
+            if cookies.session_id.is_none() {
+                //create state cookie
+                let state = rng.uuid().to_string();
+                // redirect to auth endpoint
+                let response =
+                    build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
+                outputs.response.send(&response);
+                continue;
+            }
+
+            //session cookie exists lookup session to see if its valid
+            let session_id = cookies.session_id.unwrap();
+            let mut get_oidc_claims_response = ctx
+                .provided()
+                .dbclient
+                .get_oidc_claims(once(session_id.clone()))?;
+
+            while let Some(response) = get_oidc_claims_response.next().await {
+                let response = propagate_if_error!(response, outputs, continue);
+
+                //session is valid
+                let mut request = input.clone();
+
+                //extract scope from claims
+                let scope = response.get("claims");
+                if scope.is_none() {
+                    //create state cookie
+                    let state = rng.uuid().to_string();
+                    // redirect to auth endpoint
+                    let response =
+                        build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
+                    outputs.response.send(&response);
+                    continue;
+                }
+
+                let claims: Result<types::OidcClaims, _> =
+                    wick_component::from_value(scope.unwrap().to_owned());
+
+                if claims.is_err() {
+                    outputs.response.error("invalid claims");
+                    continue;
+                }
+
+                let claims = claims.unwrap();
+
+                //add scope to request
+                request
+                    .headers
+                    .insert("X-OIDC-EMAIL".to_string(), vec![claims.email]);
+
+                request
+                    .headers
+                    .insert("X-OIDC-Group".to_string(), claims.groups);
+
+                outputs.request.send(&request);
+            }
+        }
+
         //This should always be at the end. This lets the downstream components know that the stream is finished and there will not be any more messages.
         outputs.response.done();
         outputs.request.done();

@@ -27,10 +27,14 @@ tests:
         operation: each
         inputs:
           - name: input
-            value: [1]
+            value: [1,2,3]
         outputs:
           - name: output
             value: 1
+          - name: output
+            value: 2
+          - name: output
+            value: 3
           - name: output
             flags:
               done: true
