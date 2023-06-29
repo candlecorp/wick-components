@@ -1,0 +1,48 @@
+kind: wick/component@v1
+name: azureblob
+metadata:
+  version: 0.0.1
+  description: New composite wick component
+  licenses:
+    - Apache-2.0
+import:
+  - name: azureblob
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./azureblob-http-client.wick
+      with:
+        storage_account: '{{ ctx.root_config.storage_account }}'
+        container_name: '{{ ctx.root_config.container_name }}'
+  - name: hmac
+    component:
+      kind: wick/component/manifest@v1
+      ref: registry.candle.dev/common/hmac:0.0.1
+      with:
+        secret: '{{ ctx.root_config.access_key }}'
+component:
+  kind: wick/component/composite@v1
+  with:
+    - name: storage_account
+      type: string
+    - name: container_name
+      type: string
+    - name: access_key
+      type: bytes
+  operations:
+    - name: get
+      with:
+        - name: resource
+          type: string
+        - name: start_time
+          type: string
+      uses:
+        - name: AUTH_PAYLOAD
+          operation: core::sender
+          with:
+            output: "GET\n\n\n\n\n\n\n\n\n\n\n\nx-ms-date:{{ ctx.inherent.timestamp | date: '%a, %d %b %Y %H:%M:00' }} GMT\nx-ms-version:2011-08-18\n/{{ctx.root_config.storage_account}}/{{ctx.root_config.container_name}}/{{ctx.config.resource}}"
+      flow:
+        - AUTH_PAYLOAD.output -> hmac::from_string[a].input
+        - a.output -> azureblob::get[b].authorization
+        - b.response -> <>.response
+        - b.body -> <>.output
+        - AUTH_PAYLOAD.output -> <>.string_to_sign

@@ -1,0 +1,39 @@
+kind: wick/component@v1
+name: azureblob-http-client
+metadata:
+  version: 0.0.1
+  description: New HTTP Client wick component
+  licenses:
+    - Apache-2.0
+resources:
+  - name: HTTP_URL
+    resource:
+      kind: wick/resource/url@v1
+      url: https://{{ctx.root_config.storage_account}}.blob.core.windows.net/{{ctx.root_config.container_name}}
+component:
+  kind: wick/component/http@v1
+  with:
+    - name: storage_account
+      type: string
+    - name: container_name
+      type: string
+  resource: HTTP_URL
+  codec: Json
+  operations:
+    - name: get
+      with:
+        - name: resource
+          type: string
+      inputs:
+        - name: authorization
+          type: string
+      headers:
+        'x-ms-version': ['2011-08-18']
+        'x-ms-date':
+          ['{{ ctx.inherent.timestamp | date: "%a, %d %b %Y %H:%M:00" }} GMT']
+        'authorization':
+          [
+            'SharedKey {{ ctx.root_config.storage_account }}:{{ authorization }}',
+          ]
+      method: Get
+      path: /{{ctx.config.resource}}
