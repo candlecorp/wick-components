@@ -41,6 +41,7 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 [[package]]
 name = "asset-container"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "bitflags 2.2.1",
  "futures 0.3.26",
@@ -386,6 +387,7 @@ dependencies = [
 [[package]]
 name = "derive-asset-container"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -511,6 +513,7 @@ dependencies = [
 [[package]]
 name = "flow-component"
 version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "anyhow",
  "futures 0.3.26",
@@ -526,6 +529,7 @@ dependencies = [
 [[package]]
 name = "flow-expression-parser"
 version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "lazy_static",
  "liquid-json",
@@ -1422,6 +1426,7 @@ version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
 dependencies = [
+ "libc",
  "rand_chacha",
  "rand_core",
 ]
@@ -1441,6 +1446,9 @@ name = "rand_core"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
+dependencies = [
+ "getrandom",
+]
 
 [[package]]
 name = "redox_syscall"
@@ -1618,6 +1626,7 @@ dependencies = [
 [[package]]
 name = "seeded-random"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "parking_lot",
  "rand",
@@ -2422,6 +2431,7 @@ dependencies = [
 [[package]]
 name = "wick-asset-reference"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "asset-container",
  "bytes 1.4.0",
@@ -2438,8 +2448,8 @@ dependencies = [
 [[package]]
 name = "wick-component"
 version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
- "bytes 1.4.0",
  "chrono",
  "flow-component",
  "paste",
@@ -2456,6 +2466,7 @@ dependencies = [
 [[package]]
 name = "wick-component-codegen"
 version = "0.4.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "anyhow",
  "bitflags 2.2.1",
@@ -2475,6 +2486,7 @@ dependencies = [
 [[package]]
 name = "wick-config"
 version = "0.26.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "asset-container",
  "derive-asset-container",
@@ -2507,6 +2519,7 @@ dependencies = [
 [[package]]
 name = "wick-interface-types"
 version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "nom",
  "serde",
@@ -2518,6 +2531,7 @@ dependencies = [
 [[package]]
 name = "wick-oci-utils"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "bytes 1.4.0",
  "derive_builder",
@@ -2540,6 +2554,7 @@ dependencies = [
 [[package]]
 name = "wick-packet"
 version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "base64 0.21.0",
  "base64-serde",
@@ -2548,6 +2563,7 @@ dependencies = [
  "liquid-json",
  "parking_lot",
  "pin-project-lite",
+ "seeded-random",
  "serde",
  "serde_json",
  "thiserror",
@@ -2565,6 +2581,7 @@ dependencies = [
 [[package]]
 name = "wick-xdg"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#efe605510b846d2556f6060ba710fa154bdca7c4"
 dependencies = [
  "getset",
  "thiserror",

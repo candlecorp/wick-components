@@ -20,8 +20,7 @@ localgen = []
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = { path = "../../../wick/crates/wick/wick-component", features = [
-  "bytes",
+wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main", features = [
   "datetime"
 ] }
 serde = { version = "1", features = ["derive"] }
@@ -31,4 +30,4 @@ hmac = "0.12.1"
 sha2 = "0.10.7"
 
 [build-dependencies]
-wick-component-codegen = { path = "../../../wick/crates/wick/wick-component-codegen" }
+wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
