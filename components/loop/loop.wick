@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'loop'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+  description: 'Loop over an array (input) and return a stream of values (output)'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/loop.signed.wasm
+  operations:
+    - name: each
+      inputs:
+        - name: input
+          type: object
+      outputs:
+        - name: output
+          type: object
+tests:
+  - name: test_each
+    cases:
+      - name: simple array
+        operation: each
+        inputs:
+          - name: input
+            value: [1,2,3]
+        outputs:
+          - name: output
+            value: 1
+          - name: output
+            value: 2
+          - name: output
+            value: 3
+          - name: output
+            flags:
+              done: true
+      - name: object array
+        operation: each
+        inputs:
+          - name: input
+            value: [{a: 1}]
+        outputs:
+          - name: output
+            value: {a: 1}
+          - name: output
+            flags:
+              done: true

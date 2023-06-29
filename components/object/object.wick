@@ -1,13 +1,15 @@
+
+=======
 # yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
 ---
 name: 'object'
 kind: wick/component@v1
 metadata:
-  description: 'A component that will take differnet types of contents and parse them into a common object that can be used in the wick flow. Can also create and manipulate new / existing objects.'
+  description: 'A component that will take differnet types of contents and parse them into a common object that can be used in the wick flow. Can also create and manipulate new / existing objects. Uses JsonPath notation.'
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.1.0'
+  version: '0.2.0'
 package:
   registry:
     host: registry.candle.dev
@@ -26,9 +28,10 @@ component:
         - name: output
           type: object
     - name: new
-      inputs:
+      with:
         - name: key
           type: string
+      inputs:
         - name: value
           type: object
       outputs:
@@ -36,10 +39,22 @@ component:
           type: object
     - name: select
       inputs:
-        - name: object
+        - name: input
           type: object
         - name: path
           type: string
+      outputs:
+        - name: output
+          type: object
+    - name: push
+      with:
+        - name: path
+          type: string
+      inputs:
+        - name: input
+          type: object
+        - name: value
+          type: object
       outputs:
         - name: output
           type: object
@@ -47,9 +62,9 @@ tests:
   - cases:
       - name: new-test
         operation: new
+        with:
+          key: 'name'
         inputs:
-          - name: key
-            value: 'name'
           - name: value
             value: 'John'
         outputs:
@@ -61,7 +76,7 @@ tests:
       - name: select-test
         operation: select
         inputs:
-          - name: object
+          - name: input
             value: { 'name': 'John', 'age': 130, 'city': 'New York' }
           - name: path
             value: '$.city'
@@ -74,7 +89,7 @@ tests:
       - name: select-nested-test
         operation: select
         inputs:
-          - name: object
+          - name: input
             value:
               {
                 'name': 'John',
@@ -126,6 +141,58 @@ tests:
         outputs:
           - name: output
             value: { 'name': 'John', 'age': '130', 'city': 'New York' }
+          - name: output
+            flags:
+              done: true
+      - name: push-object
+        operation: push
+        with:
+          path: '$.location'
+        inputs:
+          - name: input
+            value:
+              {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
+              }
+          - name: value
+            value: { 'zip': '44444' }
+        outputs:
+          - name: output
+            value: {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA', 'zip': '44444' },
+              }
+          - name: output
+            flags:
+              done: true
+      - name: push-string
+        operation: push
+        with:
+          path: '$.location.zip'
+        inputs:
+          - name: input
+            value:
+              {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
+              }
+          - name: value
+            value: '44444'
+        outputs:
+          - name: output
+            value: {
+                'name': 'John',
+                'age': 130,
+                'location':
+                  { 'city': 'New York', 'state': 'NY', 'country': 'USA', 'zip': '44444' },
+              }
           - name: output
             flags:
               done: true

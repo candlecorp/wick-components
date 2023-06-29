@@ -1,0 +1,133 @@
+kind: wick/component@v1
+name: oauth
+metadata:
+  version: 0.1.0
+  description: Oauth composite component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
+  licenses:
+  - Apache-2.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+import:
+  - name: OAUTHDB
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./oauth-db.wick
+      with:
+        db_user: '{{ ctx.root_config.db_user }}'
+        db_password: '{{ ctx.root_config.db_password }}'
+        db_host: '{{ ctx.root_config.db_host }}'
+        db_port: '{{ ctx.root_config.db_port }}'
+        db_name: '{{ ctx.root_config.db_name }}'
+  - name: OAUTHHTTP
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./oauth-http.wick
+      with:
+        token_endpoint: '{{ ctx.root_config.token_endpoint }}'
+        client_id: '{{ ctx.root_config.client_id }}'
+        client_secret: '{{ ctx.root_config.client_secret }}'
+  - name: oauth_engine
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./oauth-engine.wick
+      with:
+        client_id: '{{ ctx.root_config.client_id }}'
+        auth_endpoint: '{{ ctx.root_config.auth_endpoint }}'
+        redirect_uri: '{{ ctx.root_config.redirect_uri }}'
+        session_cookie_name: '{{ ctx.root_config.session_cookie_name }}'
+        scope: '{{ ctx.root_config.scope }}'
+      provide:
+        dbclient: OAUTHDB
+        httpclient: OAUTHHTTP
+component:
+  kind: wick/component/composite@v1
+  with:
+    - name: auth_endpoint
+      type: string
+    - name: token_endpoint
+      type: string
+    - name: redirect_uri
+      type: string
+    - name: session_cookie_name
+      type: string
+    - name: client_id
+      type: string
+    - name: client_secret
+      type: string
+    - name: scope
+      type: string
+    - name: db_user
+      type: string
+    - name: db_password
+      type: string
+    - name: db_host
+      type: string
+    - name: db_port
+      type: string
+    - name: db_name
+      type: string
+  operations:
+  - name: auth
+    uses:
+      - name: AUTH
+        operation: oauth_engine::auth
+    flow:
+      - <>.request -> AUTH.request
+      - AUTH.request -> <>.request
+      - AUTH.response -> <>.response
+  - name: oidc
+    uses:
+      - name: OIDC
+        operation: oauth_engine::oidc
+    flow:
+      - <>.request -> OIDC.request
+      - OIDC.request -> <>.request
+      - OIDC.response -> <>.response
+tests:
+  - name: auth
+    with:
+        auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
+        token_endpoint: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
+        redirect_uri: http://localhost:8081/oidc/callback
+        session_cookie_name: sid
+        client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
+        client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
+        scope: "openid profile email"
+        db_user: '{{ ctx.env.OAUTH_DB_USER }}'
+        db_password: '{{ ctx.env.OAUTH_DB_PASSWORD }}'
+        db_host: '{{ ctx.env.OAUTH_DB_HOST }}'
+        db_port: '{{ ctx.env.OAUTH_DB_PORT }}'
+        db_name: '{{ ctx.env.OAUTH_DB_NAME }}'
+    cases:
+      - name: no cookie
+        operation: auth
+        inputs:
+          - name: request
+            value:
+              method: Get
+              scheme: Http
+              path: "/"
+              uri: "http://localhost:8080/"
+              version: Http11
+              authority: "localhost:8080"
+              query_parameters: {}
+              headers:
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+                accept:
+                  - "*/*"
+        outputs:
+          - name: response
+            value:
+              version: "Http11"
+              status: TemporaryRedirect
+              headers:
+                location:
+                  - "https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email"
+          - name: response
+            flags:
+              done: true
