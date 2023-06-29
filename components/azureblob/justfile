@@ -1,0 +1,8 @@
+build:
+debug:
+setup:
+clean:
+test:
+  wick test azureblob.wick
+publish:
+  wick reg push azureblob.wick
