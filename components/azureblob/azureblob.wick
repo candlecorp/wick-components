@@ -1,10 +1,14 @@
 kind: wick/component@v1
 name: azureblob
 metadata:
-  version: 0.0.1
-  description: New composite wick component
+  version: 0.2.0
+  description: Access files on azure blob storage
   licenses:
     - Apache-2.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
 import:
   - name: azureblob
     component:
@@ -19,6 +23,10 @@ import:
       ref: registry.candle.dev/common/hmac:0.0.1
       with:
         secret: '{{ ctx.root_config.access_key }}'
+  - name: string
+    component:
+      kind: wick/component/manifest@v1
+      ref: registry.candle.dev/common/string:0.1.0
 component:
   kind: wick/component/composite@v1
   with:
@@ -30,19 +38,19 @@ component:
       type: bytes
   operations:
     - name: get
-      with:
+      inputs:
         - name: resource
           type: string
-        - name: start_time
-          type: string
       uses:
-        - name: AUTH_PAYLOAD
+        - name: AUTH_PAYLOAD_PREFIX
           operation: core::sender
           with:
-            output: "GET\n\n\n\n\n\n\n\n\n\n\n\nx-ms-date:{{ ctx.inherent.timestamp | date: '%a, %d %b %Y %H:%M:00' }} GMT\nx-ms-version:2011-08-18\n/{{ctx.root_config.storage_account}}/{{ctx.root_config.container_name}}/{{ctx.config.resource}}"
+            output: "GET\n\n\n\n\n\n\n\n\n\n\n\nx-ms-date:{{ ctx.inherent.timestamp | date: '%a, %d %b %Y %H:%M:00' }} GMT\nx-ms-version:2011-08-18\n/{{ctx.root_config.storage_account}}/{{ctx.root_config.container_name}}/"
       flow:
-        - AUTH_PAYLOAD.output -> hmac::from_string[a].input
-        - a.output -> azureblob::get[b].authorization
-        - b.response -> <>.response
-        - b.body -> <>.output
-        - AUTH_PAYLOAD.output -> <>.string_to_sign
+        - AUTH_PAYLOAD_PREFIX.output -> string::concatenate[a].left
+        - <>.resource -> a.right
+        - a.output -> hmac::from_string[b].input
+        - b.output -> azureblob::get[c].authorization
+        - <>.resource -> c.resource
+        - c.response -> <>.response
+        - c.body -> <>.output

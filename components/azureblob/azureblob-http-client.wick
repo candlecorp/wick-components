@@ -27,6 +27,8 @@ component:
       inputs:
         - name: authorization
           type: string
+        - name: resource
+          type: string
       headers:
         'x-ms-version': ['2011-08-18']
         'x-ms-date':
@@ -36,4 +38,4 @@ component:
             'SharedKey {{ ctx.root_config.storage_account }}:{{ authorization }}',
           ]
       method: Get
-      path: /{{ctx.config.resource}}
+      path: /{{resource}}
