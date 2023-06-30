@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: csv
+kind: wick/component@v1
+package:
+  registry:
+    host: 'registry.candle.dev'
+    namespace: 'common'
+metadata:
+  version: 0.0.1
+import: []
+component:
+  kind: wick/component/wasmrs@v1
+  ref: ./build/csv.signed.wasm
+  operations:
+    - name: parse_bytes
+      inputs:
+        - name: input
+          type: bytes
+      outputs:
+        - name: output
+          type: string[]
+tests:
+  - cases:
+      - name: parse_bytes
+        operation: parse_bytes
+        inputs:
+          - name: input
+            value: "{{ '\"07-Data_no_spaces\",1,1/01/2023,1,0,\"DATA DATA\",222,22,100,50,12345678,0,0,1,0,1,0,10,\"this - this 1\",5,\"Bitstream Vera Sans\",100,1,0,2/02/2023 20:00:00,0\n\"07-With w/ Spaces\",1,1/01/2023,1,1,\"DATA DATA\",333,33,200,50,12345678,0,0,1,0,1,0,20,\"that - that 1\",5,\"Bitstream Vera Sans\",100,2,0,2/02/2023 22:00:00,0' | base64_encode }}"
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value:
+              - '07-Data_no_spaces'
+              - '1'
+              - '1/01/2023'
+              - '1'
+              - '0'
+              - 'DATA DATA'
+              - '222'
+              - '22'
+              - '100'
+              - '50'
+              - '12345678'
+              - '0'
+              - '0'
+              - '1'
+              - '0'
+              - '1'
+              - '0'
+              - '10'
+              - 'this - this 1'
+              - '5'
+              - 'Bitstream Vera Sans'
+              - '100'
+              - '1'
+              - '0'
+              - '2/02/2023 20:00:00'
+              - '0'
+          - name: output
+            value:
+              - '07-With w/ Spaces'
+              - '1'
+              - '1/01/2023'
+              - '1'
+              - '1'
+              - 'DATA DATA'
+              - '333'
+              - '33'
+              - '200'
+              - '50'
+              - '12345678'
+              - '0'
+              - '0'
+              - '1'
+              - '0'
+              - '1'
+              - '0'
+              - '20'
+              - 'that - that 1'
+              - '5'
+              - 'Bitstream Vera Sans'
+              - '100'
+              - '2'
+              - '0'
+              - '2/02/2023 22:00:00'
+              - '0'
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              done: true
