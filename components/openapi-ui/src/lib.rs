@@ -35,7 +35,7 @@ impl ServeOperation for Component {
 
     async fn serve(
         mut request: WickStream<types::http::HttpRequest>,
-        _body: WickStream<bytes::Bytes>,
+        _body: WickStream<Bytes>,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
@@ -56,7 +56,7 @@ impl ServeOperation for Component {
                         headers: std::collections::HashMap::new(),
                     };
                     outputs.response.send(&res);
-                    outputs.body.send(&Bytes::new());
+                    outputs.body.send(&Bytes::default());
                     continue;
                 }
                 let mut res = types::http::HttpResponse {
@@ -102,9 +102,15 @@ impl ServeOperation for Component {
                     .insert("content-length".to_owned(), vec![data.len().to_string()]);
                 outputs.response.send(&res);
                 if let Cow::Borrowed(data) = data {
-                    outputs.body.send(&Bytes::from_static(data));
+                    outputs
+                        .body
+                        .send(&Bytes::new(wick_component::bytes::Bytes::from_static(data)));
                 } else {
-                    outputs.body.send(&Bytes::copy_from_slice(&data));
+                    outputs
+                        .body
+                        .send(&Bytes::new(wick_component::bytes::Bytes::copy_from_slice(
+                            &data,
+                        )));
                 }
             } else {
                 let res = types::http::HttpResponse {
@@ -113,7 +119,7 @@ impl ServeOperation for Component {
                     headers: std::collections::HashMap::new(),
                 };
                 outputs.response.send(&res);
-                outputs.body.send(&Bytes::new());
+                outputs.body.send(&Bytes::default());
                 continue;
             }
         }

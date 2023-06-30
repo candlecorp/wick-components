@@ -7,12 +7,12 @@ package:
     host: 'registry.candle.dev'
     namespace: 'common'
 metadata:
-  version: '1'
+  version: '0.2.0'
 import:
   - name: http
     component:
       kind: wick/component/types@v1
-      ref: registry.candle.dev/types/http:0.2.0
+      ref: registry.candle.dev/types/http:0.3.0
 component:
   kind: wick/component/wasmrs@v1
   ref: ./build/openapi_ui.signed.wasm
