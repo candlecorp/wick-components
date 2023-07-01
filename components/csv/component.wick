@@ -22,7 +22,39 @@ component:
           type: string[]
 tests:
   - cases:
-      - name: parse_bytes
+      - name: parse_bytes_windowed
+        operation: parse_bytes
+        inputs:
+          - name: input
+            flags:
+              open: true
+          - name: input
+            value: "{{ '1,1,1\n2,2,2' | base64_encode }}"
+          - name: input
+            flags:
+              close: true
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value:
+              - '1'
+              - '1'
+              - '1'
+          - name: output
+            value:
+              - '2'
+              - '2'
+              - '2'
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              done: true
+
+      - name: parse_bytes_data
         operation: parse_bytes
         inputs:
           - name: input
