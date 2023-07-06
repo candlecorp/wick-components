@@ -80,12 +80,14 @@ async fn handle_packet(
         .has_headers(false)
         .from_reader(input.as_ref());
 
+    outputs.output.open_bracket();
     for result in rdr.records() {
         let record = result.unwrap();
 
         let fields: Vec<String> = record.deserialize(None).unwrap();
         outputs.output.send(&fields);
     }
+    outputs.output.close_bracket();
 
     Ok(())
 }
