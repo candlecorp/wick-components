@@ -7,7 +7,7 @@ package:
     host: 'registry.candle.dev'
     namespace: 'common'
 metadata:
-  version: 0.0.2
+  version: 0.0.3
 import: []
 component:
   kind: wick/component/wasmrs@v1
@@ -26,13 +26,7 @@ tests:
         operation: parse_bytes
         inputs:
           - name: input
-            flags:
-              open: true
-          - name: input
             value: "{{ '1,1,1\n2,2,2' | base64_encode }}"
-          - name: input
-            flags:
-              close: true
         outputs:
           - name: output
             flags:

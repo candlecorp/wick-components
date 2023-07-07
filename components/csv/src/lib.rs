@@ -35,22 +35,14 @@ async fn handle_new_stream(
     mut input_stream: WickStream<Packet>,
     mut outputs: parse_bytes::Outputs,
     _ctx: &Context<parse_bytes::Config>,
-    start: bool,
+    _start: bool,
 ) -> (WickStream<Packet>, parse_bytes::Outputs) {
-    if start {
-        outputs.broadcast_open();
-    }
-
     while let Some(input) = input_stream.next().await {
         let input = propagate_if_error!(input, outputs, continue);
         if input.is_open_bracket() {
-            if !start {
-                outputs.broadcast_open();
-            }
+            outputs.broadcast_open();
             (input_stream, outputs) = handle_new_stream(input_stream, outputs, _ctx, false).await;
-            if !start {
-                outputs.broadcast_close();
-            }
+            outputs.broadcast_close();
         } else if input.is_close_bracket() || input.is_done() {
             break;
         } else {
@@ -63,10 +55,6 @@ async fn handle_new_stream(
                 outputs.output.error(e.to_string());
             }
         }
-    }
-
-    if start {
-        outputs.broadcast_close();
     }
 
     (input_stream, outputs)
