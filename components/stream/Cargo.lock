@@ -18,12 +18,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
-name = "adler32"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
-
-[[package]]
 name = "aho-corasick"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -62,22 +56,11 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 [[package]]
 name = "asset-container"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "bitflags 2.3.3",
  "futures 0.3.28",
  "thiserror",
-]
-
-[[package]]
-name = "async-recursion"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e97ce7de6cf12de5d7226c73f5ba9811622f4db3a5b91b55c53e987e5f91cba"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.22",
 ]
 
 [[package]]
@@ -371,7 +354,7 @@ dependencies = [
 [[package]]
 name = "derive-asset-container"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -515,7 +498,7 @@ dependencies = [
 [[package]]
 name = "flow-component"
 version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "anyhow",
  "futures 0.3.28",
@@ -531,7 +514,7 @@ dependencies = [
 [[package]]
 name = "flow-expression-parser"
 version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "lazy_static",
  "liquid-json",
@@ -772,6 +755,19 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hmac"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "futures 0.3.28",
+ "hmac 0.12.1",
+ "serde",
+ "sha2",
+ "wick-component",
+ "wick-component-codegen",
+]
+
+[[package]]
+name = "hmac"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c49c37c09c17a53d937dfbb742eb3a961d65a994e6bcdcf37e7399d0cc8ab5e"
@@ -929,15 +925,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "inflate"
-version = "0.4.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1cdb29978cc5797bd8dcc8e5bf7de604891df2a8dc576973d71a281e916db2ff"
-dependencies = [
- "adler32",
-]
-
-[[package]]
 name = "iovec"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -985,7 +972,7 @@ dependencies = [
  "base64 0.13.1",
  "crypto-common",
  "digest",
- "hmac",
+ "hmac 0.12.1",
  "serde",
  "serde_json",
  "sha2",
@@ -1626,7 +1613,7 @@ dependencies = [
 [[package]]
 name = "seeded-random"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "parking_lot",
  "rand",
@@ -1844,16 +1831,6 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
-
-[[package]]
-name = "stream-unzip"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b6f300e57e650f19b6298053185db067922e3a8e83e06f2543199da8627944f"
-dependencies = [
- "bytes 1.4.0",
- "inflate",
-]
 
 [[package]]
 name = "strsim"
@@ -2167,19 +2144,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
 
 [[package]]
-name = "unzip"
-version = "0.1.0"
-dependencies = [
- "async-recursion",
- "async-trait",
- "futures 0.3.28",
- "serde",
- "stream-unzip",
- "wick-component",
- "wick-component-codegen",
-]
-
-[[package]]
 name = "url"
 version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2424,7 +2388,7 @@ dependencies = [
 [[package]]
 name = "wick-asset-reference"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "asset-container",
  "bytes 1.4.0",
@@ -2441,12 +2405,11 @@ dependencies = [
 [[package]]
 name = "wick-component"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "chrono",
  "flow-component",
  "paste",
- "serde",
  "serde_json",
  "tokio-stream",
  "wasmrs",
@@ -2460,7 +2423,7 @@ dependencies = [
 [[package]]
 name = "wick-component-codegen"
 version = "0.4.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "anyhow",
  "bitflags 2.3.3",
@@ -2480,7 +2443,7 @@ dependencies = [
 [[package]]
 name = "wick-config"
 version = "0.26.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "asset-container",
  "derive-asset-container",
@@ -2513,7 +2476,7 @@ dependencies = [
 [[package]]
 name = "wick-interface-types"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "nom",
  "serde",
@@ -2525,7 +2488,7 @@ dependencies = [
 [[package]]
 name = "wick-oci-utils"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "bytes 1.4.0",
  "derive_builder",
@@ -2548,7 +2511,7 @@ dependencies = [
 [[package]]
 name = "wick-packet"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "base64 0.21.2",
  "base64-serde",
@@ -2575,7 +2538,7 @@ dependencies = [
 [[package]]
 name = "wick-xdg"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#089e75df3fc4708d070ceb115fac6a7668737146"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#9917e3a9f392712884b77f88248920c58c183c34"
 dependencies = [
  "getset",
  "thiserror",

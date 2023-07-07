@@ -7,6 +7,7 @@ mod wick {
     wick_component::wick_import!();
 }
 
+use stream_unzip::ZipReader;
 use wick::*;
 use wick_component::packet::Packet;
 
@@ -38,7 +39,7 @@ async fn handle_new_stream(
     _ctx: &Context<unzip::Config>,
     start: bool,
 ) -> (WickStream<Packet>, unzip::Outputs) {
-    let mut zip = stream_unzip::ZipReader::new();
+    let mut zip = ZipReader::new();
     if start {
         outputs.broadcast_open();
     }
@@ -56,29 +57,36 @@ async fn handle_new_stream(
         } else if input.is_close_bracket() || input.is_done() {
             break;
         } else {
-            println!("acting on packet: {:?}", input);
             if !input.has_data() {
                 continue;
             }
             let input: Bytes = propagate_if_error!(input.decode(), outputs, continue);
 
             zip.update(input.into());
-            let entries = zip.drain_entries();
-            for entry in entries {
-                let expanded = entry.inflate().unwrap();
-
-                let filename = expanded.name().to_owned();
-
-                let (_, data) = expanded.into_parts();
-                outputs.filename.send(&filename);
-                outputs.contents.send(&Bytes::new(data));
-            }
+            drain_zipreader(&mut zip, &mut outputs);
         }
     }
+
+    zip.finish();
+    drain_zipreader(&mut zip, &mut outputs);
 
     if start {
         outputs.broadcast_close();
     }
 
     (input_stream, outputs)
+}
+
+fn drain_zipreader(zip: &mut ZipReader, outputs: &mut unzip::Outputs) {
+    let entries = zip.drain_entries();
+
+    for entry in entries {
+        let expanded = entry.inflate().unwrap();
+
+        let filename = expanded.name().to_owned();
+
+        let (_, data) = expanded.into_parts();
+        outputs.filename.send(&filename);
+        outputs.contents.send(&Bytes::new(data));
+    }
 }
