@@ -1,7 +1,7 @@
 kind: wick/component@v1
 name: azureblob
 metadata:
-  version: 0.2.0
+  version: 0.4.0
   description: Access files on azure blob storage
   licenses:
     - Apache-2.0
@@ -20,13 +20,13 @@ import:
   - name: hmac
     component:
       kind: wick/component/manifest@v1
-      ref: registry.candle.dev/common/hmac:0.0.1
+      ref: registry.candle.dev/common/hmac:0.3.0
       with:
         secret: '{{ ctx.root_config.access_key }}'
   - name: string
     component:
       kind: wick/component/manifest@v1
-      ref: registry.candle.dev/common/string:0.1.0
+      ref: registry.candle.dev/common/string:0.3.0
 component:
   kind: wick/component/composite@v1
   with:

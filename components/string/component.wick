@@ -3,7 +3,7 @@
 name: 'string'
 kind: wick/component@v1
 metadata:
-  version: '0.1.0'
+  version: '0.3.0'
 package:
   registry:
     host: registry.candle.dev
@@ -34,6 +34,88 @@ tests:
         outputs:
           - name: output
             value: 'hello world'
+          - name: output
+            flags:
+              done: true
+      - name: concatenate_streams_left
+        operation: concatenate
+        inputs:
+          - name: left
+            flags:
+              open: true
+          - name: left
+            value: 'hello '
+          - name: left
+            value: 'howdy '
+          - name: left
+            flags:
+              close: true
+          - name: right
+            value: 'world'
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: 'hello world'
+          - name: output
+            value: 'howdy world'
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              done: true
+      - name: concatenate_streams_mixed
+        operation: concatenate
+        inputs:
+          - name: left
+            flags:
+              open: true
+          - name: left
+            value: 'hello '
+          - name: left
+            value: 'howdy '
+          - name: left
+            flags:
+              close: true
+          - name: right
+            flags:
+              open: true
+          - name: right
+            value: 'world'
+          - name: right
+            flags:
+              open: true
+          - name: right
+            value: 'you'
+          - name: right
+            value: 'pardner'
+          - name: right
+            flags:
+              close: true
+          - name: right
+            flags:
+              close: true
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: 'hello world'
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: 'howdy you'
+          - name: output
+            value: 'howdy pardner'
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              close: true
           - name: output
             flags:
               done: true

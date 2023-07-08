@@ -7,7 +7,7 @@ package:
     host: 'registry.candle.dev'
     namespace: 'common'
 metadata:
-  version: 0.0.1
+  version: 0.3.0
 import: []
 component:
   kind: wick/component/wasmrs@v1
@@ -50,3 +50,23 @@ tests:
         outputs:
           - name: output
             value: NOMax++lE1s1ipwDXKpp0WfL6aAXz/DP479t83z5+1M=
+      - name: from_string
+        operation: from_string
+        inputs:
+          - name: input
+            flags:
+              open: true
+          - name: input
+            value: 'This is my message'
+          - name: input
+            flags:
+              close: true
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: NOMax++lE1s1ipwDXKpp0WfL6aAXz/DP479t83z5+1M=
+          - name: output
+            flags:
+              close: true
