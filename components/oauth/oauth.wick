@@ -1,8 +1,8 @@
 kind: wick/component@v1
 name: oauth
 metadata:
-  version: 0.1.0
-  description: Oauth composite component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
+  version: 0.2.0
+  description: Oauth composite middleware component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
   licenses:
   - Apache-2.0
 package:
@@ -85,6 +85,15 @@ component:
       - <>.request -> OIDC.request
       - OIDC.request -> <>.request
       - OIDC.response -> <>.response
+  - name: get_user
+    uses:
+      - name: GETUSER
+        operation: oauth_engine::get_user
+    flow:
+      - <>.request -> GETUSER.request
+      - <>.body -> drop
+      - GETUSER.response -> <>.response
+      - GETUSER.body -> <>.body
 tests:
   - name: auth
     with:

@@ -41,14 +41,13 @@ impl SelectOperation for Component {
     type Config = select::Config;
     async fn select(
         mut input: WickStream<Value>,
-        mut path: WickStream<String>,
         mut outputs: Self::Outputs,
-        _ctx: Context<Self::Config>,
+        ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
-        while let (Some(Ok(object_value)), Some(Ok(path_string))) =
-            (input.next().await, path.next().await)
-        {
-            let selected_values = select(&object_value, &path_string)
+        let path = &ctx.config.path;
+        while let Some(input) = input.next().await {
+            let input = propagate_if_error!(input, outputs, continue);
+            let selected_values = select(&input, &path)
                 .map_err(|e| anyhow::anyhow!("Error selecting value by path: {}", e))?;
 
             if let Some(first_selected_value) = selected_values.first() {

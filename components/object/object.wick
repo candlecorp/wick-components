@@ -7,7 +7,7 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.2.0'
+  version: '0.3.0'
 package:
   registry:
     host: registry.candle.dev
@@ -36,11 +36,12 @@ component:
         - name: output
           type: object
     - name: select
+      with:
+        - name: path
+          type: string
       inputs:
         - name: input
           type: object
-        - name: path
-          type: string
       outputs:
         - name: output
           type: object
@@ -73,11 +74,11 @@ tests:
               done: true
       - name: select-test
         operation: select
+        with:
+          path: '$.city'
         inputs:
           - name: input
             value: { 'name': 'John', 'age': 130, 'city': 'New York' }
-          - name: path
-            value: '$.city'
         outputs:
           - name: output
             value: 'New York'
@@ -86,6 +87,8 @@ tests:
               done: true
       - name: select-nested-test
         operation: select
+        with:
+          path: '$.location.city'
         inputs:
           - name: input
             value:
@@ -95,8 +98,6 @@ tests:
                 'location':
                   { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
               }
-          - name: path
-            value: '$.location.city'
         outputs:
           - name: output
             value: 'New York'

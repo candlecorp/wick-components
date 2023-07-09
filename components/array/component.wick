@@ -1,0 +1,129 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'array'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/array.signed.wasm
+  operations:
+    - name: includes
+      with:
+        - name: array
+          type: object[]
+      inputs:
+        - name: value
+          type: object
+      outputs:
+        - name: result
+          type: bool
+    - name: includes_glob
+      with:
+        - name: array
+          type: object[]
+      inputs:
+        - name: value
+          type: object
+      outputs:
+        - name: result
+          type: bool
+tests:
+  - name: includes
+    cases:
+      - name: empty
+        operation: includes
+        with:
+          array: []
+        inputs:
+          - name: value
+            value: 1
+        outputs:
+          - name: result
+            value: false
+      - name: string
+        operation: includes
+        with:
+          array: ["a", "b", "c"]
+        inputs:
+          - name: value
+            value: "a"
+        outputs:
+          - name: result
+            value: true
+      - name: string_negative
+        operation: includes
+        with:
+          array: ["a", "b", "c"]
+        inputs:
+          - name: value
+            value: "d"
+        outputs:
+          - name: result
+            value: false
+      - name: string_number_negative
+        operation: includes
+        with:
+          array: ["a", "b", "c", "1"]
+        inputs:
+          - name: value
+            value: 1
+        outputs:
+          - name: result
+            value: false
+  - name: includes_glob
+    cases:
+      - name: empty
+        operation: includes_glob
+        with:
+          array: []
+        inputs:
+          - name: value
+            value: "/*"
+        outputs:
+          - name: result
+            value: false
+      - name: string_path
+        operation: includes_glob
+        with:
+          array: ["/foo/*", "/bar*", "/index.html"]
+        inputs:
+          - name: value
+            value: "/foo/bar"
+        outputs:
+          - name: result
+            value: true
+      - name: string_dir
+        operation: includes_glob
+        with:
+          array: ["/foo/*", "/bar*", "/index.html"]
+        inputs:
+          - name: value
+            value: "/bark"
+        outputs:
+          - name: result
+            value: true
+      - name: string_reverse
+        operation: includes_glob
+        with:
+          array: ["/foo/bar", "/bar*", "/index.html"]
+        inputs:
+          - name: value
+            value: "/foo/*"
+        outputs:
+          - name: result
+            value: true
+      - name: string_negative
+        operation: includes
+        with:
+          array: ["/foo/*", "/bar*", "/index.html"]
+        inputs:
+          - name: value
+            value: "/bear"
+        outputs:
+          - name: result
+            value: false

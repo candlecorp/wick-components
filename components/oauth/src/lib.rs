@@ -464,3 +464,109 @@ impl OidcOperation for Component {
         Ok(())
     }
 }
+
+#[async_trait::async_trait(?Send)]
+impl GetUserOperation for Component {
+    type Error = anyhow::Error;
+    type Outputs = get_user::Outputs;
+    type Config = get_user::Config;
+
+    async fn get_user(
+        mut input: WickStream<HttpRequest>,
+        mut outputs: Self::Outputs,
+        ctx: Context<Self::Config>,
+    ) -> Result<(), Self::Error> {
+        // initial setup for frequently used variables
+        let config: &RootConfig = ctx.root_config();
+
+        while let Some(input) = input.next().await {
+            //ensure request is not an error
+            let input = propagate_if_error!(input, outputs, continue);
+
+            //get cookies
+            let cookies = parse_cookies_header(input.headers.clone(), &config.session_cookie_name);
+
+            if cookies.session_id.is_none() {
+                let response = build_error_response("Session Cookie does not exist");
+                outputs.response.send(&response);
+                continue;
+            }
+
+            //session cookie exists lookup session to see if its valid
+            let session_id = cookies.session_id.unwrap();
+            let mut get_oidc_claims_response = ctx
+                .provided()
+                .dbclient
+                .get_oidc_claims(once(session_id.clone()))?;
+
+            let mut claims_responses = 0;
+
+            while let Some(response) = get_oidc_claims_response.next().await {
+                let response = propagate_if_error!(response, outputs, continue);
+
+                //extract scope from claims
+                let scope = response.get("claims");
+                if scope.is_none() {
+                    let response = build_error_response("Invalid OIDC Claims");
+                    let user_info = types::UserInfo {
+                        sub: "".to_string(),
+                        email: "".to_string(),
+                        groups: vec![],
+                    };
+                    outputs.response.send(&response);
+                    outputs.body.send(&user_info);
+                    continue;
+                }
+
+                let claims: Result<types::OidcClaims, _> =
+                    wick_component::from_value(scope.unwrap().to_owned());
+
+                if claims.is_err() {
+                    let response = build_error_response("Invalid OIDC Claims");
+                    outputs.response.send(&response);
+                    let user_info = types::UserInfo {
+                        sub: "".to_string(),
+                        email: "".to_string(),
+                        groups: vec![],
+                    };
+                    outputs.body.send(&user_info);
+                    continue;
+                }
+
+                let user_info: types::UserInfo = {
+                    let claims = claims.unwrap();
+                    types::UserInfo {
+                        sub: claims.sub,
+                        email: claims.email,
+                        groups: claims.groups,
+                    }
+                };
+
+                let response = HttpResponse {
+                    version: types::http::HttpVersion::Http11,
+                    status: types::http::StatusCode::Ok,
+                    headers: HashMap::new(),
+                };
+                outputs.response.send(&response);
+                outputs.body.send(&user_info);
+                claims_responses += 1;
+            }
+
+            if claims_responses == 0 {
+                let response = build_error_response("Session Not Found");
+                let user_info = types::UserInfo {
+                    sub: "".to_string(),
+                    email: "".to_string(),
+                    groups: vec![],
+                };
+                outputs.response.send(&response);
+                outputs.body.send(&user_info);
+            }
+        }
+
+        //This should always be at the end. This lets the downstream components know that the stream is finished and there will not be any more messages.
+        outputs.response.done();
+        outputs.body.done();
+        Ok(())
+    }
+}

@@ -10,6 +10,15 @@ import:
       kind: wick/component/types@v1
       ref: registry.candle.dev/types/http:0.2.0
 types:
+  - name: UserInfo
+    kind: wick/type/struct@v1
+    fields:
+      - name: sub
+        type: string
+      - name: email
+        type: string
+      - name: groups
+        type: string[]
   - name: OAuthTokenResponse
     kind: wick/type/struct@v1
     fields:
@@ -163,6 +172,15 @@ component:
           type: http::HttpRequest
         - name: response
           type: http::HttpResponse
+    - name: get_user
+      inputs:
+        - name: request
+          type: http::HttpRequest
+      outputs:
+        - name: response
+          type: http::HttpResponse
+        - name: body
+          type: UserInfo
 tests:
   - name: auth
     with:
