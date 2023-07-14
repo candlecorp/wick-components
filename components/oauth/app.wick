@@ -28,7 +28,7 @@ import:
   - name: oauth_composite
     component:
       kind: wick/component/manifest@v1
-      ref: ./oauth-postgres.wick
+      ref: ./oauth-mssql.wick
       with:
         auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
         token_endpoint: https://login.microsoftonline.com/organizations/oauth2/v2.0/token

@@ -78,7 +78,6 @@ component:
           type: object
       query: |
         SELECT claims FROM oidc_claims WHERE session_id = @p1
-        FOR JSON AUTO
       arguments:
         - session_id
     - name: update_session

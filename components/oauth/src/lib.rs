@@ -467,15 +467,7 @@ impl OidcOperation for Component {
                 .get_oidc_claims(once(session_id.clone()))?;
 
             while let Some(response) = get_oidc_claims_response.next().await {
-                let mut response = propagate_if_error!(response, outputs, continue);
-
-                println!("response: {:?}", response);
-
-                if response.is_string() {
-                    //parse string as json
-                    println!("IS STRING***");
-                    // let parsed_response = wick_component::from_str(&response.to_string().as_str());
-                }
+                let response = propagate_if_error!(response, outputs, continue);
 
                 //session is valid
                 let mut request = input.clone();
@@ -496,8 +488,18 @@ impl OidcOperation for Component {
                     continue;
                 }
 
-                let claims: Result<types::OidcClaims, _> =
-                    wick_component::from_value(scope.unwrap().to_owned());
+                println!("scope: {:?}", scope.unwrap());
+
+                let mut parsed_scope = scope.unwrap().to_owned();
+
+                if parsed_scope.is_string() {
+                    parsed_scope =
+                        wick_component::from_str::<Value>(parsed_scope.as_str().unwrap()).unwrap();
+                }
+
+                println!("parsed_scope: {:?}", parsed_scope);
+
+                let claims: Result<types::OidcClaims, _> = wick_component::from_value(parsed_scope);
 
                 if claims.is_err() {
                     outputs.output.error("invalid claims");
