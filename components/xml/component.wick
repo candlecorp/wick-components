@@ -1,0 +1,41 @@
+# component.wick
+
+kind: wick/component@v1
+name: xml_to_json
+metadata:
+  version: 0.1.0
+  description: A component to convert XML to JSON
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/xml.signed.wasm
+  operations:
+    - name: xml_to_json
+      inputs:
+        - name: xml
+          type: string
+      outputs:
+        - name: output
+          type: object
+tests:
+  - name: xml_to_json
+    cases:
+      - name: xml_to_json
+        operation: xml_to_json
+        inputs:
+          - name: xml
+            value: "<note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>"
+        outputs:
+          - name: output
+            value: {"note": {"to": "Tove", "from": "Jani", "heading": "Reminder", "body": "Don't forget me this weekend!"}}
+      - name: xml_to_json_with_array
+        operation: xml_to_json
+        inputs:
+          - name: xml
+            value: "<note><to>Tove</to><to>Foo</to><to>Bar</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>"
+        outputs:
+          - name: output
+            value: {"note": {"to": ["Tove","Foo","Bar"], "from": "Jani", "heading": "Reminder", "body": "Don't forget me this weekend!"}}

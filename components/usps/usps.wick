@@ -1,0 +1,65 @@
+kind: wick/component@v1
+name: usps
+metadata:
+  version: 0.1.0
+  description: USPS Address Lookup Component
+  licenses:
+  - Apache-2.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: candle
+import:
+  - name: usps_types
+    component:
+      kind: wick/component/types@v1
+      ref: ./usps-types.wick
+  - name: usps_http
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./usps-http.wick
+  - name: usps_engine
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./usps-engine.wick
+      provide:
+        usps_http: usps_http
+      with:
+        user_id: "{{ ctx.root_config.user_id }}"
+component:
+  kind: wick/component/composite@v1
+  with:
+    - name: user_id
+      type: string
+  operations:
+  - name: verify
+    inputs:
+      - name: address
+        type: usps_types::RequestAddress
+    outputs:
+      - name: verified_address
+        type: usps_types::ResponseAddress
+    uses:
+      - name: USPS
+        operation: usps_engine::verify
+    flow:
+    - <>.address -> USPS.address
+    - USPS.verified_address -> <>.verified_address
+tests:
+  - name: verify
+    with: 
+      user_id: "{{ ctx.env.USPS_USER_ID }}"
+    cases:
+      - name: verify
+        operation: verify
+        inputs:
+          - name: address
+            value:
+              Address2: 456 White Finch St
+              City: North Augusta
+              State: SC
+              Zip5: 29860
+        outputs:
+          - name: verified_address
+            value: {"Error":{"Description":"Address Not Found.","HelpContext":"","HelpFile":"","Number":"-2147219401","Source":"clsAMS"}}
+

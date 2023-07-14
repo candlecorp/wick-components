@@ -173,7 +173,11 @@ impl AuthOperation for Component {
                     {
                         let response =
                             build_error_response("State or code parameter does not exist");
-                        outputs.response.send(&response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -181,7 +185,11 @@ impl AuthOperation for Component {
                     if cookies.auth_state.is_none() {
                         //state cookie does not exist
                         let response = build_error_response("State cookie does not exist");
-                        outputs.response.send(&response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -192,7 +200,11 @@ impl AuthOperation for Component {
                         //state cookie value does not match
                         let response =
                             build_error_response("State cookie and response don't match");
-                        outputs.response.send(&response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -221,7 +233,11 @@ impl AuthOperation for Component {
 
                     if response.is_none() || body.is_none() {
                         let response = build_error_response("Token endpoint returned error");
-                        outputs.response.send(&response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -231,7 +247,11 @@ impl AuthOperation for Component {
                     //ensure response is 200
                     if response.status != types::http::StatusCode::Ok {
                         let response = build_error_response("Token endpoint returned error");
-                        outputs.response.send(&response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -243,7 +263,11 @@ impl AuthOperation for Component {
                     {
                         let response =
                             build_error_response("Token endpoint returned invalid response");
-                        outputs.response.send(&response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -291,7 +315,11 @@ impl AuthOperation for Component {
 
                     let response = build_redirect_response(&location, Some(cookies));
                     println!("response: {:?}", response);
-                    outputs.response.send(&response);
+                    outputs
+                        .output
+                        .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                            response,
+                        ));
                     continue;
                 }
                 "/oidc/logout" => {}
@@ -309,8 +337,11 @@ impl AuthOperation for Component {
                             &input.uri,
                             timestamp,
                         );
-                        outputs.response.send(&response);
-                        println!("response: {:?}", response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
                         continue;
                     }
 
@@ -335,7 +366,9 @@ impl AuthOperation for Component {
                                 &input.uri,
                                 timestamp,
                             );
-                            outputs.response.send(&response);
+                            outputs.output.send(
+                                &types::http::RequestMiddlewareResponse::HttpResponse(response),
+                            );
                             continue;
                         }
 
@@ -350,12 +383,18 @@ impl AuthOperation for Component {
                                 &input.uri,
                                 timestamp,
                             );
-                            outputs.response.send(&response);
+                            outputs.output.send(
+                                &types::http::RequestMiddlewareResponse::HttpResponse(response),
+                            );
                             continue;
                         }
 
                         //session is valid
-                        outputs.request.send(&input);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpRequest(
+                                input.clone(),
+                            ));
                     }
                     //session does not exist redirect to login
 
@@ -364,14 +403,17 @@ impl AuthOperation for Component {
                     // redirect to auth endpoint
                     let response =
                         build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
-                    outputs.response.send(&response);
+                    outputs
+                        .output
+                        .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                            response,
+                        ));
                     continue;
                 }
             }
         }
         //This should always be at the end. This lets the downstream components know that the stream is finished and there will not be any more messages.
-        outputs.response.done();
-        outputs.request.done();
+        outputs.output.done();
         println!("done");
         Ok(())
     }
@@ -406,12 +448,19 @@ impl OidcOperation for Component {
                 // redirect to auth endpoint
                 let response =
                     build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
-                outputs.response.send(&response);
+                outputs
+                    .output
+                    .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                        response,
+                    ));
                 continue;
             }
 
             //session cookie exists lookup session to see if its valid
             let session_id = cookies.session_id.unwrap();
+
+            println!("session_id: {:?}", session_id);
+
             let mut get_oidc_claims_response = ctx
                 .provided()
                 .dbclient
@@ -431,15 +480,29 @@ impl OidcOperation for Component {
                     // redirect to auth endpoint
                     let response =
                         build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
-                    outputs.response.send(&response);
+                    outputs
+                        .output
+                        .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                            response,
+                        ));
                     continue;
                 }
 
-                let claims: Result<types::OidcClaims, _> =
-                    wick_component::from_value(scope.unwrap().to_owned());
+                println!("scope: {:?}", scope.unwrap());
+
+                let mut parsed_scope = scope.unwrap().to_owned();
+
+                if parsed_scope.is_string() {
+                    parsed_scope =
+                        wick_component::from_str::<Value>(parsed_scope.as_str().unwrap()).unwrap();
+                }
+
+                println!("parsed_scope: {:?}", parsed_scope);
+
+                let claims: Result<types::OidcClaims, _> = wick_component::from_value(parsed_scope);
 
                 if claims.is_err() {
-                    outputs.response.error("invalid claims");
+                    outputs.output.error("invalid claims");
                     continue;
                 }
 
@@ -454,13 +517,16 @@ impl OidcOperation for Component {
                     .headers
                     .insert("X-OIDC-Group".to_string(), claims.groups);
 
-                outputs.request.send(&request);
+                outputs
+                    .output
+                    .send(&types::http::RequestMiddlewareResponse::HttpRequest(
+                        request,
+                    ));
             }
         }
 
         //This should always be at the end. This lets the downstream components know that the stream is finished and there will not be any more messages.
-        outputs.response.done();
-        outputs.request.done();
+        outputs.output.done();
         Ok(())
     }
 }

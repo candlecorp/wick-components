@@ -28,20 +28,16 @@ import:
   - name: oauth_composite
     component:
       kind: wick/component/manifest@v1
-      ref: ./oauth.wick
+      ref: ./oauth-mssql.wick
       with:
         auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
         token_endpoint: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
-        redirect_uri: http://localhost:8081/oidc/callback
+        redirect_uri: http://localhost:8080/oidc/callback
         session_cookie_name: sid
         client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
         client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
         scope: "openid profile email"
-        db_user: '{{ ctx.env.OAUTH_DB_USER }}'
-        db_password: '{{ ctx.env.OAUTH_DB_PASSWORD }}'
-        db_host: '{{ ctx.env.OAUTH_DB_HOST }}'
-        db_port: '{{ ctx.env.OAUTH_DB_PORT }}'
-        db_name: '{{ ctx.env.OAUTH_DB_NAME }}'
+        db_url: '{{ ctx.env.OAUTH_DB_URL }}'
 triggers:
   - kind: wick/trigger/http@v1
     resource: httpserver

@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'usps'
+kind: wick/component@v1
+metadata:
+  version: '0.0.1' 
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.4.0
+  - name: usps_types
+    component:
+      kind: wick/component/types@v1
+      ref: ./usps-types.wick
+requires:
+  - name: usps_http
+    interface:
+      operations:
+        - name: verify
+          inputs:
+            - name: request
+              type: string #xml needs to be passed as string
+          outputs:
+            - name: response
+              type: http::HttpResponse
+            - name: body
+              type: bytes
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/usps.signed.wasm
+  with:
+    - name: user_id
+      type: string
+  operations:
+    - name: verify
+      inputs:
+        - name: address
+          type: usps_types::RequestAddress
+      outputs:
+        - name: verified_address
+          type: usps_types::ResponseAddress

@@ -1,7 +1,7 @@
 kind: wick/component@v1
-name: oauth
+name: oauth_postgres
 metadata:
-  version: 0.2.0
+  version: 0.4.0
   description: Oauth composite middleware component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
   licenses:
   - Apache-2.0
@@ -13,13 +13,9 @@ import:
   - name: OAUTHDB
     component:
       kind: wick/component/manifest@v1
-      ref: ./oauth-db.wick
+      ref: ./oauth-db-postgres.wick
       with:
-        db_user: '{{ ctx.root_config.db_user }}'
-        db_password: '{{ ctx.root_config.db_password }}'
-        db_host: '{{ ctx.root_config.db_host }}'
-        db_port: '{{ ctx.root_config.db_port }}'
-        db_name: '{{ ctx.root_config.db_name }}'
+        db_url: '{{ ctx.root_config.db_url }}'
   - name: OAUTHHTTP
     component:
       kind: wick/component/manifest@v1
@@ -58,15 +54,7 @@ component:
       type: string
     - name: scope
       type: string
-    - name: db_user
-      type: string
-    - name: db_password
-      type: string
-    - name: db_host
-      type: string
-    - name: db_port
-      type: string
-    - name: db_name
+    - name: db_url
       type: string
   operations:
   - name: auth
@@ -75,16 +63,14 @@ component:
         operation: oauth_engine::auth
     flow:
       - <>.request -> AUTH.request
-      - AUTH.request -> <>.request
-      - AUTH.response -> <>.response
+      - AUTH.output -> <>.output
   - name: oidc
     uses:
       - name: OIDC
         operation: oauth_engine::oidc
     flow:
       - <>.request -> OIDC.request
-      - OIDC.request -> <>.request
-      - OIDC.response -> <>.response
+      - OIDC.output -> <>.output
   - name: get_user
     uses:
       - name: GETUSER
@@ -104,11 +90,7 @@ tests:
         client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
         client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
         scope: "openid profile email"
-        db_user: '{{ ctx.env.OAUTH_DB_USER }}'
-        db_password: '{{ ctx.env.OAUTH_DB_PASSWORD }}'
-        db_host: '{{ ctx.env.OAUTH_DB_HOST }}'
-        db_port: '{{ ctx.env.OAUTH_DB_PORT }}'
-        db_name: '{{ ctx.env.OAUTH_DB_NAME }}'
+        db_url: '{{ ctx.env.OAUTH_DB_URL }}'
     cases:
       - name: no cookie
         operation: auth
@@ -130,13 +112,13 @@ tests:
                 accept:
                   - "*/*"
         outputs:
-          - name: response
+          - name: output
             value:
-              version: "Http11"
-              status: TemporaryRedirect
+              version: "1.1"
+              status: "307"
               headers:
                 location:
                   - "https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email"
-          - name: response
+          - name: output
             flags:
               done: true

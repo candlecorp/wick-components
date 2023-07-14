@@ -1,0 +1,79 @@
+---
+name: usps_types
+kind: wick/types@v1
+metadata:
+  version: 0.1.0
+types:
+  - name: AddressValidateRequest
+    kind: wick/type/struct@v1
+    fields:
+      - name: Address
+        type: RequestAddress
+  - name: RequestAddress
+    kind: wick/type/struct@v1
+    fields:
+      - name: Address1
+        type: string?
+      - name: Address2
+        type: string
+      - name: City
+        type: string
+      - name: State
+        type: string
+      - name: Zip5
+        type: u32
+      - name: Zip4
+        type: u32?
+  - name: AddressValidateResponse
+    kind: wick/type/struct@v1
+    fields:
+      - name: Address
+        type: ResponseAddress
+  - name: Error
+    kind: wick/type/struct@v1
+    fields:
+      - name: Number
+        type: string
+      - name: Source
+        type: string
+      - name: Description
+        type: string
+      - name: HelpFile
+        type: string
+      - name: HelpContext
+        type: string
+  - name: ResponseAddress
+    kind: wick/type/struct@v1
+    fields:
+      - name: Address1
+        type: string?
+      - name: Address2
+        type: string?
+      - name: City
+        type: string?
+      - name: State
+        type: string?
+      - name: Zip5
+        type: string?
+      - name: Zip4
+        type: string?
+      - name: DeliveryPoint
+        type: string?
+      - name: CarrierRoute
+        type: string?
+      - name: Footnotes
+        type: string?
+      - name: DPVConfirmation
+        type: string?
+      - name: DPVCMRA
+        type: string?
+      - name: DPVFootnotes
+        type: string?
+      - name: Business
+        type: string?
+      - name: CentralDeliveryPoint
+        type: string?
+      - name: Vacant
+        type: string?
+      - name: Error
+        type: Error?
