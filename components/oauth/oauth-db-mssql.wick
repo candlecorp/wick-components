@@ -1,0 +1,114 @@
+name: oauth_db_mssql
+kind: wick/component@v1
+resources:
+  - name: db_resource
+    resource:
+      kind: wick/resource/url@v1
+      # pass $* values as environment variables to the pod
+      url: "{{ ctx.root_config.db_url }}"
+component:
+  kind: wick/component/sql@v1
+  with:
+    - name: db_url
+      type: string
+  resource: db_resource
+  tls: false
+  #   id VARCHAR(50) PRIMARY KEY,
+  # token_type VARCHAR(255) NOT NULL,
+  # access_token TEXT NOT NULL,
+  # refresh_token TEXT NOT NULL,
+  # expires_at TIMESTAMP NOT NULL,
+  operations:
+    - name: insert_token
+      inputs:
+        - name: session_id
+          type: string
+        - name: token_type
+          type: string
+        - name: access_token
+          type: string
+        - name: refresh_token
+          type: string
+        - name: expires_at
+          type: datetime
+      outputs:
+        - name: output
+          type: object
+      query: |
+        INSERT INTO oauth_sessions (id, token_type, access_token, refresh_token, expires_at)
+        VALUES (@p1, @p2, @p3, @p4, @p5)
+      arguments:
+        - session_id
+        - token_type
+        - access_token
+        - refresh_token
+        - expires_at
+    - name: insert_claims
+      inputs:
+        - name: session_id
+          type: string
+        - name: claims
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        INSERT INTO oidc_claims (session_Id, claims)
+        VALUES (@p1, @p2)
+      arguments:
+        - session_id
+        - claims
+    - name: get_session
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        SELECT expires_at, access_token FROM oauth_sessions WHERE id = @p1
+      arguments:
+        - session_id
+    - name: get_oidc_claims
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        SELECT claims FROM oidc_claims WHERE session_id = @p1
+        FOR JSON AUTO
+      arguments:
+        - session_id
+    - name: update_session
+      inputs:
+        - name: expires_at
+          type: datetime
+        - name: access_token
+          type: string
+        - name: refresh_token
+          type: string
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        UPDATE oauth_sessions SET expires_at = @p1, access_token = @p2, updated_at = GETDATE(), refresh_token = @p3 WHERE id = @p4
+      arguments:
+        - expires_at
+        - access_token
+        - refresh_token
+        - session_id
+    - name: delete_session
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        DELETE FROM oauth_sessions WHERE id = @p1
+      arguments:
+        - session_id

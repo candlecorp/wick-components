@@ -56,7 +56,7 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 [[package]]
 name = "asset-container"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "bitflags 2.3.3",
  "futures 0.3.28",
@@ -210,16 +210,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cookie"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7efb37c3e1ccb1ff97164ad95ac1606e8ccd35b3fa0a7d99a304c7f4a428cc24"
-dependencies = [
- "time",
- "version_check",
-]
-
-[[package]]
 name = "core-foundation-sys"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -290,12 +280,12 @@ dependencies = [
 
 [[package]]
 name = "darling"
-version = "0.20.1"
+version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0558d22a7b463ed0241e993f76f09f30b126687447751a8638587b864e4b3944"
+checksum = "0209d94da627ab5605dcccf08bb18afa5009cfbef48d8a8b7d7bdbc79be25c5e"
 dependencies = [
- "darling_core 0.20.1",
- "darling_macro 0.20.1",
+ "darling_core 0.20.3",
+ "darling_macro 0.20.3",
 ]
 
 [[package]]
@@ -314,9 +304,9 @@ dependencies = [
 
 [[package]]
 name = "darling_core"
-version = "0.20.1"
+version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab8bfa2e259f8ee1ce5e97824a3c55ec4404a0d772ca7fa96bf19f0752a046eb"
+checksum = "177e3443818124b357d8e76f53be906d60937f0d3a90773a664fa63fa253e621"
 dependencies = [
  "fnv",
  "ident_case",
@@ -339,23 +329,23 @@ dependencies = [
 
 [[package]]
 name = "darling_macro"
-version = "0.20.1"
+version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29a358ff9f12ec09c3e61fef9b5a9902623a695a46a917b07f269bff1445611a"
+checksum = "836a9bbc7ad63342d6d6e7b815ccab164bc77a2d95d84bc3117a8c0d5c98e2d5"
 dependencies = [
- "darling_core 0.20.1",
+ "darling_core 0.20.3",
  "quote",
  "syn 2.0.25",
 ]
 
 [[package]]
 name = "dashmap"
-version = "5.4.0"
+version = "5.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "907076dfda823b0b36d2a1bb5f90c96660a5bbcd7729e10727f07858f22c4edc"
+checksum = "6943ae99c34386c84a470c499d3414f66502a41340aa895406e0d2e4a207b91d"
 dependencies = [
  "cfg-if",
- "hashbrown 0.12.3",
+ "hashbrown 0.14.0",
  "lock_api",
  "once_cell",
  "parking_lot_core",
@@ -364,7 +354,7 @@ dependencies = [
 [[package]]
 name = "derive-asset-container"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -479,9 +469,9 @@ dependencies = [
 
 [[package]]
 name = "equivalent"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88bffebc5d80432c9b140ee17875ff173a8ab62faad5b257da912bd2f6c1c0a1"
+checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "filetime"
@@ -508,7 +498,7 @@ dependencies = [
 [[package]]
 name = "flow-component"
 version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "anyhow",
  "futures 0.3.28",
@@ -524,7 +514,7 @@ dependencies = [
 [[package]]
 name = "flow-expression-parser"
 version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "lazy_static",
  "liquid-json",
@@ -1165,20 +1155,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "oauth_engine"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.21.2",
- "cookie",
- "serde",
- "urlencoding",
- "wick-component",
- "wick-component-codegen",
-]
-
-[[package]]
 name = "object"
 version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1348,6 +1324,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 
 [[package]]
+name = "prettyplease"
+version = "0.2.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "92139198957b410250d43fad93e630d956499a625c527eda65175c8680f83387"
+dependencies = [
+ "proc-macro2",
+ "syn 2.0.25",
+]
+
+[[package]]
 name = "proc-macro-error"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1473,9 +1459,9 @@ dependencies = [
 
 [[package]]
 name = "regex-automata"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83d3daa6976cffb758ec878f108ba0e062a45b2d6ca3a2cca965338855476caf"
+checksum = "39354c10dd07468c2e73926b23bb9c2caca74c5501e38a35da70406f1d923310"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -1484,9 +1470,9 @@ dependencies = [
 
 [[package]]
 name = "regex-syntax"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2ab07dc67230e4a4718e70fd5c20055a4334b121f1f9db8fe63ef39ce9b8c846"
+checksum = "e5ea92a5b6195c6ef2a0295ea818b312502c6fc94dde986c5553242e18fd4ce2"
 
 [[package]]
 name = "reqwest"
@@ -1583,9 +1569,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.21.4"
+version = "0.21.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8620e6b3ea4348874f156afce0032895cb1d483d6ab6bee37543b71ce3cbd01f"
+checksum = "79ea77c539259495ce8ca47f53e66ae0330a8819f67e23ac96ca02f50e7b7d36"
 dependencies = [
  "log",
  "ring",
@@ -1637,12 +1623,11 @@ dependencies = [
 [[package]]
 name = "seeded-random"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "parking_lot",
  "rand",
  "rand_chacha",
- "uuid",
 ]
 
 [[package]]
@@ -1681,6 +1666,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde-xml-rs"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb3aa78ecda1ebc9ec9847d5d3aba7d618823446a049ba2491940506da6e2782"
+dependencies = [
+ "log",
+ "serde",
+ "thiserror",
+ "xml-rs",
+]
+
+[[package]]
 name = "serde_derive"
 version = "1.0.171"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1693,9 +1690,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.100"
+version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f1e14e89be7aa4c4b78bdbdc9eb5bf8517829a600ae8eaa39a6e1d960b5185c"
+checksum = "b5062a995d481b2308b6064e9af76011f2921c35f97b0468811ed9f6cd91dfed"
 dependencies = [
  "itoa",
  "ryu",
@@ -1747,7 +1744,7 @@ version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edc7d5d3932fb12ce722ee5e64dd38c504efba37567f0c402f6ca728c3b8b070"
 dependencies = [
- "darling 0.20.1",
+ "darling 0.20.3",
  "proc-macro2",
  "quote",
  "syn 2.0.25",
@@ -1916,9 +1913,9 @@ dependencies = [
 
 [[package]]
 name = "tar"
-version = "0.4.38"
+version = "0.4.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4b55807c0344e1e6c04d7c965f5289c39a8d94ae23ed5c0b57aabac549f871c6"
+checksum = "ec96d2ffad078296368d46ff1cb309be1c23c513b4ab0e22a45de0185275ac96"
 dependencies = [
  "filetime",
  "libc",
@@ -2180,18 +2177,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "urlencoding"
-version = "2.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8db7427f936968176eaa7cdf81b7f98b980b18495ec28f1b5791ac3bfe3eea9"
-
-[[package]]
-name = "uuid"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d023da39d1fde5a8a3fe1f3e01ca9632ada0a63e9797de55a879d6e2236277be"
-
-[[package]]
 name = "version_check"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2293,9 +2278,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cf8e3897eb29abbfbbce3cef500e6a4fc802e175b9718bceb20887e43da2729"
+checksum = "94eaf073a819835e7bf712f6afbc8f3f04790cf6e57fd48b86e3ceac1f1c5582"
 dependencies = [
  "bytes 1.4.0",
  "crossbeam-channel",
@@ -2315,9 +2300,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-codec"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a81f0513a5e5f5696cd49965808cee4a7816426d2a302a9318bfe8713ca58da0"
+checksum = "20f90276d9d3c49951c3073b2845ac3dc2cee446722ea4904bb768419c36b6be"
 dependencies = [
  "heapless",
  "rmp-serde",
@@ -2327,9 +2312,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-frames"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b4ba83ebb354ad721dfb6c099256b8c3ed31e8f81217dda56ea783c8210acd5"
+checksum = "ff7f452a1908fb0f2d08db7752b9dc69bdeea647fa1841f469ef3ad98815956c"
 dependencies = [
  "bytes 1.4.0",
  "serde",
@@ -2337,9 +2322,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-guest"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf63add27ac8dbc4df415606906bd975a29477df2d0a44fa866e1d064456c29c"
+checksum = "d50bc90ea73c739b11440c0e15674a4b8c197a0f1c120bd0ab5930f5d699eccd"
 dependencies = [
  "bytes 1.4.0",
  "cfg-if",
@@ -2357,9 +2342,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-runtime"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b72c754f8f45726c17943eb40c3662e088b84a431755626f48708d104a2b385"
+checksum = "86a76568a0617b94230c08566e0e4dc1bdd4e953bb8f73ef3617f29cc025bb3a"
 dependencies = [
  "bytes 1.4.0",
  "crossbeam-channel",
@@ -2376,9 +2361,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-rx"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c917feb73a6549d2604511d052daf941e1951ea46f0da935d93e9d0301050cb"
+checksum = "85a7878f17e23c775cb6cbf40c66651076b3bc483ffe5396a4b17874d2114a35"
 dependencies = [
  "async-trait",
  "bytes 1.4.0",
@@ -2425,7 +2410,7 @@ dependencies = [
 [[package]]
 name = "wick-asset-reference"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "asset-container",
  "bytes 1.4.0",
@@ -2442,9 +2427,8 @@ dependencies = [
 [[package]]
 name = "wick-component"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
- "chrono",
  "flow-component",
  "paste",
  "serde",
@@ -2461,7 +2445,7 @@ dependencies = [
 [[package]]
 name = "wick-component-codegen"
 version = "0.4.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "anyhow",
  "bitflags 2.3.3",
@@ -2469,6 +2453,7 @@ dependencies = [
  "derive_builder",
  "heck",
  "itertools",
+ "prettyplease",
  "proc-macro2",
  "quote",
  "serde_json",
@@ -2481,7 +2466,7 @@ dependencies = [
 [[package]]
 name = "wick-config"
 version = "0.26.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "asset-container",
  "derive-asset-container",
@@ -2514,7 +2499,7 @@ dependencies = [
 [[package]]
 name = "wick-interface-types"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "nom",
  "serde",
@@ -2526,7 +2511,7 @@ dependencies = [
 [[package]]
 name = "wick-oci-utils"
 version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "bytes 1.4.0",
  "derive_builder",
@@ -2549,7 +2534,7 @@ dependencies = [
 [[package]]
 name = "wick-packet"
 version = "0.15.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "base64 0.21.2",
  "base64-serde",
@@ -2576,7 +2561,7 @@ dependencies = [
 [[package]]
 name = "wick-xdg"
 version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git#ca9103de1129cfba1058be84536a0a45f2a68c2a"
+source = "git+https://github.com/candlecorp/wick.git#454287903fff88c9219860f35d82ba753d659a84"
 dependencies = [
  "getset",
  "thiserror",
@@ -2706,3 +2691,22 @@ checksum = "688597db5a750e9cad4511cb94729a078e274308099a0382b5b8203bbc767fee"
 dependencies = [
  "home",
 ]
+
+[[package]]
+name = "xml"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "serde",
+ "serde-xml-rs",
+ "wick-component",
+ "wick-component-codegen",
+ "xml-rs",
+]
+
+[[package]]
+name = "xml-rs"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a56c84a8ccd4258aed21c92f70c0f6dea75356b6892ae27c24139da456f9336"

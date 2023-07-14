@@ -1,25 +1,17 @@
-name: oauth_db
+name: oauth_db_postgres
 kind: wick/component@v1
 resources:
-  - name: db_url
+  - name: db_resource
     resource:
       kind: wick/resource/url@v1
       # pass $* values as environment variables to the pod
-      url: "postgres://{{ ctx.root_config.db_user }}:{{ ctx.root_config.db_password }}@{{ ctx.root_config.db_host }}:{{ ctx.root_config.db_port }}/{{ ctx.root_config.db_name }}"
+      url: "{{ ctx.root_config.db_url }}"
 component:
   kind: wick/component/sql@v1
   with:
-    - name: db_user
+    - name: db_url
       type: string
-    - name: db_password
-      type: string
-    - name: db_host
-      type: string
-    - name: db_port
-      type: string
-    - name: db_name
-      type: string
-  resource: db_url
+  resource: db_resource
   tls: false
   #   id VARCHAR(50) PRIMARY KEY,
   # token_type VARCHAR(255) NOT NULL,

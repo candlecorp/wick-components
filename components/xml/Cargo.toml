@@ -1,5 +1,5 @@
 [package]
-name = "usps"
+name = "xml"
 version = "0.1.0"
 edition = "2021"
 
@@ -18,10 +18,10 @@ crate-type = ["cdylib"]
 [dependencies]
 wick-component = { git = "https://github.com/candlecorp/wick.git" }
 serde = { version = "1", features = ["derive"] }
-serde-xml-rs = "0.6"
 async-trait = "0.1"
 anyhow = { version = "1" }
-regex = "1.9"
+serde-xml-rs = "0.6"
+xml-rs = "0.8"
 
 [build-dependencies]
 wick-component-codegen = { git = "https://github.com/candlecorp/wick.git" }
