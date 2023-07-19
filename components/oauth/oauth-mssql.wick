@@ -1,7 +1,7 @@
 kind: wick/component@v1
 name: oauth_mssql
 metadata:
-  version: 0.4.0
+  version: 0.6.0
   description: Oauth composite middleware component. This requires a mssql database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
   licenses:
   - Apache-2.0
@@ -34,6 +34,8 @@ import:
         redirect_uri: '{{ ctx.root_config.redirect_uri }}'
         session_cookie_name: '{{ ctx.root_config.session_cookie_name }}'
         scope: '{{ ctx.root_config.scope }}'
+        email_claim: '{{ ctx.root_config.email_claim }}'
+        groups_claim: '{% if ctx.root_config contains "group_claims" %}{{ ctx.root_config.group_claims | output }}{% endif %}{% unless ctx.root_config contains "group_claims" %}{{ nil | output }}{% endunless %}'
       provide:
         dbclient: OAUTHDB
         httpclient: OAUTHHTTP
@@ -56,6 +58,10 @@ component:
       type: string
     - name: db_url
       type: string
+    - name: email_claim
+      type: string
+    - name: groups_claim
+      type: string?
   operations:
   - name: auth
     uses:

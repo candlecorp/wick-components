@@ -36,12 +36,17 @@ import:
         session_cookie_name: sid
         client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
         client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
-        scope: "openid profile email"
+        scope: "openid"
         db_url: '{{ ctx.env.OAUTH_DB_URL }}'
+        email_claim: upn
+        # groups_claim: groups
 triggers:
   - kind: wick/trigger/http@v1
     resource: httpserver
     routers:
+      - kind: wick/router/raw@v1
+        path: /oidc/userinfo
+        operation: oauth_composite::get_user
       - kind: wick/router/static@v1
         middleware:
           request:

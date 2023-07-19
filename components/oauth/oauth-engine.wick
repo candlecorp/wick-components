@@ -37,23 +37,6 @@ types:
         type: datetime
       - name: access_token
         type: string
-  - name: OidcClaims
-    kind: wick/type/struct@v1
-    fields:
-      - name: aud
-        type: string
-      - name: iss
-        type: string
-      - name: sub
-        type: string
-      - name: exp
-        type: u64
-      - name: iat
-        type: u64
-      - name: groups
-        type: string[]
-      - name: email
-        type: string
 requires:
   - name: dbclient
     interface:
@@ -153,6 +136,10 @@ component:
       type: string
     - name: scope
       type: string
+    - name: email_claim
+      type: string
+    - name: groups_claim
+      type: string?
   operations:
     - name: auth
       inputs:

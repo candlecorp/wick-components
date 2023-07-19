@@ -272,7 +272,31 @@ impl AuthOperation for Component {
                     }
 
                     //process id_token and extract claims
-                    let claims = get_oidc_claims(body.id_token.as_str())?;
+                    let claims_access = get_oidc_claims(body.access_token.as_str())?;
+                    let claims_id = get_oidc_claims(body.id_token.as_str())?;
+
+                    let claims_access: Value = wick_component::from_str(&claims_access)?;
+                    let claims_id: Value = wick_component::from_str(&claims_id)?;
+
+                    let claims: Value = match (claims_access, claims_id) {
+                        (
+                            wick_component::Value::Object(mut map1),
+                            wick_component::Value::Object(map2),
+                        ) => {
+                            map1.extend(map2);
+                            wick_component::Value::Object(map1) // Now claims contains both sets of claims
+                        }
+                        _ => {
+                            let response = build_error_response(
+                                "Access or ID token claims are not valid JSON",
+                            );
+                            outputs.output.send(
+                                &types::http::RequestMiddlewareResponse::HttpResponse(response),
+                            );
+                            continue;
+                        }
+                    };
+
                     let session_id = &rng.uuid();
 
                     let expires_at = timestamp + Duration::seconds(body.expires_in as _);
@@ -292,7 +316,7 @@ impl AuthOperation for Component {
                     let mut insert_claims_response = ctx
                         .provided()
                         .dbclient
-                        .insert_claims(once(session_id.to_string()), once(claims))?;
+                        .insert_claims(once(session_id.to_string()), once(claims.to_string()))?;
 
                     while let Some(insert_response) = insert_claims_response.next().await {
                         let _response = propagate_if_error!(insert_response, outputs, continue);
@@ -473,8 +497,8 @@ impl OidcOperation for Component {
                 let mut request = input.clone();
 
                 //extract scope from claims
-                let scope = response.get("claims");
-                if scope.is_none() {
+                let claims = response.get("claims");
+                if claims.is_none() {
                     //create state cookie
                     let state = rng.uuid().to_string();
                     // redirect to auth endpoint
@@ -488,18 +512,18 @@ impl OidcOperation for Component {
                     continue;
                 }
 
-                println!("scope: {:?}", scope.unwrap());
+                println!("scope: {:?}", claims.unwrap());
 
-                let mut parsed_scope = scope.unwrap().to_owned();
+                let mut parsed_claims = claims.unwrap().to_owned();
 
-                if parsed_scope.is_string() {
-                    parsed_scope =
-                        wick_component::from_str::<Value>(parsed_scope.as_str().unwrap()).unwrap();
+                if parsed_claims.is_string() {
+                    parsed_claims =
+                        wick_component::from_str::<Value>(parsed_claims.as_str().unwrap()).unwrap();
                 }
 
-                println!("parsed_scope: {:?}", parsed_scope);
+                println!("parsed_claims: {:?}", parsed_claims);
 
-                let claims: Result<types::OidcClaims, _> = wick_component::from_value(parsed_scope);
+                let claims: Result<Value, _> = wick_component::from_value(parsed_claims);
 
                 if claims.is_err() {
                     outputs.output.error("invalid claims");
@@ -508,14 +532,32 @@ impl OidcOperation for Component {
 
                 let claims = claims.unwrap();
 
+                let _sub = claims
+                    .get("sub")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_default()
+                    .to_string();
+                let email = claims
+                    .get(&config.email_claim)
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_default()
+                    .to_string();
+
+                let mut groups = Vec::new();
+            
+                if config.groups_claim.is_some() {
+                    groups = match claims.get(&config.groups_claim.as_ref().unwrap()) {
+                        Some(groups) => wick_component::from_value(groups.to_owned()).unwrap(),
+                        None => Vec::new(),
+                    };
+                }
+
                 //add scope to request
                 request
                     .headers
-                    .insert("X-OIDC-EMAIL".to_string(), vec![claims.email]);
+                    .insert("x-oidc-email".to_string(), vec![email]);
 
-                request
-                    .headers
-                    .insert("X-OIDC-Group".to_string(), claims.groups);
+                request.headers.insert("x-oidc-group".to_string(), groups);
 
                 outputs
                     .output
@@ -584,8 +626,14 @@ impl GetUserOperation for Component {
                     continue;
                 }
 
-                let claims: Result<types::OidcClaims, _> =
-                    wick_component::from_value(scope.unwrap().to_owned());
+                let mut parsed_scope = scope.unwrap().to_owned();
+
+                if parsed_scope.is_string() {
+                    parsed_scope =
+                        wick_component::from_str::<Value>(parsed_scope.as_str().unwrap()).unwrap();
+                }
+
+                let claims: Result<Value, _> = wick_component::from_value(parsed_scope);
 
                 if claims.is_err() {
                     let response = build_error_response("Invalid OIDC Claims");
@@ -599,12 +647,36 @@ impl GetUserOperation for Component {
                     continue;
                 }
 
+                let claims = claims.unwrap();
+
+                let sub = claims
+                    .get("sub")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_default()
+                    .to_string();
+
+                println!("email claim: {:?}", config.email_claim);
+
+                let email = claims
+                    .get(&config.email_claim)
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_default()
+                    .to_string();
+
+                let mut groups = Vec::new();
+                
+                if config.groups_claim.is_some() {
+                    groups = match claims.get(&config.groups_claim.as_ref().unwrap()) {
+                        Some(groups) => wick_component::from_value(groups.to_owned()).unwrap(),
+                        None => Vec::new(),
+                    };
+                }
+
                 let user_info: types::UserInfo = {
-                    let claims = claims.unwrap();
                     types::UserInfo {
-                        sub: claims.sub,
-                        email: claims.email,
-                        groups: claims.groups,
+                        sub: sub,
+                        email: email,
+                        groups: groups,
                     }
                 };
 
