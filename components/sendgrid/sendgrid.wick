@@ -1,0 +1,57 @@
+---
+kind: wick/component@v1
+name: sendgrid
+metadata:
+  version: 0.1.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: candle
+import:
+  - name: API_CLIENT
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./sendgrid-http.wick
+      with:
+        authorization: '{{ ctx.root_config.token }}'
+  - name: object
+    component:
+      kind: wick/component/manifest@v1
+      ref: registry.candle.dev/common/object:0.3.0
+component:
+  kind: wick/component/composite@v1
+  with: 
+    - name: token
+      type: string
+  operations:
+    - name: template_send
+      uses:
+        - name: API_CLIENT_1
+          operation: API_CLIENT::send
+        - name: CONFIG
+          operation: core::sender
+          with: 
+            output:
+              from: '{{ ctx.config.from }}'
+              to: '{{ ctx.config.to | output }}'
+              template_id: '{{ ctx.config.template_id }}'
+      with:
+        - name: from
+          type: string
+        - name: to
+          type: object
+        - name: template_id
+          type: string
+      inputs:
+        - name: template_data
+          type: object
+      outputs:
+        - name: output
+          type: object
+      flow:
+        - CONFIG.output.from -> API_CLIENT_1.from
+        - CONFIG.output.to -> API_CLIENT_1.to
+        - CONFIG.output.template_id -> API_CLIENT_1.template_id
+        - <>.template_data -> API_CLIENT_1.template_data
+        - API_CLIENT_1.response -> drop
+        - API_CLIENT_1.body -> <>.output
