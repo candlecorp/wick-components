@@ -1,0 +1,42 @@
+kind: wick/component@v1
+name: sendgrid_http
+metadata:
+  version: 0.1.0
+  description: Sendgrid component to send template mail.
+  licenses:
+  - Apache-2.0
+resources:
+- name: HTTP_URL
+  resource:
+    kind: wick/resource/url@v1
+    url: https://api.sendgrid.com/v3/mail/send
+component:
+  kind: wick/component/http@v1
+  with:
+    - name: authorization
+      type: string
+  resource: HTTP_URL
+  codec: Json
+  operations:
+  - name: send
+    inputs:
+      - name: from
+        type: string
+      - name: to
+        type: object
+      - name: template_id
+        type: string
+      - name: template_data
+        type: object
+    codec: Json
+    method: Post
+    headers:
+      "Authorization": ["Bearer {{ ctx.root_config.authorization }}"]
+      "Content-Type": ["application/json"]
+    body:
+      "from":
+        "email": "{{ from }}"
+      personalizations:
+        - to: "{{ to | each: '{ \"email\": \"{{ el }}\" }' | json | output }}"
+          dynamic_template_data: "{{ template_data | output }}"
+      template_id: "{{ template_id }}"
