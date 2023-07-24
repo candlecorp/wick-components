@@ -32,9 +32,9 @@ tests:
         operation: render
         with:
           template:
-            status: '{{status}}'
+            status: '{% raw %}{{status}}{% endraw %}'
             body:
-              result: '{{ result }}'
+              result: '{% raw %}{{ result }}{% endraw %}'
         inputs:
           - name: input
             value:
