@@ -28,7 +28,7 @@ tests:
       - name: basic
         operation: render
         with:
-          template: 'Hello {{ name }}!'
+          template: 'Hello {%raw%}{{ name }}{%endraw%}!'
         inputs:
           - name: data
             value:

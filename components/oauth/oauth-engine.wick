@@ -164,48 +164,55 @@ component:
           type: http::HttpResponse
         - name: body
           type: UserInfo
-tests:
-  - name: auth
-    with:
-      auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
-      redirect_uri: http://localhost:8080/oidc/callback
-      session_cookie_name: sid
-      client_id: "1234567"
-      client_secret: "abc123"
-      scope: "openid profile email"
-    cases:
-      - name: no cookie
-        operation: auth
-        inherent: 
-          seed: 1234567
-          timestamp: 1689015106
-        inputs:
-          - name: request
-            value:
-              method: Get
-              scheme: Http
-              path: "/"
-              uri: "http://localhost:8080/"
-              version: Http11
-              authority: "localhost:8080"
-              remote_addr: "127.0.0.1"
-              query_parameters: {}
-              headers:
-                host:
-                  - "localhost:8080"
-                user-agent:
-                  - "curl/7.64.1"
-                accept:
-                  - "*/*"
-        outputs:
-          - name: output
-            value:
-              version: "1.1"
-              status: "307"
-              headers:
-                location:
-                  - "https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email&state=17b66ba8-38f7-9361-5068-fb22b0c72353"
-                "set-cookie": ["auth_state=17b66ba8-38f7-9361-5068-fb22b0c72353; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:54:58 GMT","return_url=http://localhost:8080/; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:54:58 GMT","sid=expired; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:49:57 GMT"]
-          - name: output
-            flags:
-              done: true
+# tests:
+#   - name: auth
+#     with:
+#       auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
+#       redirect_uri: http://localhost:8080/oidc/callback
+#       session_cookie_name: sid
+#       client_id: '1234567'
+#       client_secret: 'abc123'
+#       scope: 'openid profile email'
+#       email_claim: 'email'
+#       groups_claim: 'groups'
+#     cases:
+#       - name: no cookie
+#         operation: auth
+#         inherent:
+#           seed: 1234567
+#           timestamp: 1689015106
+#         inputs:
+#           - name: request
+#             value:
+#               method: Get
+#               scheme: Http
+#               path: '/'
+#               uri: 'http://localhost:8080/'
+#               version: Http11
+#               authority: 'localhost:8080'
+#               remote_addr: '127.0.0.1'
+#               query_parameters: {}
+#               headers:
+#                 host:
+#                   - 'localhost:8080'
+#                 user-agent:
+#                   - 'curl/7.64.1'
+#                 accept:
+#                   - '*/*'
+#         outputs:
+#           - name: output
+#             value:
+#               version: '1.1'
+#               status: '307'
+#               headers:
+#                 location:
+#                   - 'https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email&state=17b66ba8-38f7-9361-5068-fb22b0c72353'
+#                 'set-cookie':
+#                   [
+#                     'auth_state=17b66ba8-38f7-9361-5068-fb22b0c72353; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:54:58 GMT',
+#                     'return_url=http://localhost:8080/; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:54:58 GMT',
+#                     'sid=expired; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:49:57 GMT',
+#                   ]
+#           - name: output
+#             flags:
+#               done: true

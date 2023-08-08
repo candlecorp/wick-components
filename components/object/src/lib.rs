@@ -9,8 +9,9 @@ use jsonpath_lib::select;
 use wick::*;
 
 // Implement the "new" operation
-#[async_trait::async_trait(?Send)]
-impl NewOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl new::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = new::Outputs;
     type Config = new::Config;
@@ -34,8 +35,9 @@ impl NewOperation for Component {
 }
 
 // Implement the "select" operation
-#[async_trait::async_trait(?Send)]
-impl SelectOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl select::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = select::Outputs;
     type Config = select::Config;
@@ -64,8 +66,9 @@ impl SelectOperation for Component {
     }
 }
 
-#[async_trait::async_trait(?Send)]
-impl SerializeOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl serialize::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = serialize::Outputs;
     type Config = serialize::Config;
@@ -169,8 +172,9 @@ fn extend_object_at_path(root: &mut Value, mut path: LinkedList<&str>, new_value
 }
 
 // Implement the "push" operation
-#[async_trait::async_trait(?Send)]
-impl PushOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl push::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = push::Outputs;
     type Config = push::Config;

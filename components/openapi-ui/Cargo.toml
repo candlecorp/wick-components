@@ -20,10 +20,7 @@ localgen = []
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main", features = [
-  "bytes",
-  "datetime"
-] }
+wick-component = { workspace = true, features = ["bytes"] }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
 bytes = "1.4"
@@ -32,4 +29,4 @@ serde_json = "1.0.94"
 rust-embed = { version = "6.7", features = ["debug-embed"] }
 
 [build-dependencies]
-wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
+wick-component-codegen = { workspace = true }

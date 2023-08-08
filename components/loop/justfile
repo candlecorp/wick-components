@@ -1,15 +1,16 @@
 project_name := "loop"
+root_dir:=`cargo metadata | wick query --type json -r '.workspace_root'`
 build: setup
     cargo build --release --target=wasm32-unknown-unknown
-    cp ./target/wasm32-unknown-unknown/release/{{project_name}}.wasm ./build/
+    cp {{root_dir}}/target/wasm32-unknown-unknown/release/{{project_name}}.wasm ./build/
     wick wasm sign ./build/{{project_name}}.wasm loop.wick
 debug: setup
     cargo +nightly build --target=wasm32-wasi
-    cp ./target/wasm32-wasi/debug/{{project_name}}.wasm ./build/
+    cp {{root_dir}}/target/wasm32-wasi/debug/{{project_name}}.wasm ./build/
     wick wasm sign ./build/{{project_name}}.wasm loop.wick
 setup:
     mkdir -p build
-test: build
+test:
     wick test loop.wick
 clean:
   cargo clean

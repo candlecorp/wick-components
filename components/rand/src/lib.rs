@@ -4,8 +4,9 @@ mod wick {
 
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
-impl IntOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl int::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = int::Outputs;
     type Config = int::Config;

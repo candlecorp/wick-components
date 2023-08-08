@@ -1,0 +1,39 @@
+
+[profile.release]
+strip = "symbols"
+codegen-units = 1
+debug = false
+lto = true
+opt-level = "z"
+panic = "abort"
+
+
+[workspace]
+resolver = "2"
+# List rust components here
+members = [
+  "components/hmac",
+  "components/openapi-ui",
+  "components/usps",
+  "components/oauth",
+  "components/array",
+  "components/jinja",
+  "components/unzip",
+  "components/liquid",
+  "components/hello-world",
+  "components/regex",
+  "components/xml",
+  "components/object",
+  "components/csv",
+  "components/string",
+  "components/rand",
+  "components/liquid-json",
+  "components/cookies",
+  "components/loop",
+]
+
+[workspace.dependencies]
+wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main", features = [
+  "datetime",
+] }
+wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }

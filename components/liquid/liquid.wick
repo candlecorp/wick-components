@@ -31,7 +31,7 @@ tests:
       - name: liquid
         operation: render
         with:
-          template: 'This is a {{ adjective }} string.  It is {{ length }} very long.'
+          template: 'This is a {%raw%}{{ adjective }}{%endraw%} string.  It is {%raw%}{{ length }}{%endraw%} very long.'
         inputs:
           - name: parameters
             value: { 'adjective': 'nice', 'length': 'not' }
