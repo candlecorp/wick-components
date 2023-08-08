@@ -1043,22 +1043,6 @@ dependencies = [
 
 [[package]]
 name = "liquid-json"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3fa84b645d05cf0eb96104b6202d0f304d3536dad406af50aa6359efd9f9e74"
-dependencies = [
- "liquid",
- "liquid-core",
- "liquid-lib",
- "once_cell",
- "regex",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "liquid-json"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d2ca2e69be23a333da932de11a7e9384a34388484fa1e6397b96677e3e5b8bd"

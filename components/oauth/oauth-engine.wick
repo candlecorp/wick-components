@@ -172,6 +172,8 @@ tests:
       session_cookie_name: sid
       client_id: "1234567"
       client_secret: "abc123"
+      email_claim: email
+      groups_claim: groups
       scope: "openid profile email"
     cases:
       - name: no cookie
