@@ -3,8 +3,9 @@ mod wick {
 }
 use wick::{types::http::HttpRequest, *};
 
-#[async_trait::async_trait(?Send)]
-impl GetIpOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl get_ip::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = get_ip::Outputs;
     type Config = get_ip::Config;

@@ -3,8 +3,9 @@ mod wick {
 }
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
-impl GreetOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl greet::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = greet::Outputs;
     type Config = greet::Config;

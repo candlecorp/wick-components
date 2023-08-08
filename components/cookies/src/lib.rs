@@ -1,14 +1,14 @@
-
 mod wick {
     wick_component::wick_import!();
 }
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
-impl GetOperation for Component {
-  type Error = anyhow::Error;
-  type Config = get::Config;
-  type Outputs = get::Outputs;
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl get::Operation for Component {
+    type Error = anyhow::Error;
+    type Config = get::Config;
+    type Outputs = get::Outputs;
 
     async fn get(
         mut input: WickStream<String>,

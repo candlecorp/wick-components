@@ -20,9 +20,7 @@ localgen = []
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main", features = [
-  "datetime"
-] }
+wick-component = { workspace = true }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
 futures = "0.3"
@@ -31,4 +29,4 @@ sha2 = "0.10.7"
 async-recursion = "1.0"
 
 [build-dependencies]
-wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
+wick-component-codegen = { workspace = true }

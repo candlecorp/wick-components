@@ -1,13 +1,14 @@
-
 mod wick {
     wick_component::wick_import!();
 }
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
-impl RenderOperation for Component {
-type Error=anyhow::Error;
- type Outputs=render::Outputs; type Config=render::Config;
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl render::Operation for Component {
+    type Error = anyhow::Error;
+    type Outputs = render::Outputs;
+    type Config = render::Config;
     async fn render(
         mut input: WickStream<Value>,
         mut outputs: Self::Outputs,

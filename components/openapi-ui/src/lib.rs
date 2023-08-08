@@ -28,7 +28,7 @@ struct Response {
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl ServeOperation for Component {
+impl serve::Operation for Component {
     type Error = Box<dyn std::error::Error + Send + Sync>;
     type Outputs = serve::Outputs;
     type Config = serve::Config;

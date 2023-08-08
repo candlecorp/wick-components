@@ -16,10 +16,7 @@ panic = "abort"
 crate-type = ["cdylib"]
 
 [dependencies]
-wick-component = { git = "https://github.com/candlecorp/wick.git", features = [
-  "uuid",
-  "datetime",
-] }
+wick-component = { workspace = true, features = ["uuid"] }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1"
 anyhow = { version = "1" }
@@ -28,4 +25,4 @@ urlencoding = "2"
 base64 = "0.21"
 
 [build-dependencies]
-wick-component-codegen = { git = "https://github.com/candlecorp/wick.git" }
+wick-component-codegen = { workspace = true }

@@ -5,8 +5,9 @@ mod wick {
 }
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
-impl MatchOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl match_::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = match_::Outputs;
     type Config = match_::Config;
@@ -32,8 +33,9 @@ impl MatchOperation for Component {
     }
 }
 
-#[async_trait::async_trait(?Send)]
-impl CaptureOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl capture::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = capture::Outputs;
     type Config = capture::Config;
@@ -66,44 +68,3 @@ impl CaptureOperation for Component {
         Ok(())
     }
 }
-
-// #[async_trait::async_trait(?Send)]
-// impl CapturesOperation for Component {
-//     type Error = anyhow::Error;
-//     type Outputs = captures::Outputs;
-//     type Config = captures::Config;
-//     async fn captures(
-//         mut input: WickStream<String>,
-//         mut outputs: Self::Outputs,
-//         ctx: Context<Self::Config>,
-//     ) -> anyhow::Result<()> {
-//         let pattern = ctx.config.pattern.clone();
-//         while let Some(Ok(input)) = input.next().await {
-//             println!("Pattern: {}", pattern);
-//             let re = match Regex::new(&pattern) {
-//                 Ok(re) => re,
-//                 Err(e) => {
-//                     return Err(anyhow::anyhow!("Invalid Regex Pattern: {}", e));
-//                 }
-//             };
-
-//             let mut all_captures_vec: Vec<Vec<String>> = Vec::new(); // Store captures for all matches
-
-//             for captures in re.captures_iter(&input) {
-//                 let mut captures_vec = Vec::new();
-//                 for capture in captures.iter() {
-//                     if let Some(capture) = capture {
-//                         captures_vec.push(capture.as_str().to_string());
-//                     }
-//                 }
-
-//                 all_captures_vec.push(captures_vec);
-//             }
-
-//             outputs.captures.send(&all_captures_vec);
-
-//             outputs.captures.done();
-//         }
-//         Ok(())
-//     }
-// }
