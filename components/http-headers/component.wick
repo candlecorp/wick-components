@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'http-headers'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+  description: "Operations to manipulate HTTP headers for both request and response"
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: candle
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.4.0
+types:
+    - name: Strings
+      kind: wick/type/union@v1
+      description: string or array of strings
+      types:
+        - string
+        - string[]
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: add
+      with:
+        - name: header
+          type: string
+      inputs:
+        - name: input
+          type: http::RequestMiddlewareResponse
+        - name: value
+          type: Strings
+      outputs:
+        - name: output
+          type: http::RequestMiddlewareResponse
+tests:
+  - name: add
+    cases:
+      - name: add_string
+        operation: add
+        with:
+          header: "foo"
+        inputs:
+          - name: input
+            value:
+              method: Get
+              scheme: Http
+              path: "/"
+              uri: "http://localhost:8080/"
+              version: Http11
+              authority: "localhost:8080"
+              query_parameters: {}
+              headers:
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+                accept:
+                  - "*/*"
+              remote_addr: "91.108.2.98"
+          - name: value
+            value: "bar"
+        outputs:
+          - name: output
+            value:
+              authority: "localhost:8080"
+              headers:
+                accept:
+                  - "*/*"
+                foo:
+                  - "bar"
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+              method: Get
+              path: "/"
+              remote_addr: "91.108.2.98"
+              scheme: Http
+              uri: "http://localhost:8080/"
+              version: "1.1"
+      - name: add_strings
+        operation: add
+        with:
+          header: "foo"
+        inputs:
+          - name: input
+            value:
+              method: Get
+              scheme: Http
+              path: "/"
+              uri: "http://localhost:8080/"
+              version: Http11
+              authority: "localhost:8080"
+              query_parameters: {}
+              headers:
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+                accept:
+                  - "*/*"
+              remote_addr: "91.108.2.98"
+          - name: value
+            value: 
+             - "bar"
+             - "baz"
+        outputs:
+          - name: output
+            value:
+              authority: "localhost:8080"
+              headers:
+                accept:
+                  - "*/*"
+                foo:
+                  - "bar"
+                  - "baz"
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+              method: Get
+              path: "/"
+              remote_addr: "91.108.2.98"
+              scheme: Http
+              uri: "http://localhost:8080/"
+              version: "1.1"
+
+
+

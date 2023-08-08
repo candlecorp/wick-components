@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
 ---
-name: 'http_client_ip'
+name: 'http-client-ip'
 kind: wick/component@v1
 metadata:
-  version: '0.1.0'
+  version: '0.2.0'
 import:
   - name: http
     component:
       kind: wick/component/types@v1
-      ref: registry.candle.dev/types/http:0.2.0
+      ref: registry.candle.dev/types/http:0.4.0
 package:
   registry:
     host: registry.candle.dev

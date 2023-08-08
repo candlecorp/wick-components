@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'log'
+kind: wick/component@v1
+metadata:
+  version: '0.2.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: string
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: output
+          type: bool
+    - name: object
+      inputs:
+        - name: input
+          type: object
+      outputs:
+        - name: output
+          type: bool
+tests:
+  - name: log
+    cases:
+      - name: string
+        operation: string
+        inputs:
+          - name: input
+            value: "This is a log"
+        outputs:
+          - name: output
+            value: true
+          - name: output
+            flags:
+              done: true
+      - name: object
+        operation: object
+        inputs:
+          - name: input
+            value: 
+              data: "This is a log"
+        outputs:
+          - name: output
+            value: true
+          - name: output
+            flags:
+              done: true
