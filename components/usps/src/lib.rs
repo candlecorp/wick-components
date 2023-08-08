@@ -6,7 +6,7 @@ use serde_xml_rs::{from_str, to_string};
 use wick::*;
 
 #[async_trait::async_trait(?Send)]
-impl VerifyOperation for Component {
+impl verify::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = verify::Outputs;
     type Config = verify::Config;

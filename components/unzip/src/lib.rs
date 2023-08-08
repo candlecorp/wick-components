@@ -9,11 +9,11 @@ mod wick {
 
 use stream_unzip::ZipReader;
 use wick::*;
-use wick_component::packet::Packet;
+use wick_component::Packet;
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl UnzipOperation for Component {
+impl unzip::Operation for Component {
     type Error = Box<dyn std::error::Error + Send + Sync>;
     type Outputs = unzip::Outputs;
     type Config = unzip::Config;

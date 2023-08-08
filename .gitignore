@@ -1,4 +1,8 @@
 /components/*/target/*
 .wick
 /components/*/build/*
+/components/*/.cargo/*
+/components/*/Cargo.lock
 /archive
+/target
+/.cargo

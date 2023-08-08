@@ -11,13 +11,13 @@ use std::ops::Deref;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use wick::*;
-use wick_component::packet::{Output, Packet};
+use wick_component::wick_packet::{Output, Packet};
 
 type HmacSha256 = Hmac<Sha256>;
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl FromBytesOperation for Component {
+impl from_bytes::Operation for Component {
     type Error = Box<dyn std::error::Error + Send + Sync>;
     type Outputs = from_bytes::Outputs;
     type Config = from_bytes::Config;
@@ -37,7 +37,7 @@ impl FromBytesOperation for Component {
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl FromStringOperation for Component {
+impl from_string::Operation for Component {
     type Error = Box<dyn std::error::Error + Send + Sync>;
     type Outputs = from_string::Outputs;
     type Config = from_string::Config;
@@ -79,7 +79,7 @@ async fn handle_new_string_stream(
             }
             let input: String = propagate_if_error!(input.decode(), outputs, continue);
             if let Err(e) = handle_packet(input.as_bytes(), &mut outputs.output, secret).await {
-                outputs.output.error(e.to_string());
+                outputs.output.error(&e.to_string());
             }
         }
     }
@@ -111,7 +111,7 @@ async fn handle_new_bytes_stream(
             }
             let input: Bytes = propagate_if_error!(input.decode(), outputs, continue);
             if let Err(e) = handle_packet(&input, &mut outputs.output, secret).await {
-                outputs.output.error(e.to_string());
+                outputs.output.error(&e.to_string());
             }
         }
     }

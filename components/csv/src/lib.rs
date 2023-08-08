@@ -8,11 +8,11 @@ mod wick {
 }
 
 use wick::*;
-use wick_component::{packet::Packet, Bytes};
+use wick_component::{wick_packet::Packet, Bytes};
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl ParseBytesOperation for Component {
+impl parse_bytes::Operation for Component {
     type Error = Box<dyn std::error::Error + Send + Sync>;
     type Outputs = parse_bytes::Outputs;
     type Config = parse_bytes::Config;
@@ -52,7 +52,7 @@ async fn handle_new_stream(
             }
             let input: Bytes = propagate_if_error!(input.decode(), outputs, continue);
             if let Err(e) = handle_packet(&input, &mut outputs).await {
-                outputs.output.error(e.to_string());
+                outputs.output.error(&e.to_string());
             }
         }
     }

@@ -52,8 +52,9 @@ fn group_same_elements(val: Value) -> Value {
     }
 }
 
-#[async_trait::async_trait(?Send)]
-impl XmlToJsonOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl xml_to_json::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = xml_to_json::Outputs;
     type Config = xml_to_json::Config;
@@ -80,7 +81,6 @@ impl XmlToJsonOperation for Component {
                 }
             }
             let parsed_data: Value = from_str(&xml_string)?;
-            println!("{:?}", parsed_data);
             let simplified_data = simplify_value(parsed_data);
             let grouped_data = group_same_elements(simplified_data);
             let final_data = match root_element_name {

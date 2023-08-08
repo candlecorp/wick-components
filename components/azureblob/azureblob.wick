@@ -1,7 +1,7 @@
 kind: wick/component@v1
 name: azureblob
 metadata:
-  version: 0.4.0
+  version: 0.5.0
   description: Access files on azure blob storage
   licenses:
     - Apache-2.0
@@ -23,6 +23,10 @@ import:
       ref: registry.candle.dev/common/hmac:0.3.0
       with:
         secret: '{{ ctx.root_config.access_key }}'
+  - name: liquid
+    component:
+      kind: wick/component/manifest@v1
+      ref: registry.candle.dev/common/liquid:0.3.0
   - name: string
     component:
       kind: wick/component/manifest@v1
@@ -42,15 +46,12 @@ component:
         - name: resource
           type: string
       uses:
-        - name: AUTH_PAYLOAD_PREFIX
-          operation: core::sender
+        - name: AUTH_PAYLOAD
+          operation: liquid::render
           with:
-            output: "GET\n\n\n\n\n\n\n\n\n\n\n\nx-ms-date:{{ ctx.inherent.timestamp | date: '%a, %d %b %Y %H:%M:00' }} GMT\nx-ms-version:2011-08-18\n/{{ctx.root_config.storage_account}}/{{ctx.root_config.container_name}}/"
+            template: "GET\n\n\n\n\n\n\n\n\n\n\n\nx-ms-date:{{ ctx.inherent.timestamp | date: '%a, %d %b %Y %H:%M:00' }} GMT\nx-ms-version:2011-08-18\n/{{ctx.root_config.storage_account}}/{{ctx.root_config.container_name}}/{%raw%}{{input}}{%endraw%}"
       flow:
-        - AUTH_PAYLOAD_PREFIX.output -> string::concatenate[a].left
-        - <>.resource -> a.right
-        - a.output -> hmac::from_string[b].input
-        - b.output -> azureblob::get[c].authorization
+        - <>.resource -> AUTH_PAYLOAD -> hmac::from_string -> azureblob::get[c].authorization
         - <>.resource -> c.resource
         - c.response -> <>.response
         - c.body -> <>.output

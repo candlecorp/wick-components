@@ -4,8 +4,9 @@ mod wick {
 use glob::Pattern;
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
-impl IncludesOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl includes::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = includes::Outputs;
     type Config = includes::Config;
@@ -26,8 +27,9 @@ impl IncludesOperation for Component {
     }
 }
 
-#[async_trait::async_trait(?Send)]
-impl IncludesGlobOperation for Component {
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
+impl includes_glob::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = includes_glob::Outputs;
     type Config = includes_glob::Config;

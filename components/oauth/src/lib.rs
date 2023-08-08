@@ -141,7 +141,7 @@ fn get_oidc_claims(id_token: &str) -> Result<String, anyhow::Error> {
 }
 
 #[async_trait::async_trait(?Send)]
-impl AuthOperation for Component {
+impl auth::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = auth::Outputs;
     type Config = auth::Config;
@@ -444,7 +444,7 @@ impl AuthOperation for Component {
 }
 
 #[async_trait::async_trait(?Send)]
-impl OidcOperation for Component {
+impl oidc::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = oidc::Outputs;
     type Config = oidc::Config;
@@ -544,7 +544,7 @@ impl OidcOperation for Component {
                     .to_string();
 
                 let mut groups = Vec::new();
-            
+
                 if config.groups_claim.is_some() {
                     groups = match claims.get(&config.groups_claim.as_ref().unwrap()) {
                         Some(groups) => wick_component::from_value(groups.to_owned()).unwrap(),
@@ -574,7 +574,7 @@ impl OidcOperation for Component {
 }
 
 #[async_trait::async_trait(?Send)]
-impl GetUserOperation for Component {
+impl get_user::Operation for Component {
     type Error = anyhow::Error;
     type Outputs = get_user::Outputs;
     type Config = get_user::Config;
@@ -664,7 +664,7 @@ impl GetUserOperation for Component {
                     .to_string();
 
                 let mut groups = Vec::new();
-                
+
                 if config.groups_claim.is_some() {
                     groups = match claims.get(&config.groups_claim.as_ref().unwrap()) {
                         Some(groups) => wick_component::from_value(groups.to_owned()).unwrap(),
