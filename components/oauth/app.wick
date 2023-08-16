@@ -39,7 +39,7 @@ import:
         scope: "openid"
         db_url: '{{ ctx.env.OAUTH_DB_URL }}'
         email_claim: upn
-        # groups_claim: groups
+        groups_claim: groups
 triggers:
   - kind: wick/trigger/http@v1
     resource: httpserver

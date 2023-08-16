@@ -3,7 +3,7 @@
 name: 'string'
 kind: wick/component@v1
 metadata:
-  version: '0.3.0'
+  version: '0.4.0'
 package:
   registry:
     host: registry.candle.dev
@@ -21,9 +21,102 @@ component:
       outputs:
         - name: output
           type: string
+    - name: split
+      with:
+        - name: separator
+          type: string
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: output
+          type: string[]
 tests:
   - name: test_concat
     cases:
+      - name: split
+        operation: split
+        with:
+          separator: ' '
+        inputs:
+          - name: input
+            value: 'hello world'
+        outputs:
+          - name: output
+            value: ['hello', 'world']
+          - name: output
+            flags:
+              done: true
+      - name: split_streams_left
+        operation: split
+        with:
+          separator: ' '
+        inputs:
+          - name: input
+            flags:
+              open: true
+          - name: input
+            value: 'hello world'
+          - name: input
+            flags:
+              close: true
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: ['hello', 'world']
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              done: true
+      - name: split_streams_mixed
+        operation: split
+        with:
+          separator: ' '
+        inputs:
+          - name: input
+            flags:
+              open: true
+          - name: input
+            value: 'hello world'
+          - name: input
+            flags:
+              close: true
+          - name: input
+            flags:
+              open: true
+          - name: input
+            value: 'howdy you'
+          - name: input
+            value: 'pardner'
+          - name: input
+            flags:
+              close: true
+        outputs:
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: ['hello', 'world']
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              open: true
+          - name: output
+            value: ['howdy', 'you']
+          - name: output
+            value: ['pardner']
+          - name: output
+            flags:
+              close: true
+          - name: output
+            flags:
+              done: true
       - name: concatenate
         operation: concatenate
         inputs:

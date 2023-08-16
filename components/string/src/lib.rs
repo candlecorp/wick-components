@@ -13,3 +13,11 @@ fn concatenate(
 ) -> Result<String, Infallible> {
     Ok(format!("{}{}", left, right))
 }
+
+#[wick_component::operation(unary_simple)]
+fn split(input: String, ctx: Context<split::Config>) -> Result<Vec<String>, std::io::Error> {
+    Ok(input
+        .split(&ctx.config.separator)
+        .map(|s| s.to_string())
+        .collect())
+}

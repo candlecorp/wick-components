@@ -68,7 +68,7 @@ dependencies = [
  "glob",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -83,6 +83,17 @@ dependencies = [
 [[package]]
 name = "asset-container"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "bitflags 2.3.3",
+ "futures 0.3.28",
+ "thiserror",
+]
+
+[[package]]
+name = "asset-container"
+version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "bitflags 2.3.3",
  "futures 0.3.28",
@@ -294,7 +305,7 @@ dependencies = [
  "basic-cookies",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -372,7 +383,7 @@ dependencies = [
  "futures 0.3.28",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -491,8 +502,21 @@ dependencies = [
 [[package]]
 name = "derive-asset-container"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
- "asset-container",
+ "asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "proc-macro2",
+ "quote",
+ "structmeta",
+ "syn 2.0.28",
+]
+
+[[package]]
+name = "derive-asset-container"
+version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git)",
  "proc-macro2",
  "quote",
  "structmeta",
@@ -676,28 +700,62 @@ dependencies = [
 [[package]]
 name = "flow-component"
 version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "anyhow",
  "futures 0.3.28",
  "liquid-json 0.5.1",
- "seeded-random",
+ "seeded-random 0.3.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "serde",
  "serde_json",
  "tracing",
- "wick-interface-types",
- "wick-packet",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-packet 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+]
+
+[[package]]
+name = "flow-component"
+version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "anyhow",
+ "futures 0.3.28",
+ "liquid-json 0.5.1",
+ "seeded-random 0.3.0 (git+https://github.com/candlecorp/wick.git)",
+ "serde",
+ "serde_json",
+ "tracing",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git)",
+ "wick-packet 0.15.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
 name = "flow-expression-parser"
 version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "liquid-json 0.5.1",
  "nom",
  "once_cell",
  "parking_lot",
  "regex 1.9.3",
- "seeded-random",
+ "seeded-random 0.3.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "flow-expression-parser"
+version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "liquid-json 0.5.1",
+ "nom",
+ "once_cell",
+ "parking_lot",
+ "regex 1.9.3",
+ "seeded-random 0.3.0 (git+https://github.com/candlecorp/wick.git)",
  "serde",
  "serde_json",
  "thiserror",
@@ -927,7 +985,7 @@ dependencies = [
  "async-trait",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
@@ -953,7 +1011,7 @@ dependencies = [
  "serde",
  "sha2",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1175,7 +1233,7 @@ dependencies = [
  "minijinja",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1282,7 +1340,7 @@ dependencies = [
  "serde",
  "serde_json",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1336,7 +1394,7 @@ dependencies = [
  "liquid-json 0.5.1",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1395,7 +1453,7 @@ dependencies = [
  "async-trait",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1500,7 +1558,7 @@ dependencies = [
  "serde",
  "urlencoding",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1515,7 +1573,7 @@ dependencies = [
  "serde_json",
  "url",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1580,7 +1638,7 @@ dependencies = [
  "serde",
  "serde_json",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1801,7 +1859,7 @@ dependencies = [
  "async-trait",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -1872,7 +1930,7 @@ dependencies = [
  "regex 1.9.3",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -2121,6 +2179,18 @@ dependencies = [
 [[package]]
 name = "seeded-random"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "parking_lot",
+ "rand 0.8.5",
+ "rand_chacha",
+ "uuid",
+]
+
+[[package]]
+name = "seeded-random"
+version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "parking_lot",
  "rand 0.8.5",
@@ -2373,7 +2443,7 @@ dependencies = [
  "async-trait",
  "serde",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -2753,7 +2823,7 @@ dependencies = [
  "serde",
  "stream-unzip",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -2783,7 +2853,7 @@ dependencies = [
  "serde",
  "serde-xml-rs",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
@@ -3036,8 +3106,9 @@ dependencies = [
 [[package]]
 name = "wick-asset-reference"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
- "asset-container",
+ "asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "bytes 1.4.0",
  "normpath",
  "parking_lot",
@@ -3046,17 +3117,35 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tracing",
- "wick-oci-utils",
+ "wick-oci-utils 0.3.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+]
+
+[[package]]
+name = "wick-asset-reference"
+version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git)",
+ "bytes 1.4.0",
+ "normpath",
+ "parking_lot",
+ "serde",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "wick-oci-utils 0.3.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
 name = "wick-component"
 version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "async-recursion",
  "bytes 1.4.0",
  "chrono",
- "flow-component",
+ "flow-component 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "paste",
  "serde",
  "serde_json",
@@ -3068,12 +3157,13 @@ dependencies = [
  "wasmrs-runtime",
  "wasmrs-rx",
  "wick-operation",
- "wick-packet",
+ "wick-packet 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
 name = "wick-component-codegen"
 version = "0.4.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "anyhow",
  "bitflags 2.3.3",
@@ -3087,19 +3177,41 @@ dependencies = [
  "serde_json",
  "syn 2.0.28",
  "tokio",
- "wick-config",
- "wick-interface-types",
+ "wick-config 0.26.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+]
+
+[[package]]
+name = "wick-component-codegen"
+version = "0.4.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "anyhow",
+ "bitflags 2.3.3",
+ "check_keyword",
+ "derive_builder",
+ "heck",
+ "itertools 0.11.0",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "serde_json",
+ "syn 2.0.28",
+ "tokio",
+ "wick-config 0.26.0 (git+https://github.com/candlecorp/wick.git)",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
 name = "wick-config"
 version = "0.26.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
- "asset-container",
- "derive-asset-container",
+ "asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "derive-asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "derive_builder",
- "flow-component",
- "flow-expression-parser",
+ "flow-component 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "flow-expression-parser 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "glob",
  "liquid-json 0.5.1",
  "num-traits",
@@ -3117,14 +3229,59 @@ dependencies = [
  "tokio",
  "tracing",
  "url",
- "wick-asset-reference",
- "wick-interface-types",
- "wick-packet",
+ "wick-asset-reference 0.3.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-packet 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+]
+
+[[package]]
+name = "wick-config"
+version = "0.26.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git)",
+ "derive-asset-container 0.2.0 (git+https://github.com/candlecorp/wick.git)",
+ "derive_builder",
+ "flow-component 0.5.0 (git+https://github.com/candlecorp/wick.git)",
+ "flow-expression-parser 0.5.0 (git+https://github.com/candlecorp/wick.git)",
+ "glob",
+ "liquid-json 0.5.1",
+ "num-traits",
+ "option-utils",
+ "parking_lot",
+ "property",
+ "regex 1.9.3",
+ "serde",
+ "serde-value",
+ "serde-with-expand-env",
+ "serde_json",
+ "serde_with",
+ "serde_yaml",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "url",
+ "wick-asset-reference 0.3.0 (git+https://github.com/candlecorp/wick.git)",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git)",
+ "wick-packet 0.15.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
 name = "wick-interface-types"
 version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "nom",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "serde_yaml",
+]
+
+[[package]]
+name = "wick-interface-types"
+version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "nom",
  "serde",
@@ -3136,6 +3293,7 @@ dependencies = [
 [[package]]
 name = "wick-oci-utils"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "bytes 1.4.0",
  "derive_builder",
@@ -3152,12 +3310,36 @@ dependencies = [
  "thiserror",
  "tokio",
  "tracing",
- "wick-xdg",
+ "wick-xdg 0.2.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+]
+
+[[package]]
+name = "wick-oci-utils"
+version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "bytes 1.4.0",
+ "derive_builder",
+ "flate2",
+ "getset",
+ "oci-distribution",
+ "once_cell",
+ "regex 1.9.3",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "sha256",
+ "tar",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "wick-xdg 0.2.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
 name = "wick-operation"
 version = "0.1.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -3168,6 +3350,7 @@ dependencies = [
 [[package]]
 name = "wick-packet"
 version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "base64 0.21.2",
  "base64-serde",
@@ -3175,7 +3358,7 @@ dependencies = [
  "chrono",
  "parking_lot",
  "pin-project-lite",
- "seeded-random",
+ "seeded-random 0.3.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "serde",
  "serde_json",
  "thiserror",
@@ -3188,12 +3371,49 @@ dependencies = [
  "wasmrs-guest",
  "wasmrs-runtime",
  "wasmrs-rx",
- "wick-interface-types",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+]
+
+[[package]]
+name = "wick-packet"
+version = "0.15.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "base64 0.21.2",
+ "base64-serde",
+ "bytes 1.4.0",
+ "chrono",
+ "parking_lot",
+ "pin-project-lite",
+ "seeded-random 0.3.0 (git+https://github.com/candlecorp/wick.git)",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio-stream",
+ "tracing",
+ "url",
+ "wasmrs",
+ "wasmrs-codec",
+ "wasmrs-frames",
+ "wasmrs-guest",
+ "wasmrs-runtime",
+ "wasmrs-rx",
+ "wick-interface-types 0.15.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
 name = "wick-xdg"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#3239a4453868d04ea32ace557cc14ca75a3045e8"
+dependencies = [
+ "getset",
+ "thiserror",
+]
+
+[[package]]
+name = "wick-xdg"
+version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git#3239a4453868d04ea32ace557cc14ca75a3045e8"
 dependencies = [
  "getset",
  "thiserror",
@@ -3332,7 +3552,7 @@ dependencies = [
  "serde",
  "serde-xml-rs",
  "wick-component",
- "wick-component-codegen",
+ "wick-component-codegen 0.4.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "xml-rs",
 ]
 
