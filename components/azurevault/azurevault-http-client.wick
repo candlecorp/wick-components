@@ -1,0 +1,34 @@
+kind: wick/component@v1
+name: azurevault-http-client
+metadata:
+  version: 0.0.1
+  description: New HTTP Client wick component
+  licenses:
+    - Apache-2.0
+resources:
+  - name: HTTP_URL
+    resource:
+      kind: wick/resource/url@v1
+      url: '{{ ctx.root_config.vault_url }}'
+component:
+  kind: wick/component/http@v1
+  resource: HTTP_URL
+  with:
+    - name: vault_url
+      type: string
+  operations:
+    - name: create_secret
+      method: Put
+      path: "/secrets/{{ name }}?api-version=7.4"
+      codec: Json
+      inputs:
+        - name: name
+          type: string
+        - name: value
+          type: string
+        - name: authorization
+          type: string
+      headers:
+        authorization: ["Bearer {{ authorization }}"]
+      body:
+        value: "{{ value }}"

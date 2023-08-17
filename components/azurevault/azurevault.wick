@@ -1,0 +1,58 @@
+kind: wick/component@v1
+name: azurevault
+metadata:
+  version: 0.1.0
+  description: Manipulate Entires in Azure Vault
+  licenses:
+    - Apache-2.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+import:
+  - name: azureauth_client
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./azureauth-http-client.wick
+      with:
+        tenant_id: '{{ ctx.root_config.tenant_id }}'
+        client_id: '{{ ctx.root_config.client_id }}'
+        client_secret: '{{ ctx.root_config.client_secret }}'
+  - name: azurevault_client
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./azurevault-http-client.wick
+      with:
+        vault_url: '{{ ctx.root_config.vault_url }}'
+component:
+  kind: wick/component/composite@v1
+  with:
+    - name: tenant_id
+      type: string
+    - name: client_id
+      type: string
+    - name: client_secret
+      type: string
+    - name: vault_url
+      type: string
+  operations:
+    - name: create_secret
+      inputs:
+        - name: name
+          type: string
+        - name: value
+          type: string
+      uses:
+        - name: SENDER
+          operation: core::sender
+          with:
+            output:
+              grant_type: client_credentials 
+      flow:
+        - SENDER.output.grant_type -> azureauth_client::get_token[GET_TOKEN].grant_type
+        - GET_TOKEN.response -> drop
+        - GET_TOKEN.body.access_token -> azurevault_client::create_secret[CREATE_SECRET].authorization
+        - <>.name -> CREATE_SECRET.name
+        - <>.value -> CREATE_SECRET.value
+        - CREATE_SECRET.response -> drop
+        - CREATE_SECRET.body -> <>.output

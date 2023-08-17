@@ -1,0 +1,35 @@
+kind: wick/component@v1
+name: azurevault-http-client
+metadata:
+  version: 0.0.1
+  description: New HTTP Client wick component
+  licenses:
+    - Apache-2.0
+resources:
+  - name: HTTP_URL
+    resource:
+      kind: wick/resource/url@v1
+      url: https://login.microsoftonline.com/{{ ctx.root_config.tenant_id }}/oauth2/v2.0
+component:
+  kind: wick/component/http@v1
+  resource: HTTP_URL
+  with:
+    - name: tenant_id
+      type: string
+    - name: client_id
+      type: string
+    - name: client_secret
+      type: string
+  operations:
+    - name: get_token
+      method: Post
+      path: /token
+      codec: FormData
+      inputs:
+        - name: grant_type
+          type: string
+      body:
+        client_id: "{{ ctx.root_config.client_id }}"
+        client_secret: "{{ ctx.root_config.client_secret }}"
+        grant_type: "{{ grant_type }}"
+        scope: "https://vault.azure.net/.default"
