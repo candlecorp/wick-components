@@ -1,7 +1,7 @@
 kind: wick/component@v1
 name: oauth_postgres
 metadata:
-  version: 0.6.0
+  version: 0.6.1
   description: Oauth composite middleware component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
   licenses:
   - Apache-2.0

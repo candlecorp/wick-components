@@ -34,9 +34,10 @@ component:
       outputs:
         - name: output
           type: object
-      query: |
+      exec: |
         INSERT INTO oauth_sessions (id, token_type, access_token, refresh_token, expires_at)
         VALUES ($1, $2, $3, $4, $5)
+        returning id;
       arguments:
         - session_id
         - token_type
@@ -52,9 +53,10 @@ component:
       outputs:
         - name: output
           type: object
-      query: |
+      exec: |
         INSERT INTO oidc_claims (session_Id, claims)
         VALUES ($1, $2::json)
+        returning session_id;
       arguments:
         - session_id
         - claims
@@ -93,8 +95,9 @@ component:
       outputs:
         - name: output
           type: object
-      query: |
+      exec: |
         update oauth_sessions set expires_at = $1, access_token = $2, updated_at = now(), refresh_token=$3 where session_id = $4
+        returning session_id;
       arguments:
         - expires_at
         - access_token
@@ -107,7 +110,8 @@ component:
       outputs:
         - name: output
           type: object
-      query: |
+      exec: |
         delete from oauth_sessions where session_id = $1
+        returning session_id;
       arguments:
         - session_id

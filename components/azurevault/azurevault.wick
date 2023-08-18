@@ -1,7 +1,7 @@
 kind: wick/component@v1
 name: azurevault
 metadata:
-  version: 0.1.0
+  version: 0.2.0
   description: Manipulate Entires in Azure Vault
   licenses:
     - Apache-2.0
@@ -56,3 +56,37 @@ component:
         - <>.value -> CREATE_SECRET.value
         - CREATE_SECRET.response -> drop
         - CREATE_SECRET.body -> <>.output
+    - name: delete_secret
+      inputs:
+        - name: name
+          type: string
+      uses:
+        - name: SENDER
+          operation: core::sender
+          with:
+            output:
+              grant_type: client_credentials 
+      flow:
+        - SENDER.output.grant_type -> azureauth_client::get_token[GET_TOKEN].grant_type
+        - GET_TOKEN.response -> drop
+        - GET_TOKEN.body.access_token -> azurevault_client::delete_secret[DELETE_SECRET].authorization
+        - <>.name -> DELETE_SECRET.name
+        - DELETE_SECRET.response -> drop
+        - DELETE_SECRET.body -> <>.output
+    - name: purge_secret
+      inputs:
+        - name: name
+          type: string
+      uses:
+        - name: SENDER
+          operation: core::sender
+          with:
+            output:
+              grant_type: client_credentials 
+      flow:
+        - SENDER.output.grant_type -> azureauth_client::get_token[GET_TOKEN].grant_type
+        - GET_TOKEN.response -> drop
+        - GET_TOKEN.body.access_token -> azurevault_client::purge_secret[PURGE_SECRET].authorization
+        - <>.name -> PURGE_SECRET.name
+        - PURGE_SECRET.response -> drop
+        - PURGE_SECRET.body -> <>.output

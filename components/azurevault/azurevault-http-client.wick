@@ -32,3 +32,25 @@ component:
         authorization: ["Bearer {{ authorization }}"]
       body:
         value: "{{ value }}"
+    - name: delete_secret
+      method: Delete
+      path: "/secrets/{{ name }}?api-version=7.4"
+      codec: Json
+      inputs:
+        - name: name
+          type: string
+        - name: authorization
+          type: string
+      headers:
+        authorization: ["Bearer {{ authorization }}"]
+    - name: purge_secret
+      method: Delete
+      path: "/deletedsecrets/{{ name }}?api-version=7.4"
+      codec: Json
+      inputs:
+        - name: name
+          type: string
+        - name: authorization
+          type: string
+      headers:
+        authorization: ["Bearer {{ authorization }}"]
