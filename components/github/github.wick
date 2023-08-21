@@ -1,0 +1,49 @@
+kind: wick/component@v1
+name: github
+metadata:
+  version: '0.1.0'
+  description: 'A component that connects to github api'
+  licenses:
+    - Apache-2.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+import:
+  - name: github_client
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./github-api.wick
+      with:
+        authorization_type: '{{ ctx.root_config.authorization_type }}'
+        authorization_value: '{{ ctx.root_config.authorization_value }}'
+  - name: github_driver
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./github-driver.wick
+      provide:
+        github_client: github_client
+component:
+  kind: wick/component/composite@v1
+  with:
+    - name: authorization_type
+      type: string
+    - name: authorization_value
+      type: string
+  operations:
+    - name: get_stargazers
+      inputs:
+        - name: organization
+          type: string
+        - name: repository
+          type: string
+      outputs:
+        - name: stargazers
+          type: string[]
+      uses:
+        - name: GET_STARGAZERS
+          operation: github_driver::get_stargazers
+      flow:
+        - <>.organization -> GET_STARGAZERS.organization
+        - <>.repository -> GET_STARGAZERS.repository
+        - GET_STARGAZERS.stargazers -> <>.stargazers

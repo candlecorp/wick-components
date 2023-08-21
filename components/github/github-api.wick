@@ -1,0 +1,34 @@
+kind: wick/component@v1
+name: github-api
+metadata:
+  version: 0.0.1
+  description: HTTP client for github
+  licenses:
+  - Apache-2.0
+resources:
+- name: HTTP_URL
+  resource:
+    kind: wick/resource/url@v1
+    url: https://api.github.com
+component:
+  kind: wick/component/http@v1
+  resource: HTTP_URL
+  with:
+    - name: authorization_type
+      type: string
+    - name: authorization_value
+      type: string
+  codec: Json
+  operations:
+  - name: get_stargazers
+    inputs:
+    - name: organization
+      type: string
+    - name: repository
+      type: string
+    - name: page
+      type: u32
+    method: Get
+    headers:
+      "Authorization": ["{{ ctx.root_config.authorization_type }} {{ ctx.root_config.authorization_value }}"]
+    path: repos/{{organization}}/{{repository}}/stargazers?per_page=100&page={{page}}

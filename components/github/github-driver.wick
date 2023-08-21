@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'github'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+  description: 'A component that connects to github api'
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.4.0
+requires:
+  - name: github_client
+    interface:
+      operations:
+        - name: get_stargazers
+          inputs:
+            - name: organization
+              type: string
+            - name: repository
+              type: string
+            - name: page
+              type: u32
+          outputs:
+            - name: response
+              type: http::HttpResponse
+            - name: body
+              type: Stargazer[]
+types:
+  # {
+  #   "login": "user123",
+  #   "id": 123412345,
+  #   "node_id": "U_kgDOBm8aIg",
+  #   "avatar_url": "https://avatars.githubusercontent.com/u/123412345?v=4",
+  #   "gravatar_id": "",
+  #   "url": "https://api.github.com/users/user123",
+  #   "html_url": "https://github.com/user123",
+  #   "followers_url": "https://api.github.com/users/user123/followers",
+  #   "following_url": "https://api.github.com/users/user123/following{/other_user}",
+  #   "gists_url": "https://api.github.com/users/user123/gists{/gist_id}",
+  #   "starred_url": "https://api.github.com/users/user123/starred{/owner}{/repo}",
+  #   "subscriptions_url": "https://api.github.com/users/user123/subscriptions",
+  #   "organizations_url": "https://api.github.com/users/user123/orgs",
+  #   "repos_url": "https://api.github.com/users/user123/repos",
+  #   "events_url": "https://api.github.com/users/user123/events{/privacy}",
+  #   "received_events_url": "https://api.github.com/users/user123/received_events",
+  #   "type": "User",
+  #   "site_admin": false
+  # },
+  - name: Stargazer
+    kind: wick/type/struct@v1
+    fields:
+      - name: login
+        type: string
+      - name: url
+        type: string
+      - name: type
+        type: string
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/github.signed.wasm
+  operations:
+    - name: get_stargazers
+      inputs:
+        - name: organization
+          type: string
+        - name: repository
+          type: string
+      outputs:
+        - name: stargazers
+          type: string[]
