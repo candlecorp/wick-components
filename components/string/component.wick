@@ -3,7 +3,7 @@
 name: 'string'
 kind: wick/component@v1
 metadata:
-  version: '0.4.0'
+  version: '0.5.0'
 package:
   registry:
     host: registry.candle.dev
@@ -31,9 +31,27 @@ component:
       outputs:
         - name: output
           type: string[]
+    - name: lowercase
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: output
+          type: string
 tests:
   - name: test_concat
     cases:
+      - name: lowercase
+        operation: lowercase
+        inputs:
+          - name: input
+            value: 'HELLO WORLD'
+        outputs:
+          - name: output
+            value: 'hello world'
+          - name: output
+            flags:
+              done: true
       - name: split
         operation: split
         with:

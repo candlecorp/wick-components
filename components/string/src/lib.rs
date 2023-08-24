@@ -21,3 +21,8 @@ fn split(input: String, ctx: Context<split::Config>) -> Result<Vec<String>, std:
         .map(|s| s.to_string())
         .collect())
 }
+
+#[wick_component::operation(unary_simple)]
+fn lowercase(input: String, _ctx: Context<lowercase::Config>) -> Result<String, std::io::Error> {
+    Ok(input.to_lowercase())
+}
