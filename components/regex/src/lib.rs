@@ -1,3 +1,5 @@
+use std::vec;
+
 use regex::Regex;
 
 mod wick {
@@ -5,66 +7,46 @@ mod wick {
 }
 use wick::*;
 
-#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
-#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl match_::Operation for Component {
-    type Error = anyhow::Error;
-    type Outputs = match_::Outputs;
-    type Config = match_::Config;
-    async fn match_(
-        mut input: WickStream<String>,
-        mut outputs: Self::Outputs,
-        ctx: Context<Self::Config>,
-    ) -> anyhow::Result<()> {
-        let pattern = ctx.config.pattern.clone();
-        while let Some(Ok(input)) = input.next().await {
-            println!("Pattern: {}", pattern);
-            let re = match Regex::new(&pattern) {
-                Ok(re) => re,
-                Err(e) => {
-                    return Err(anyhow::anyhow!("Invalid Regex Pattern: {}", e));
-                }
-            };
-            outputs.result.send(&re.is_match(&input));
+#[wick_component::operation(unary_simple)]
+fn match_(input: String, ctx: Context<match_::Config>) -> Result<bool, std::io::Error> {
+    let pattern = ctx.config.pattern.clone();
 
-            outputs.result.done();
+    let re = match Regex::new(&pattern) {
+        Ok(re) => re,
+        Err(e) => {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                format!("Invalid Regex Pattern: {}", e),
+            ));
         }
-        Ok(())
-    }
+    };
+
+    Ok(re.is_match(&input))
 }
 
-#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
-#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
-impl capture::Operation for Component {
-    type Error = anyhow::Error;
-    type Outputs = capture::Outputs;
-    type Config = capture::Config;
-    async fn capture(
-        mut input: WickStream<String>,
-        mut outputs: Self::Outputs,
-        ctx: Context<Self::Config>,
-    ) -> anyhow::Result<()> {
-        let pattern = ctx.config.pattern.clone();
-        while let Some(Ok(input)) = input.next().await {
-            println!("Pattern: {}", pattern);
-            let re = match Regex::new(&pattern) {
-                Ok(re) => re,
-                Err(e) => {
-                    return Err(anyhow::anyhow!("Invalid Regex Pattern: {}", e));
-                }
-            };
+#[wick_component::operation(unary_simple)]
+fn capture(input: String, ctx: Context<capture::Config>) -> Result<Vec<String>, std::io::Error> {
+    let pattern = ctx.config.pattern.clone();
 
-            if let Some(captures) = re.captures(&input) {
-                let mut captures_vec = Vec::new();
-                for capture in captures.iter() {
-                    if let Some(capture) = capture {
-                        captures_vec.push(capture.as_str().to_string());
-                    }
-                }
-                outputs.result.send(&captures_vec);
+    let re = match Regex::new(&pattern) {
+        Ok(re) => re,
+        Err(e) => {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                format!("Invalid Regex Pattern: {}", e),
+            ));
+        }
+    };
+
+    if let Some(captures) = re.captures(&input) {
+        let mut captures_vec = Vec::new();
+        for capture in captures.iter() {
+            if let Some(capture) = capture {
+                captures_vec.push(capture.as_str().to_string());
             }
         }
-        outputs.result.done();
-        Ok(())
+        return Ok(captures_vec);
     }
+
+    Ok(vec![])
 }

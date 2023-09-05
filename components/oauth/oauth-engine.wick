@@ -25,11 +25,11 @@ types:
       - name: access_token
         type: string
       - name: expires_in
-        type: u32
+        type: u32?
       - name: token_type
         type: string
       - name: id_token
-        type: string
+        type: string?
   - name: SessionDetails
     kind: wick/type/struct@v1
     fields:

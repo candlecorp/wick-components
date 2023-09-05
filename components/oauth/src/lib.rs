@@ -133,9 +133,9 @@ fn get_oidc_claims(id_token: &str) -> Result<String, anyhow::Error> {
 
     let engine = engine::GeneralPurpose::new(&alphabet::URL_SAFE, general_purpose::NO_PAD);
 
-    let decoded = engine.decode(parts[1]).unwrap();
+    let decoded = engine.decode(parts[1])?;
 
-    let claims = String::from_utf8(decoded).unwrap();
+    let claims = String::from_utf8(decoded)?;
 
     Ok(claims)
 }
@@ -256,11 +256,7 @@ impl auth::Operation for Component {
                     }
 
                     //ensure body is not empty
-                    if body.access_token.is_empty()
-                        || body.expires_in == 0
-                        || body.token_type.is_empty()
-                        || body.id_token.is_empty()
-                    {
+                    if body.access_token.is_empty() || body.token_type.is_empty() {
                         let response =
                             build_error_response("Token endpoint returned invalid response");
                         outputs
@@ -272,8 +268,18 @@ impl auth::Operation for Component {
                     }
 
                     //process id_token and extract claims
-                    let claims_access = get_oidc_claims(body.access_token.as_str())?;
-                    let claims_id = get_oidc_claims(body.id_token.as_str())?;
+                    let claims_access = get_oidc_claims(body.access_token.as_str());
+                    let claims_access = match claims_access {
+                        Ok(claims) => claims,
+                        Err(_) => "{}".to_string(),
+                    };
+                    println!("body: {:?}", body);
+                    let claims_id = match body.id_token {
+                        Some(id_token) => get_oidc_claims(id_token.as_str())?,
+                        None => "{}".to_string(),
+                    };
+
+                    println!("claims_id: {:?}", claims_id);
 
                     let claims_access: Value = wick_component::from_str(&claims_access)?;
                     let claims_id: Value = wick_component::from_str(&claims_id)?;
@@ -297,9 +303,17 @@ impl auth::Operation for Component {
                         }
                     };
 
+                    println!("claims: {:?}", claims);
+
                     let session_id = &rng.uuid();
 
-                    let expires_at = timestamp + Duration::seconds(body.expires_in as _);
+                    let mut expires: u32 = 3600;
+
+                    if body.expires_in.is_some() {
+                        expires = body.expires_in.unwrap();
+                    }
+
+                    let expires_at = timestamp + Duration::seconds(expires as _);
 
                     let mut insert_token_response = ctx.provided().dbclient.insert_token(
                         once(session_id.to_string()),
@@ -311,6 +325,7 @@ impl auth::Operation for Component {
 
                     while let Some(insert_response) = insert_token_response.next().await {
                         let _response = propagate_if_error!(insert_response, outputs, continue);
+                        println!("insert_response: {:?}", _response);
                     }
 
                     let mut insert_claims_response = ctx
@@ -320,6 +335,7 @@ impl auth::Operation for Component {
 
                     while let Some(insert_response) = insert_claims_response.next().await {
                         let _response = propagate_if_error!(insert_response, outputs, continue);
+                        println!("insert_response: {:?}", _response);
                     }
 
                     //on error redirect to "/"

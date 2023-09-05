@@ -1,5 +1,5 @@
 kind: wick/component@v1
-name: oauth-postgres
+name: oauth-sqlite
 metadata:
   version: 0.1.0
   description: Oauth composite middleware component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
@@ -13,7 +13,7 @@ import:
   - name: OAUTHDB
     component:
       kind: wick/component/manifest@v1
-      ref: ./oauth-db-postgres.wick
+      ref: ./oauth-db-sqlite.wick
       with:
         db_url: '{{ ctx.root_config.db_url }}'
   - name: OAUTHHTTP

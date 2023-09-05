@@ -1,10 +1,9 @@
-name: oauth_db_postgres
+name: oauth_db_sqlite
 kind: wick/component@v1
 resources:
   - name: db_resource
     resource:
       kind: wick/resource/url@v1
-      # pass $* values as environment variables to the pod
       url: "{{ ctx.root_config.db_url }}"
 component:
   kind: wick/component/sql@v1
@@ -13,17 +12,12 @@ component:
       type: string
   resource: db_resource
   tls: false
-  #   id VARCHAR(50) PRIMARY KEY,
-  # token_type VARCHAR(255) NOT NULL,
-  # access_token TEXT NOT NULL,
-  # refresh_token TEXT NOT NULL,
-  # expires_at TIMESTAMP NOT NULL,
   operations:
     - name: initialize
       exec: |
         CREATE TABLE IF NOT EXISTS oauth_sessions (
-          id VARCHAR(50) PRIMARY KEY,
-          token_type VARCHAR(255) NOT NULL,
+          id TEXT PRIMARY KEY,
+          token_type TEXT NOT NULL,
           access_token TEXT NOT NULL,
           refresh_token TEXT NOT NULL,
           expires_at TIMESTAMP NOT NULL,
@@ -32,8 +26,8 @@ component:
         );
 
         CREATE TABLE IF NOT EXISTS oidc_claims (
-          session_id VARCHAR(50) PRIMARY KEY REFERENCES oauth_sessions(id),
-          claims json
+          session_id TEXT PRIMARY KEY REFERENCES oauth_sessions(id),
+          claims TEXT
         );
     - name: insert_token
       inputs:
@@ -112,7 +106,7 @@ component:
         - name: output
           type: object
       exec: |
-        update oauth_sessions set expires_at = $1, access_token = $2, updated_at = now(), refresh_token=$3 where session_id = $4
+        update oauth_sessions set expires_at = $1, access_token = $2, updated_at = datetime('now'), refresh_token=$3 where session_id = $4
         returning session_id;
       arguments:
         - expires_at

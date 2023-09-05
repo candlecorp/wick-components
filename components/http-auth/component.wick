@@ -1,0 +1,131 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'http-auth'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.4.0
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: candle
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: basic
+      with:
+        - name: username
+          type: string
+        - name: password
+          type: string
+      inputs:
+        - name: request
+          type: http::HttpRequest
+      outputs:
+        - name: output
+          type: http::RequestMiddlewareResponse
+tests:
+  - name: basic
+    cases:
+      - name: no_auth
+        operation: basic
+        with:
+          username: 'username'
+          password: 'password'
+        inputs:
+          - name: request
+            value:
+              method: Get
+              scheme: Http
+              path: '/'
+              uri: 'http://localhost:8080/'
+              version: Http11
+              authority: 'localhost:8080'
+              remote_addr: '127.0.0.1'
+              query_parameters: {}
+              headers:
+                host:
+                  - 'localhost:8080'
+                user-agent:
+                  - 'curl/7.64.1'
+                accept:
+                  - '*/*'
+        outputs:
+          - name: output
+            assertions:
+              - operator: Contains
+                value: { status: "400" }
+          - name: output
+            flags:
+              done: true
+      - name: wrong_auth
+        operation: basic
+        with:
+          username: 'username'
+          password: 'password'
+        inputs:
+          - name: request
+            value:
+              method: Get
+              scheme: Http
+              path: '/'
+              uri: 'http://localhost:8080/'
+              version: Http11
+              authority: 'localhost:8080'
+              remote_addr: '127.0.0.1'
+              query_parameters: {}
+              headers:
+                host:
+                  - 'localhost:8080'
+                user-agent:
+                  - 'curl/7.64.1'
+                accept:
+                  - '*/*'
+                authorization:
+                  - Basic YXJmOmJhcmY=
+        outputs:
+          - name: output
+            assertions:
+              - operator: Contains
+                value: { status: "400" }
+          - name: output
+            flags:
+              done: true
+      - name: correct_auth
+        operation: basic
+        with:
+          username: 'username'
+          password: 'password'
+        inputs:
+          - name: request
+            value:
+              method: Get
+              scheme: Http
+              path: '/'
+              uri: 'http://localhost:8080/'
+              version: Http11
+              authority: 'localhost:8080'
+              remote_addr: '127.0.0.1'
+              query_parameters: {}
+              headers:
+                host:
+                  - 'localhost:8080'
+                user-agent:
+                  - 'curl/7.64.1'
+                accept:
+                  - '*/*'
+                authorization:
+                  - Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+        outputs:
+          - name: output
+            assertions:
+              - operator: Contains
+                value: { remote_addr: "127.0.0.1" }
+          - name: output
+            flags:
+              done: true
