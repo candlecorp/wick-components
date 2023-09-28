@@ -161,6 +161,13 @@ fn extend_object_at_path(root: &mut Value, mut path: LinkedList<&str>, new_value
                     panic!("Root value must be an object when new value is an object");
                 }
             }
+            Value::Array(new_array) => {
+                if let Value::Array(array) = root {
+                    array.append(&mut new_array.clone());
+                } else {
+                    *root = Value::Array(new_array);
+                }
+            }
             Value::String(new_string) => {
                 *root = Value::String(new_string);
             }
