@@ -24,9 +24,9 @@ anyhow = { version = "1" }
 #
 # Candle libraries
 #
-candle-core = { version = "0.2.2" }
-candle-nn = { version = "0.2.2" }
-candle-transformers = { version = "0.2.2" }
+candle-core = { version = "0.3.0" }
+candle-nn = { version = "0.3.0" }
+candle-transformers = { version = "0.3.0" }
 tokenizers = { version = "0.13.4", default-features = false, features = [
   "unstable_wasm",
 ] }
