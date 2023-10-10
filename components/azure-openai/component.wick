@@ -3,7 +3,7 @@
 name: 'azure-openai'
 kind: wick/component@v1
 metadata:
-  version: '0.1.0'
+  version: '0.2.0'
 package:
   registry:
     host: registry.candle.dev
@@ -28,3 +28,5 @@ component:
       outputs:
         - name: event
           type: http::HttpEvent
+        - name: tokens
+          type: u32

@@ -67,6 +67,8 @@ impl parse_completion::Operation for Component {
         };
 
         outputs.event.send(&event_obj);
+        outputs.tokens.send(count);
+        outputs.tokens.done();
         outputs.event.done();
         Ok(())
     }
