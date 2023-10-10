@@ -49,6 +49,7 @@ pub(super) fn load_model(file: &str) -> Result<Llama> {
 }
 
 fn load_model_inner(file: &str) -> Result<Llama> {
+    println!("opening file: {}", file);
     let mut file = std::fs::File::open(file)?;
     let config = Config::from_reader(&mut file)?;
     let device = candle_core::Device::Cpu;
@@ -70,6 +71,7 @@ pub(super) fn load_tokenizer(file: &str) -> Result<Tokenizer> {
 }
 
 fn load_tokenizer_inner(file: &str) -> Result<Tokenizer> {
+    println!("opening file: {}", file);
     Tokenizer::from_file(file).map_err(|e| anyhow::anyhow!(e))
 }
 
