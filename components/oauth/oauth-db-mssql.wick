@@ -133,3 +133,16 @@ component:
         DELETE FROM oauth_sessions WHERE id = @p1
       arguments:
         - session_id
+    - name: get_login_hint_claim
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        SELECT JSON_VALUE(claims, '$.login_hint') AS login_hint
+        FROM oidc_claims
+        WHERE session_id = @p1;
+      arguments:
+        - session_id

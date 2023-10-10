@@ -131,3 +131,14 @@ component:
         returning session_id;
       arguments:
         - session_id
+    - name: get_login_hint_claim
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        select claims->'login_hint' as login_hint from oidc_claims where session_id = $1
+      arguments:
+        - session_id

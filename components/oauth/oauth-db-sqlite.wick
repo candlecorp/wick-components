@@ -125,3 +125,14 @@ component:
         returning session_id;
       arguments:
         - session_id
+    - name: get_login_hint_claim
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        SELECT json_extract(claims, '$.login_hint') AS login_hint FROM oidc_claims WHERE session_id = $1;
+      arguments:
+        - session_id

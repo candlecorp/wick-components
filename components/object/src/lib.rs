@@ -74,13 +74,17 @@ impl serialize::Operation for Component {
     type Config = serialize::Config;
     async fn serialize(
         mut content: WickStream<String>,
-        mut content_type: WickStream<String>,
         mut outputs: Self::Outputs,
-        _ctx: Context<Self::Config>,
+        ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
-        while let (Some(Ok(content_string)), Some(Ok(content_type_string))) =
-            (content.next().await, content_type.next().await)
-        {
+        let content_type_string = ctx.config.content_type.clone();
+        while let Some(Ok(content_string)) = content.next().await {
+            let content_string = match base64::decode(&content_string) {
+                Ok(bytes) => String::from_utf8(bytes).map_err(|e| {
+                    anyhow::anyhow!("Error converting base64 bytes to String: {}", e)
+                })?,
+                Err(_) => content_string,
+            };
             // Parse the content based on the content type
             let parsed_content: Value = match content_type_string.as_str() {
                 "application/json" => {

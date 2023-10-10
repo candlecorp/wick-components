@@ -7,7 +7,7 @@ metadata:
   authors: ['Candle Corporation']
   licenses: ['Apache-2.0']
   documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
-  version: '0.4.0'
+  version: '0.5.0'
 package:
   registry:
     host: registry.candle.dev
@@ -17,10 +17,11 @@ component:
   ref: build/object.signed.wasm
   operations:
     - name: serialize
+      with:
+        - name: content_type
+          type: string
       inputs:
         - name: content
-          type: string
-        - name: content_type
           type: string
       outputs:
         - name: output
@@ -106,11 +107,24 @@ tests:
               done: true
       - name: serialize-test-json
         operation: serialize
+        with:
+          content_type: 'application/json'
         inputs:
           - name: content
             value: '{ "name": "John", "age": 130, "city": "New York" }'
-          - name: content_type
-            value: 'application/json'
+        outputs:
+          - name: output
+            value: { 'name': 'John', 'age': 130, 'city': 'New York' }
+          - name: output
+            flags:
+              done: true
+      - name: serialize-test-json-base64
+        operation: serialize
+        with:
+          content_type: 'application/json'
+        inputs:
+          - name: content
+            value: eyAibmFtZSI6ICJKb2huIiwgImFnZSI6IDEzMCwgImNpdHkiOiAiTmV3IFlvcmsiIH0=
         outputs:
           - name: output
             value: { 'name': 'John', 'age': 130, 'city': 'New York' }
@@ -119,11 +133,11 @@ tests:
               done: true
       - name: serialize-test-xml
         operation: serialize
+        with:
+          content_type: 'application/xml'
         inputs:
           - name: content
             value: '<person><name>John</name><age>130</age><city>New York</city></person>'
-          - name: content_type
-            value: 'application/xml'
         outputs:
           - name: output
             value: { 'name': 'John', 'age': '130', 'city': 'New York' }
@@ -132,11 +146,11 @@ tests:
               done: true
       - name: serialize-test-form-encode
         operation: serialize
+        with:
+          content_type: 'application/x-www-form-urlencoded'
         inputs:
           - name: content
             value: 'name=John&age=130&city=New%20York'
-          - name: content_type
-            value: 'application/x-www-form-urlencoded'
         outputs:
           - name: output
             value: { 'name': 'John', 'age': '130', 'city': 'New York' }

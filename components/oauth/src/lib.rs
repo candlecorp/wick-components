@@ -362,7 +362,73 @@ impl auth::Operation for Component {
                         ));
                     continue;
                 }
-                "/oidc/logout" => {}
+                "/oidc/logout" => {
+                    let location = config.logout_endpoint.clone();
+
+                    //get session cookie value
+                    if cookies.session_id.is_none() {
+                        //session cookie does not exist
+                        let response = build_error_response("Session cookie does not exist");
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
+                        continue;
+                    }
+
+                    let expires_at_old = timestamp + Duration::seconds(-1);
+                    let session_cookie =
+                        Cookie::build(config.session_cookie_name.clone(), "expired")
+                            .path("/")
+                            .http_only(true)
+                            .expires(
+                                CookieDateTime::from_unix_timestamp(expires_at_old.timestamp())
+                                    .unwrap(),
+                            )
+                            .finish();
+
+                    let mut resp_cookies: Vec<Cookie> = vec![];
+                    resp_cookies.push(session_cookie);
+
+                    let mut get_login_hint_response = ctx
+                        .provided()
+                        .dbclient
+                        .get_login_hint_claim(once(cookies.session_id.unwrap().to_string()))?;
+
+                    while let Some(login_hint_response) = get_login_hint_response.next().await {
+                        let login_hint =
+                            propagate_if_error!(login_hint_response, outputs, continue);
+                        println!("insert_response: {:?}", login_hint);
+
+                        let login_hint_val = match login_hint.get("login_hint") {
+                            Some(login_hint) => login_hint.as_str().unwrap(),
+                            None => "",
+                        };
+
+                        //append login_hint to logout endpoint
+                        let location = format!("{}?logout_hint={}", location, login_hint_val);
+
+                        let response =
+                            build_redirect_response(&location, Some(resp_cookies.clone()));
+                        println!("response: {:?}", response);
+                        outputs
+                            .output
+                            .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                                response,
+                            ));
+                        continue;
+                    }
+                    //if login hint does not exist redirect to logout endpoint
+                    let response = build_redirect_response(&location, Some(resp_cookies.clone()));
+                    println!("response: {:?}", response);
+                    outputs
+                        .output
+                        .send(&types::http::RequestMiddlewareResponse::HttpResponse(
+                            response,
+                        ));
+                    continue;
+                }
                 _ => {
                     //handle all other requests
 
