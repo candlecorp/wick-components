@@ -15,7 +15,6 @@ members = [
   "components/hmac",
   "components/openapi-ui",
   "components/usps",
-  "components/oauth",
   "components/array",
   "components/jinja",
   "components/unzip",
@@ -30,6 +29,7 @@ members = [
   "components/liquid-json",
   "components/cookies",
   "components/loop",
+  "components/azure-openai",
 ]
 
 [workspace.dependencies]
