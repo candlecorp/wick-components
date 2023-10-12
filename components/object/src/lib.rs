@@ -78,15 +78,17 @@ impl serialize::Operation for Component {
     async fn serialize(
         mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
-        _ctx: Context<Self::Config>,
+        ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
-        while let (Some(content_string), Some(content_type_string)) = (
-            inputs.content.next().await,
-            inputs.content_type.next().await,
-        ) {
+        let content_type_string = ctx.config.content_type.clone();
+        while let Some(Ok(content_string)) = inputs.content.next().await {
             let content_string = propagate_if_error!(content_string.decode(), outputs, continue);
-            let content_type_string =
-                propagate_if_error!(content_type_string.decode(), outputs, continue);
+            let content_string = match base64::decode(&content_string) {
+                Ok(bytes) => String::from_utf8(bytes).map_err(|e| {
+                    anyhow::anyhow!("Error converting base64 bytes to String: {}", e)
+                })?,
+                Err(_) => content_string,
+            };
             // Parse the content based on the content type
             let parsed_content: Value = match content_type_string.as_str() {
                 "application/json" => {
@@ -165,6 +167,13 @@ fn extend_object_at_path(root: &mut Value, mut path: LinkedList<&str>, new_value
                     }
                 } else {
                     panic!("Root value must be an object when new value is an object");
+                }
+            }
+            Value::Array(new_array) => {
+                if let Value::Array(array) = root {
+                    array.append(&mut new_array.clone());
+                } else {
+                    *root = Value::Array(new_array);
                 }
             }
             Value::String(new_string) => {

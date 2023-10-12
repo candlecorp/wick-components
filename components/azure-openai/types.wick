@@ -1,0 +1,146 @@
+---
+name: azure-openai-types
+kind: wick/types@v1
+types:
+  - name: OpenAIResponse
+    kind: wick/type/union@v1
+    types:
+      - Error
+      - Response
+  - name: Error
+    kind: wick/type/struct@v1
+    fields:
+      - name: message
+        type: string
+      - name: type
+        type: string
+  - name: Response
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a response
+    fields:
+      - name: body
+        type: bytes
+  - name: Message
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a message
+    fields:
+      - name: role
+        type: string
+        description: >
+          The role of the message
+      - name: content
+        type: string
+        description: >
+          The content of the message
+  - name: EventData
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes an event
+    fields:
+      - name: id
+        type: string
+        description: >
+          The id of the event
+      - name: object
+        type: string
+        description: >
+          The object of the event
+      - name: created
+        type: u64
+        description: >
+          The time the event was created
+      - name: model
+        type: string
+        description: >
+          The model of the event
+      - name: prompt_filter_results
+        type: PromptFilterResult[]?
+        description: >
+          The prompt filter results of the event
+      - name: choices
+        type: Choice[]
+        description: >
+          The choices of the event
+  - name: PromptFilterResult
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a prompt filter result
+    fields:
+      - name: prompt_index
+        type: u64
+        description: >
+          The prompt index of the prompt filter result
+      - name: content_filter_results
+        type: ContentFilterResult
+        description: >
+          The content filter results of the prompt filter result
+  - name: ContentFilterResult
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a content filter result
+    fields:
+      - name: hate
+        type: FilterResult?
+        description: >
+          The hate filter result of the content filter result
+      - name: self_harm
+        type: FilterResult?
+        description: >
+          The self harm filter result of the content filter result
+      - name: sexual
+        type: FilterResult?
+        description: >
+          The sexual filter result of the content filter result
+      - name: violence
+        type: FilterResult?
+        description: >
+          The violence filter result of the content filter result
+  - name: FilterResult
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a filter result
+    fields:
+      - name: filtered
+        type: bool
+        description: >
+          Whether the filter was filtered
+      - name: severity
+        type: string
+        description: >
+          The severity of the filter
+  - name: Choice
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a choice
+    fields:
+      - name: index
+        type: u64
+        description: >
+          The index of the choice
+      - name: finish_reason
+        type: string?
+        description: >
+          The finish reason of the choice
+      - name: delta
+        type: Delta
+        description: >
+          The delta of the choice
+      - name: content_filter_results
+        type: ContentFilterResult?
+        description: >
+          The content filter results of the choice
+  - name: Delta
+    kind: wick/type/struct@v1
+    description: >
+      A struct that describes a delta
+    fields:
+      - name: content
+        type: string?
+        description: >
+          The content of the delta
+      - name: role
+        type: string?
+        description: >
+          The role of the delta

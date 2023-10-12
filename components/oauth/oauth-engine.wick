@@ -99,6 +99,13 @@ requires:
           outputs:
             - name: output
               type: object
+        - name: get_login_hint_claim
+          inputs:
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: object
   - name: httpclient
     interface:
       operations:
@@ -127,6 +134,8 @@ component:
   ref: build/oauth_engine.signed.wasm
   with:
     - name: auth_endpoint
+      type: string
+    - name: logout_endpoint
       type: string
     - name: redirect_uri
       type: string

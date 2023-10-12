@@ -1,0 +1,45 @@
+name: refine_http
+kind: wick/component@v1
+resources:
+  - name: API_ENDPOINT
+    resource:
+      kind: wick/resource/url@v1
+      url: '{{ ctx.root_config.api_endpoint }}'
+import:
+  - name: types
+    component:
+      kind: wick/component/types@v1
+      ref: ./types.wick
+component:
+  kind: wick/component/http@v1
+  resource: API_ENDPOINT
+  timeout: 10
+  with:
+    - name: api_key
+      type: string
+    - name: api_endpoint
+      type: string
+    - name: ai_model
+      type: string
+    - name: max_tokens
+      type: u32
+  operations:
+    - name: chat_completions
+      inputs:
+        - name: messages
+          type: types::Message[]
+      method: Post
+      codec: Json
+      path: "/openai/deployments/{{ ctx.root_config.ai_model }}/chat/completions?api-version=2023-07-01-preview"
+      headers:
+        "Content-Type": ["application/json"]
+        "api-key": ["{{ ctx.root_config.api_key }}"]
+      body:
+        messages: '{{ messages }}'
+        max_tokens: '{{ ctx.root_config.max_tokens}}'
+        temperature: 0.7
+        frequency_penalty: 0
+        presence_penalty: 0
+        top_p: 0.95
+        stop: null
+        stream: true

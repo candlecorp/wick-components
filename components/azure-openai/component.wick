@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'azure-openai'
+kind: wick/component@v1
+metadata:
+  version: '0.2.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: candle
+import:
+  - name: events
+    component:
+      kind: wick/component/types@v1
+      ref: ./types.wick
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.5.0
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: parse_completion
+      inputs:
+        - name: event
+          type: http::HttpEvent
+      outputs:
+        - name: event
+          type: http::HttpEvent
+        - name: tokens
+          type: u32
