@@ -7,17 +7,18 @@ use wick::*;
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl each::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = each::Inputs;
     type Outputs = each::Outputs;
     type Config = each::Config;
 
     async fn each(
-        mut input: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        while let Some(input) = input.next().await {
+        while let Some(input) = inputs.input.next().await {
             //ensure request is not an error
-            let input = propagate_if_error!(input, outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
 
             match input {
                 Value::Array(arr) => {

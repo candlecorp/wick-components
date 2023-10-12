@@ -1,22 +1,23 @@
 mod wick {
     wick_component::wick_import!();
 }
-use wick::{types::http::HttpRequest, *};
+use wick::*;
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl get_ip::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = get_ip::Inputs;
     type Outputs = get_ip::Outputs;
     type Config = get_ip::Config;
 
     async fn get_ip(
-        mut request: WickStream<HttpRequest>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        while let Some(request) = request.next().await {
-            let request = propagate_if_error!(request, outputs, continue);
+        while let Some(request) = inputs.request.next().await {
+            let request = propagate_if_error!(request.decode(), outputs, continue);
             println!("request: {:?}", request);
             let xff = request
                 .headers

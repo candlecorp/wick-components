@@ -10,7 +10,7 @@ package:
     namespace: common
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/array.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: includes
       with:
@@ -48,82 +48,80 @@ tests:
       - name: string
         operation: includes
         with:
-          array: ["a", "b", "c"]
+          array: ['a', 'b', 'c']
         inputs:
           - name: value
-            value: "a"
+            value: 'a'
         outputs:
           - name: result
             value: true
       - name: string_negative
         operation: includes
         with:
-          array: ["a", "b", "c"]
+          array: ['a', 'b', 'c']
         inputs:
           - name: value
-            value: "d"
+            value: 'd'
         outputs:
           - name: result
             value: false
       - name: string_number_negative
         operation: includes
         with:
-          array: ["a", "b", "c", "1"]
+          array: ['a', 'b', 'c', '1']
         inputs:
           - name: value
             value: 1
         outputs:
           - name: result
             value: false
-  - name: includes_glob
-    cases:
       - name: empty
         operation: includes_glob
         with:
           array: []
         inputs:
           - name: value
-            value: "/*"
+            value: '/*'
         outputs:
           - name: result
             value: false
       - name: string_path
         operation: includes_glob
         with:
-          array: ["/foo/*", "/bar*", "/index.html"]
+          array: ['/foo/*', '/bar*', '/index.html']
         inputs:
           - name: value
-            value: "/foo/bar"
+            value: '/foo/bar'
         outputs:
           - name: result
             value: true
       - name: string_dir
         operation: includes_glob
         with:
-          array: ["/foo/*", "/bar*", "/index.html"]
+          array: ['/foo/*', '/bar*', '/index.html']
         inputs:
           - name: value
-            value: "/bark"
+            value: '/bark'
         outputs:
           - name: result
             value: true
       - name: string_reverse
         operation: includes_glob
         with:
-          array: ["/foo/bar", "/bar*", "/index.html"]
+          array: ['/foo/bar', '/bar*', '/index.html']
         inputs:
           - name: value
-            value: "/foo/*"
+            value: '/foo/*'
         outputs:
           - name: result
             value: true
       - name: string_negative
         operation: includes
         with:
-          array: ["/foo/*", "/bar*", "/index.html"]
+          array: ['/foo/*', '/bar*', '/index.html']
         inputs:
           - name: value
-            value: "/bear"
+            value: '/bear'
         outputs:
           - name: result
             value: false

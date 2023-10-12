@@ -8,17 +8,18 @@ use wick::*;
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl includes::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = includes::Inputs;
     type Outputs = includes::Outputs;
     type Config = includes::Config;
 
     async fn includes(
-        mut value: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let array = ctx.config.array.clone();
-        while let Some(value) = value.next().await {
-            let value = propagate_if_error!(value, outputs, continue);
+        while let Some(value) = inputs.value.next().await {
+            let value = propagate_if_error!(value.decode(), outputs, continue);
             let matches = array.contains(&value);
             outputs.result.send(&matches);
         }
@@ -31,17 +32,18 @@ impl includes::Operation for Component {
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl includes_glob::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = includes_glob::Inputs;
     type Outputs = includes_glob::Outputs;
     type Config = includes_glob::Config;
 
     async fn includes_glob(
-        mut value: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let array = ctx.config.array.clone();
-        while let Some(value) = value.next().await {
-            let value = propagate_if_error!(value, outputs, continue);
+        while let Some(value) = inputs.value.next().await {
+            let value = propagate_if_error!(value.decode(), outputs, continue);
             let target_pattern = Pattern::new(&value.to_string());
 
             if target_pattern.is_err() {

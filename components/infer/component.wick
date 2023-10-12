@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'llama2'
+kind: wick/component@v1
+package:
+  registry:
+    namespace: candle_ml
+metadata:
+  version: '0.0.1'
+resources:
+  - name: MODEL_DIR
+    resource:
+      kind: wick/resource/volume@v1
+      path: '{{ctx.root_config.model_dir}}'
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  volumes:
+    - resource: MODEL_DIR
+      path: /
+  with:
+    - name: model_dir
+      type: string
+    - name: model
+      type: string
+    - name: tokenizer
+      type: string
+  operations:
+    - name: generate
+      with:
+        - name: max_length
+          type: uint?
+        - name: temperature
+          type: float?
+        - name: top_p
+          type: float?
+        - name: repeat_penalty
+          type: float?
+      inputs:
+        - name: prompt
+          type: string
+      outputs:
+        - name: output
+          type: string
+tests:
+  - with:
+      model_dir: '{{__dirname}}'
+      model: 'stories15M.bin'
+      tokenizer: 'tokenizer.json'
+    cases:
+      - operation: generate
+        with:
+          max_length: 32
+        inputs:
+          - name: prompt
+            value: 'Once upon a time'
+        outputs:
+          - { name: output, value: ',' }
+          - { name: output, value: ' there' }
+          - { name: output, value: ' was' }
+          - { name: output, value: ' a' }
+          - { name: output, value: ' little' }
+          - { name: output, value: ' girl' }
+          - { name: output, value: ' named' }
+          - { name: output, value: ' L' }
+          - { name: output, value: 'ily' }
+          - { name: output, value: '.' }
+          - { name: output, value: ' She' }
+          - { name: output, value: ' loved' }
+          - { name: output, value: ' to' }
+          - { name: output, value: ' play' }
+          - { name: output, value: ' outside' }
+          - { name: output, value: ' in' }
+          - { name: output, value: ' the' }
+          - { name: output, value: ' sun' }
+          - { name: output, value: 'sh' }
+          - { name: output, value: 'ine' }
+          - { name: output, value: ' and' }
+          - { name: output, value: ' pick' }
+          - { name: output, value: ' flowers' }
+          - { name: output, value: '.' }
+          - { name: output, value: ' One' }
+          - { name: output, value: ' day' }
+          - { name: output, value: ',' }
+          - { name: output, value: ' she' }
+          - { name: output, value: ' found' }
+          - { name: output, value: ' a' }
+          - { name: output, value: ' sh' }
+          - { name: output, value: 'iny' }

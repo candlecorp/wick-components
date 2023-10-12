@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'redact'
+kind: wick/component@v1
+package:
+  registry:
+    namespace: common
+metadata:
+  version: '0.0.1'
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: regex
+      with:
+        - name: patterns
+          type: string[]
+        - name: append_hash
+          type: bool
+      inputs:
+        - name: input
+          type: string
+      outputs:
+        - name: output
+          type: string
+tests:
+  - cases:
+      - operation: regex
+        with:
+          patterns:
+            - '\d\d\d-\d\d-\d\d\d\d'
+          append_hash: true
+        inputs:
+          - name: input
+            value: 'My Social Security Number is 333-22-4444'
+        outputs:
+          - name: output
+            value: 'My Social Security Number is XXXXXXXXXXX'

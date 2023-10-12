@@ -1,0 +1,60 @@
+kind: wick/component@v1
+name: file-reader-cli-adapter
+import:
+  - name: component
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./component.wick
+  - name: log
+    component:
+      kind: wick/component/manifest@v1
+      ref: registry.candle.dev/common/log:0.2.0
+component:
+  kind: wick/component/composite@v1
+  operations:
+    - name: main
+      inputs:
+        - name: args
+          type: 'string[]'
+      outputs:
+        - name: code
+          type: u32
+      uses:
+        - name: OP
+          operation: component::regex
+          with:
+            patterns:
+              - '\b\d\d\d-\d\d-\d\d\d\d\b'
+              - '\b\d\d\d\d-\d\d\d\d-\d\d\d\d-\d\d\d\d\b'
+              - '\b[a-zA-Z-.]+@([a-zA-Z-]+.)+[a-zA-Z-]{2,}\b'
+            append_hash: true
+        - name: GATE
+          operation: core::switch
+          with:
+            outputs:
+              - name: code
+                type: u32
+            cases:
+              - case: true
+                do: self::main::exit_ok
+            default: self::main::exit_err
+      flow:
+        - <>.args.1 -> OP -> log::string -> GATE.match
+        - GATE -> <>.code
+      operations:
+        - name: exit_ok
+          uses:
+            - name: SENDER
+              operation: core::sender
+              with:
+                output: 0
+          flow:
+            - SENDER.output -> <>.code
+        - name: exit_err
+          uses:
+            - name: SENDER
+              operation: core::sender
+              with:
+                output: 1
+          flow:
+            - SENDER.output -> <>.code

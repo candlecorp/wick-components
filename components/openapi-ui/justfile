@@ -1,5 +1,5 @@
 project_name := "openapi_ui"
-root_dir:=`cargo metadata | wick query --type json -r '.workspace_root'`
+root_dir:=`cargo metadata --format-version=1 |wick query --type json -r '.workspace_root'`
 build: setup
     cargo build --release --target=wasm32-unknown-unknown
     cp {{root_dir}}/target/wasm32-unknown-unknown/release/*.wasm ./build/

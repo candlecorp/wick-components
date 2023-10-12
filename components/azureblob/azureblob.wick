@@ -7,7 +7,7 @@ metadata:
     - Apache-2.0
 package:
   registry:
-    host: registry.candle.dev
+    host: 192.168.0.67:5000
     namespace: common
 import:
   - name: azureblob

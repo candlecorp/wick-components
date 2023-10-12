@@ -16,13 +16,13 @@ debug_target := "wasm32-wasi"
 # Build and sign a WebAssembly component implementation
 build: setup
     cargo build --release --target="{{build_target}}"
-    cp "./target/{{build_target}}/release/{{project_name}}.wasm" ./build/component.wasm
+    cp "../../target/{{build_target}}/release/{{project_name}}.wasm" ./build/component.wasm
     {{wick}} wasm sign ./build/component.wasm component.wick
 
 # Build a debug version of a WebAssembly component
 debug: setup
     cargo +nightly build --target="{{debug_target}}"
-    cp "./target/{{debug_target}}/debug/{{project_name}}.wasm" ./build/component.wasm
+    cp "../../target/{{debug_target}}/debug/{{project_name}}.wasm" ./build/component.wasm
     {{wick}} wasm sign ./build/component.wasm component.wick
 
 # Echo variables used by this justfile

@@ -7,11 +7,12 @@ use wick::*;
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl render::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = render::Inputs;
     type Outputs = render::Outputs;
     type Config = render::Config;
 
     async fn render(
-        mut data: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
@@ -19,7 +20,8 @@ impl render::Operation for Component {
         let mut env = minijinja::Environment::new();
         env.add_template("root", &tpl).unwrap();
         let template = env.get_template("root").unwrap();
-        while let Some(Ok(data)) = data.next().await {
+        while let Some(data) = inputs.data.next().await {
+            let data = propagate_if_error!(data.decode(), outputs, continue);
             let rendered = template.render(data).unwrap();
             outputs.output.send(&rendered);
         }

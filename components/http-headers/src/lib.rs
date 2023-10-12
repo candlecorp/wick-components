@@ -34,20 +34,20 @@ fn process_headers(
 #[async_trait::async_trait(?Send)]
 impl add::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = add::Inputs;
     type Outputs = add::Outputs;
     type Config = add::Config;
 
     async fn add(
-        mut input: WickStream<types::http::RequestMiddlewareResponse>,
-        mut value: WickStream<types::Strings>,
+      mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let header = ctx.config.header.clone();
         println!("header: {}", header);
-        while let (Some(input), Some(value)) = (input.next().await, value.next().await) {
-            let input = propagate_if_error!(input, outputs, continue);
-            let value = propagate_if_error!(value, outputs, continue);
+        while let (Some(input), Some(value)) = (inputs.input.next().await, inputs.value.next().await) {
+            let input = propagate_if_error!(input.decode(), outputs, continue);
+            let value = propagate_if_error!(value.decode(), outputs, continue);
 
             match input {
                 types::http::RequestMiddlewareResponse::HttpRequest(mut req) => {

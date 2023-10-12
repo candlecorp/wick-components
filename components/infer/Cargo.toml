@@ -1,0 +1,32 @@
+[package]
+name = "infer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wick-component = { workspace = true }
+serde = { version = "1", features = ["derive"] }
+async-trait = "0.1"
+anyhow = { version = "1" }
+
+#
+# Candle libraries
+#
+candle-core = { version = "0.3.0" }
+candle-nn = { version = "0.3.0" }
+candle-transformers = { version = "0.3.0" }
+tokenizers = { version = "0.13.4", default-features = false, features = [
+  "unstable_wasm",
+] }
+num-traits = { version = "0.2.16" }
+byteorder = { version = "1.4.3" }
+
+
+[build-dependencies]
+wick-component-codegen = { workspace = true }

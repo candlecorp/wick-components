@@ -2721,3 +2721,15 @@ checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi",
 ]
+
+[[patch.unused]]
+name = "wick-component"
+version = "0.16.0"
+
+[[patch.unused]]
+name = "wick-component-codegen"
+version = "0.5.0"
+
+[[patch.unused]]
+name = "wick-config"
+version = "0.27.0"
