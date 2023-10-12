@@ -4,21 +4,21 @@ mod wick {
 use cookie::time::OffsetDateTime as CookieDateTime;
 
 use cookie::Cookie;
-use wick::{
-    types::http::{HttpRequest, HttpResponse},
-    *,
-};
+use wick::{types::http::HttpResponse, *};
 
 use base64::{
     alphabet,
     engine::{self, general_purpose},
     Engine,
 };
-use wick_component::{datetime::chrono::Duration, once};
+use wick_component::datetime::chrono::Duration;
 
 use std::collections::HashMap;
 use urlencoding::encode;
 use wick_component::propagate_if_error;
+
+use provided::dbclient;
+use provided::httpclient;
 
 struct OauthCookies {
     auth_state: Option<String>,
@@ -143,11 +143,12 @@ fn get_oidc_claims(id_token: &str) -> Result<String, anyhow::Error> {
 #[async_trait::async_trait(?Send)]
 impl auth::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = auth::Inputs;
     type Outputs = auth::Outputs;
     type Config = auth::Config;
 
     async fn auth(
-        mut input: WickStream<HttpRequest>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
@@ -156,9 +157,9 @@ impl auth::Operation for Component {
         let rng = &ctx.inherent.rng;
         let timestamp = ctx.inherent.timestamp;
 
-        while let Some(input) = input.next().await {
+        while let Some(input) = inputs.request.next().await {
             //ensure request is not an error
-            let input = propagate_if_error!(input, outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
 
             //get cookies
             let cookies = parse_cookies_header(input.headers.clone(), &config.session_cookie_name);
@@ -212,23 +213,32 @@ impl auth::Operation for Component {
                     let access_code = input.query_parameters.get("code").unwrap()[0].clone();
 
                     //call token http component using get_token function
-                    let (mut get_token_response, mut get_token_response_body) =
-                        ctx.provided().httpclient.get_token(
-                            once(access_code.to_string()),
-                            once(config.redirect_uri.clone()),
-                        )?;
+                    let mut res = ctx.provided().httpclient.get_token(
+                        httpclient::get_token::Config::default(),
+                        httpclient::get_token::Request {
+                            access_code: access_code.to_string(),
+                            redirect_uri: config.redirect_uri.clone(),
+                        },
+                    )?;
 
                     let mut response: Option<HttpResponse> = None;
                     let mut body: Option<types::OAuthTokenResponse> = None;
 
                     //intentionally this is not a multi-response stream so will only get the first response
-                    while let (Some(token_response), Some(token_response_body)) = (
-                        get_token_response.next().await,
-                        get_token_response_body.next().await,
-                    ) {
+                    while let (Some(token_response), Some(token_response_body)) =
+                        (res.response.next().await, res.body.next().await)
+                    {
                         //ensure response is not an error
-                        response = Some(propagate_if_error!(token_response, outputs, continue));
-                        body = Some(propagate_if_error!(token_response_body, outputs, continue));
+                        response = Some(propagate_if_error!(
+                            token_response.decode(),
+                            outputs,
+                            continue
+                        ));
+                        body = Some(propagate_if_error!(
+                            token_response_body.decode(),
+                            outputs,
+                            continue
+                        ));
                     }
 
                     if response.is_none() || body.is_none() {
@@ -316,25 +326,33 @@ impl auth::Operation for Component {
                     let expires_at = timestamp + Duration::seconds(expires as _);
 
                     let mut insert_token_response = ctx.provided().dbclient.insert_token(
-                        once(session_id.to_string()),
-                        once(body.token_type),
-                        once(body.access_token),
-                        once("".to_string()),
-                        once(expires_at),
+                        dbclient::insert_token::Config::default(),
+                        dbclient::insert_token::Request {
+                            session_id: session_id.to_string(),
+                            token_type: body.token_type,
+                            access_token: body.access_token,
+                            refresh_token: "".to_string(),
+                            expires_at: expires_at,
+                        },
                     )?;
 
-                    while let Some(insert_response) = insert_token_response.next().await {
-                        let _response = propagate_if_error!(insert_response, outputs, continue);
+                    while let Some(insert_response) = insert_token_response.output.next().await {
+                        let _response =
+                            propagate_if_error!(insert_response.decode(), outputs, continue);
                         println!("insert_response: {:?}", _response);
                     }
 
-                    let mut insert_claims_response = ctx
-                        .provided()
-                        .dbclient
-                        .insert_claims(once(session_id.to_string()), once(claims.to_string()))?;
+                    let mut insert_claims_response = ctx.provided().dbclient.insert_claims(
+                        dbclient::insert_claims::Config::default(),
+                        dbclient::insert_claims::Request {
+                            session_id: session_id.to_string(),
+                            claims: claims.to_string(),
+                        },
+                    )?;
 
-                    while let Some(insert_response) = insert_claims_response.next().await {
-                        let _response = propagate_if_error!(insert_response, outputs, continue);
+                    while let Some(insert_response) = insert_claims_response.output.next().await {
+                        let _response =
+                            propagate_if_error!(insert_response.decode(), outputs, continue);
                         println!("insert_response: {:?}", _response);
                     }
 
@@ -387,13 +405,15 @@ impl auth::Operation for Component {
 
                     //session cookie exists lookup session to see if its valid
                     let session_id = cookies.session_id.unwrap();
-                    let mut get_session_response = ctx
-                        .provided()
-                        .dbclient
-                        .get_session(once(session_id.clone()))?;
+                    let mut get_session_response = ctx.provided().dbclient.get_session(
+                        dbclient::get_session::Config::default(),
+                        dbclient::get_session::Request {
+                            session_id: session_id.clone(),
+                        },
+                    )?;
 
-                    while let Some(response) = get_session_response.next().await {
-                        let response = propagate_if_error!(response, outputs, continue);
+                    while let Some(response) = get_session_response.output.next().await {
+                        let response = propagate_if_error!(response.decode(), outputs, continue);
 
                         //session does not exist redirect to login
                         if response.access_token.is_empty() {
@@ -462,11 +482,12 @@ impl auth::Operation for Component {
 #[async_trait::async_trait(?Send)]
 impl oidc::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = oidc::Inputs;
     type Outputs = oidc::Outputs;
     type Config = oidc::Config;
 
     async fn oidc(
-        mut input: WickStream<HttpRequest>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
@@ -475,9 +496,9 @@ impl oidc::Operation for Component {
         let rng = &ctx.inherent.rng;
         let timestamp = ctx.inherent.timestamp;
 
-        while let Some(input) = input.next().await {
+        while let Some(input) = inputs.request.next().await {
             //ensure request is not an error
-            let input = propagate_if_error!(input, outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
 
             //get cookies
             let cookies = parse_cookies_header(input.headers.clone(), &config.session_cookie_name);
@@ -501,13 +522,15 @@ impl oidc::Operation for Component {
 
             println!("session_id: {:?}", session_id);
 
-            let mut get_oidc_claims_response = ctx
-                .provided()
-                .dbclient
-                .get_oidc_claims(once(session_id.clone()))?;
+            let mut get_oidc_claims_response = ctx.provided().dbclient.get_oidc_claims(
+                dbclient::get_oidc_claims::Config::default(),
+                dbclient::get_oidc_claims::Request {
+                    session_id: session_id.clone(),
+                },
+            )?;
 
-            while let Some(response) = get_oidc_claims_response.next().await {
-                let response = propagate_if_error!(response, outputs, continue);
+            while let Some(response) = get_oidc_claims_response.output.next().await {
+                let response = propagate_if_error!(response.decode(), outputs, continue);
 
                 //session is valid
                 let mut request = input.clone();
@@ -592,20 +615,21 @@ impl oidc::Operation for Component {
 #[async_trait::async_trait(?Send)]
 impl get_user::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = get_user::Inputs;
     type Outputs = get_user::Outputs;
     type Config = get_user::Config;
 
     async fn get_user(
-        mut input: WickStream<HttpRequest>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         // initial setup for frequently used variables
         let config: &RootConfig = ctx.root_config();
 
-        while let Some(input) = input.next().await {
+        while let Some(input) = inputs.request.next().await {
             //ensure request is not an error
-            let input = propagate_if_error!(input, outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
 
             //get cookies
             let cookies = parse_cookies_header(input.headers.clone(), &config.session_cookie_name);
@@ -618,15 +642,17 @@ impl get_user::Operation for Component {
 
             //session cookie exists lookup session to see if its valid
             let session_id = cookies.session_id.unwrap();
-            let mut get_oidc_claims_response = ctx
-                .provided()
-                .dbclient
-                .get_oidc_claims(once(session_id.clone()))?;
+            let mut get_oidc_claims_response = ctx.provided().dbclient.get_oidc_claims(
+                dbclient::get_oidc_claims::Config::default(),
+                dbclient::get_oidc_claims::Request {
+                    session_id: session_id.clone(),
+                },
+            )?;
 
             let mut claims_responses = 0;
 
-            while let Some(response) = get_oidc_claims_response.next().await {
-                let response = propagate_if_error!(response, outputs, continue);
+            while let Some(response) = get_oidc_claims_response.output.next().await {
+                let response = propagate_if_error!(response.decode(), outputs, continue);
 
                 //extract scope from claims
                 let scope = response.get("claims");

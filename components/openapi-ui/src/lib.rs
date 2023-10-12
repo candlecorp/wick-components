@@ -29,18 +29,18 @@ struct Response {
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl serve::Operation for Component {
-    type Error = Box<dyn std::error::Error + Send + Sync>;
+    type Error = anyhow::Error;
+    type Inputs = serve::Inputs;
     type Outputs = serve::Outputs;
     type Config = serve::Config;
 
     async fn serve(
-        mut request: WickStream<types::http::HttpRequest>,
-        _body: WickStream<Bytes>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        while let Some(req) = request.next().await {
-            let req = propagate_if_error!(req, outputs, continue);
+        while let Some(req) = inputs.request.next().await {
+            let req = propagate_if_error!(req.decode(), outputs, continue);
             let path = if req.path == "/" {
                 "/index.html".to_owned()
             } else {

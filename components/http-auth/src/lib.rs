@@ -20,17 +20,18 @@ fn build_error_response(msg: &str) -> types::http::HttpResponse {
 #[async_trait::async_trait(?Send)]
 impl basic::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = basic::Inputs;
     type Outputs = basic::Outputs;
     type Config = basic::Config;
 
     async fn basic(
-        mut input: WickStream<types::http::HttpRequest>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        while let Some(input) = input.next().await {
+        while let Some(input) = inputs.request.next().await {
             //ensure request is not an error
-            let input = propagate_if_error!(input, outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
 
             let auth_header = input.headers.get("authorization");
             if auth_header.is_some() {

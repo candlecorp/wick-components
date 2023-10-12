@@ -7,15 +7,17 @@ use wick::*;
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl greet::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = greet::Inputs;
     type Outputs = greet::Outputs;
     type Config = greet::Config;
 
     async fn greet(
-        mut name: WickStream<String>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
-        ctx: Context<Self::Config>,
+        _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        while let (Some(Ok(name))) = (name.next().await) {
+        while let Some(name) = inputs.name.next().await {
+            let name = propagate_if_error!(name.decode(), outputs, continue);
             outputs.output.send(&format!("Hello, {}", name));
         }
         outputs.output.done();

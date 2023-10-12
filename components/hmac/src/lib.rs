@@ -11,24 +11,25 @@ use std::ops::Deref;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use wick::*;
-use wick_component::wick_packet::{Output, Packet};
+use wick_component::wick_packet::OutgoingPort;
 
 type HmacSha256 = Hmac<Sha256>;
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl from_bytes::Operation for Component {
-    type Error = Box<dyn std::error::Error + Send + Sync>;
+    type Error = anyhow::Error;
+    type Inputs = from_bytes::Inputs;
     type Outputs = from_bytes::Outputs;
     type Config = from_bytes::Config;
 
     async fn from_bytes(
-        input: WickStream<Packet>,
+        inputs: Self::Inputs,
         outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let (_, mut outputs) =
-            handle_new_bytes_stream(input, outputs, &ctx.root_config().secret, true).await;
+            handle_new_bytes_stream(inputs.input, outputs, &ctx.root_config().secret, true).await;
         outputs.output.done();
 
         Ok(())
@@ -38,17 +39,18 @@ impl from_bytes::Operation for Component {
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl from_string::Operation for Component {
-    type Error = Box<dyn std::error::Error + Send + Sync>;
+    type Error = anyhow::Error;
+    type Inputs = from_string::Inputs;
     type Outputs = from_string::Outputs;
     type Config = from_string::Config;
 
     async fn from_string(
-        input: WickStream<Packet>,
+        inputs: Self::Inputs,
         outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let (_, mut outputs) =
-            handle_new_string_stream(input, outputs, &ctx.root_config().secret, true).await;
+            handle_new_string_stream(inputs.input, outputs, &ctx.root_config().secret, true).await;
         outputs.output.done();
 
         Ok(())
@@ -57,14 +59,13 @@ impl from_string::Operation for Component {
 
 #[cfg_attr(not(target_family = "wasm"), async_recursion::async_recursion)]
 #[cfg_attr(target_family = "wasm", async_recursion::async_recursion(?Send))]
-async fn handle_new_string_stream(
-    mut input_stream: WickStream<Packet>,
+async fn handle_new_string_stream<T: Stream<Item = VPacket<String>> + Unpin>(
+    mut input_stream: T,
     mut outputs: from_string::Outputs,
     secret: &Bytes,
     _start: bool,
-) -> (WickStream<Packet>, from_string::Outputs) {
+) -> (T, from_string::Outputs) {
     while let Some(input) = input_stream.next().await {
-        let input = propagate_if_error!(input, outputs, continue);
         if input.is_open_bracket() {
             outputs.broadcast_open();
             (input_stream, outputs) =
@@ -77,7 +78,8 @@ async fn handle_new_string_stream(
             if !input.has_data() {
                 continue;
             }
-            let input: String = propagate_if_error!(input.decode(), outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
+
             if let Err(e) = handle_packet(input.as_bytes(), &mut outputs.output, secret).await {
                 outputs.output.error(&e.to_string());
             }
@@ -89,14 +91,13 @@ async fn handle_new_string_stream(
 
 #[cfg_attr(not(target_family = "wasm"), async_recursion::async_recursion)]
 #[cfg_attr(target_family = "wasm", async_recursion::async_recursion(?Send))]
-async fn handle_new_bytes_stream(
-    mut input_stream: WickStream<Packet>,
+async fn handle_new_bytes_stream<T: Stream<Item = VPacket<Bytes>> + Unpin>(
+    mut input_stream: T,
     mut outputs: from_bytes::Outputs,
     secret: &Bytes,
     _start: bool,
-) -> (WickStream<Packet>, from_bytes::Outputs) {
+) -> (T, from_bytes::Outputs) {
     while let Some(input) = input_stream.next().await {
-        let input = propagate_if_error!(input, outputs, continue);
         if input.is_open_bracket() {
             outputs.broadcast_open();
             (input_stream, outputs) =
@@ -109,7 +110,7 @@ async fn handle_new_bytes_stream(
             if !input.has_data() {
                 continue;
             }
-            let input: Bytes = propagate_if_error!(input.decode(), outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
             if let Err(e) = handle_packet(&input, &mut outputs.output, secret).await {
                 outputs.output.error(&e.to_string());
             }
@@ -121,7 +122,7 @@ async fn handle_new_bytes_stream(
 
 async fn handle_packet(
     input: &[u8],
-    output: &mut Output<Bytes>,
+    output: &mut OutgoingPort<Bytes>,
     secret: &Bytes,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut mac = HmacSha256::new_from_slice(&secret)?;

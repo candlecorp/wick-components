@@ -56,15 +56,17 @@ fn group_same_elements(val: Value) -> Value {
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl xml_to_json::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = xml_to_json::Inputs;
     type Outputs = xml_to_json::Outputs;
     type Config = xml_to_json::Config;
 
     async fn xml_to_json(
-        mut xml: WickStream<String>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> Result<()> {
-        while let Some(Ok(xml_string)) = xml.next().await {
+        while let Some(xml_string) = inputs.xml.next().await {
+            let xml_string = propagate_if_error!(xml_string.decode(), outputs, continue);
             let mut reader = EventReader::new_with_config(
                 xml_string.as_bytes(),
                 ParserConfig::new().trim_whitespace(true),

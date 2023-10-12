@@ -1,0 +1,10 @@
+name: wasi-test
+kind: wick/app@v1
+import:
+  - name: CLI
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./cli.wick
+triggers:
+  - kind: wick/trigger/cli@v1
+    operation: CLI::main

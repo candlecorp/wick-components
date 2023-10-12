@@ -6,3 +6,4 @@
 /archive
 /target
 /.cargo
+.DS_Store

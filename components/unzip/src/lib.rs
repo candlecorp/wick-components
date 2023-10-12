@@ -9,21 +9,21 @@ mod wick {
 
 use stream_unzip::ZipReader;
 use wick::*;
-use wick_component::Packet;
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl unzip::Operation for Component {
-    type Error = Box<dyn std::error::Error + Send + Sync>;
+    type Error = anyhow::Error;
+    type Inputs = unzip::Inputs;
     type Outputs = unzip::Outputs;
     type Config = unzip::Config;
 
     async fn unzip(
-        input: WickStream<Packet>,
+        inputs: Self::Inputs,
         outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        let (_, mut outputs) = handle_new_stream(input, outputs, &_ctx, true).await;
+        let (_, mut outputs) = handle_new_stream(inputs.input, outputs, &_ctx, true).await;
         outputs.filename.done();
         outputs.contents.done();
 
@@ -33,19 +33,18 @@ impl unzip::Operation for Component {
 
 #[cfg_attr(not(target_family = "wasm"), async_recursion::async_recursion)]
 #[cfg_attr(target_family = "wasm", async_recursion::async_recursion(?Send))]
-async fn handle_new_stream(
-    mut input_stream: WickStream<Packet>,
+async fn handle_new_stream<T: Stream<Item = VPacket<Bytes>> + Unpin>(
+    mut input_stream: T,
     mut outputs: unzip::Outputs,
     _ctx: &Context<unzip::Config>,
     start: bool,
-) -> (WickStream<Packet>, unzip::Outputs) {
+) -> (T, unzip::Outputs) {
     let mut zip = ZipReader::new();
     if start {
         outputs.broadcast_open();
     }
 
     while let Some(input) = input_stream.next().await {
-        let input = propagate_if_error!(input, outputs, continue);
         if input.is_open_bracket() {
             if !start {
                 outputs.broadcast_open();
@@ -60,7 +59,7 @@ async fn handle_new_stream(
             if !input.has_data() {
                 continue;
             }
-            let input: Bytes = propagate_if_error!(input.decode(), outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
 
             zip.update(input.into());
             drain_zipreader(&mut zip, &mut outputs);

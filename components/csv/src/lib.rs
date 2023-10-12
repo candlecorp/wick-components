@@ -8,21 +8,22 @@ mod wick {
 }
 
 use wick::*;
-use wick_component::{wick_packet::Packet, Bytes};
+use wick_component::Bytes;
 
 #[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl parse_bytes::Operation for Component {
-    type Error = Box<dyn std::error::Error + Send + Sync>;
+    type Error = anyhow::Error;
+    type Inputs = parse_bytes::Inputs;
     type Outputs = parse_bytes::Outputs;
     type Config = parse_bytes::Config;
 
     async fn parse_bytes(
-        input: WickStream<Packet>,
+        inputs: Self::Inputs,
         outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
-        let (_, mut outputs) = handle_new_stream(input, outputs, &_ctx, true).await;
+        let (_, mut outputs) = handle_new_stream(inputs.input, outputs, &_ctx, true).await;
         outputs.output.done();
 
         Ok(())
@@ -31,14 +32,13 @@ impl parse_bytes::Operation for Component {
 
 #[cfg_attr(not(target_family = "wasm"), async_recursion::async_recursion)]
 #[cfg_attr(target_family = "wasm", async_recursion::async_recursion(?Send))]
-async fn handle_new_stream(
-    mut input_stream: WickStream<Packet>,
+async fn handle_new_stream<T: Stream<Item = VPacket<Bytes>> + Unpin>(
+    mut input_stream: T,
     mut outputs: parse_bytes::Outputs,
     _ctx: &Context<parse_bytes::Config>,
     _start: bool,
-) -> (WickStream<Packet>, parse_bytes::Outputs) {
+) -> (T, parse_bytes::Outputs) {
     while let Some(input) = input_stream.next().await {
-        let input = propagate_if_error!(input, outputs, continue);
         if input.is_open_bracket() {
             outputs.broadcast_open();
             (input_stream, outputs) = handle_new_stream(input_stream, outputs, _ctx, false).await;
@@ -50,7 +50,7 @@ async fn handle_new_stream(
             if !input.has_data() {
                 continue;
             }
-            let input: Bytes = propagate_if_error!(input.decode(), outputs, continue);
+            let input = propagate_if_error!(input.decode(), outputs, continue);
             if let Err(e) = handle_packet(&input, &mut outputs).await {
                 outputs.output.error(&e.to_string());
             }

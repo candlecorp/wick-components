@@ -13,16 +13,17 @@ use wick::*;
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl new::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = new::Inputs;
     type Outputs = new::Outputs;
     type Config = new::Config;
     async fn new(
-        mut value: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
         let key = &ctx.config.key;
-        while let Some(value) = value.next().await {
-            let value = propagate_if_error!(value, outputs, continue);
+        while let Some(value) = inputs.value.next().await {
+            let value = propagate_if_error!(value.decode(), outputs, continue);
 
             let mut new_object = HashMap::new();
             new_object.insert(key, value);
@@ -39,21 +40,22 @@ impl new::Operation for Component {
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl select::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = select::Inputs;
     type Outputs = select::Outputs;
     type Config = select::Config;
     async fn select(
-        mut input: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
         let path = &ctx.config.path;
-        while let Some(input) = input.next().await {
-            let input = propagate_if_error!(input, outputs, continue);
+        while let Some(input) = inputs.input.next().await {
+            let input = propagate_if_error!(input.decode(), outputs, continue);
             let selected_values = select(&input, &path)
                 .map_err(|e| anyhow::anyhow!("Error selecting value by path: {}", e))?;
 
             if let Some(first_selected_value) = selected_values.first() {
-                outputs.output.send(first_selected_value);
+                outputs.output.send(*first_selected_value);
             } else {
                 outputs.output.done();
                 return Err(anyhow::anyhow!("No value found at the specified path"));
@@ -70,17 +72,21 @@ impl select::Operation for Component {
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl serialize::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = serialize::Inputs;
     type Outputs = serialize::Outputs;
     type Config = serialize::Config;
     async fn serialize(
-        mut content: WickStream<String>,
-        mut content_type: WickStream<String>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
-        while let (Some(Ok(content_string)), Some(Ok(content_type_string))) =
-            (content.next().await, content_type.next().await)
-        {
+        while let (Some(content_string), Some(content_type_string)) = (
+            inputs.content.next().await,
+            inputs.content_type.next().await,
+        ) {
+            let content_string = propagate_if_error!(content_string.decode(), outputs, continue);
+            let content_type_string =
+                propagate_if_error!(content_type_string.decode(), outputs, continue);
             // Parse the content based on the content type
             let parsed_content: Value = match content_type_string.as_str() {
                 "application/json" => {
@@ -176,16 +182,20 @@ fn extend_object_at_path(root: &mut Value, mut path: LinkedList<&str>, new_value
 #[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl push::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = push::Inputs;
     type Outputs = push::Outputs;
     type Config = push::Config;
     async fn push(
-        mut input: WickStream<Value>,
-        mut value: WickStream<Value>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
         let path = &ctx.config.path;
-        if let (Some(Ok(mut input)), Some(Ok(value))) = (input.next().await, value.next().await) {
+        while let (Some(input), Some(value)) =
+            (inputs.input.next().await, inputs.value.next().await)
+        {
+            let mut input = propagate_if_error!(input.decode(), outputs, continue);
+            let value = propagate_if_error!(value.decode(), outputs, continue);
             let path = path.replace("$.", "");
             let path: LinkedList<&str> = path.trim_start_matches('.').split('.').collect();
             extend_object_at_path(&mut input, path, value);

@@ -1,3 +1,5 @@
 /target
 /build
 /tests/testdata/custom.txt
+
+/*.bin

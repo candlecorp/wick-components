@@ -5,20 +5,23 @@ use regex::Regex;
 use serde_xml_rs::{from_str, to_string};
 use wick::*;
 
+use provided::usps_http;
+
 #[async_trait::async_trait(?Send)]
 impl verify::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = verify::Inputs;
     type Outputs = verify::Outputs;
     type Config = verify::Config;
 
     async fn verify(
-        mut request: WickStream<types::usps_types::RequestAddress>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let config: &RootConfig = ctx.root_config();
-        while let Some(request) = request.next().await {
-            let mut request = propagate_if_error!(request, outputs, continue);
+        while let Some(request) = inputs.address.next().await {
+            let mut request = propagate_if_error!(request.decode(), outputs, continue);
             let user_id = config.user_id.clone();
 
             if request.address1.is_none() {
@@ -44,21 +47,16 @@ impl verify::Operation for Component {
             println!("xml_with_userid: {:?}", xml_with_userid);
 
             // //call token http component using verify function
-            let mut response_stream = ctx
-                .provided()
-                .usps_http
-                .verify_raw(once(xml_with_userid.to_string()))?;
+            let mut response_stream = ctx.provided().usps_http.verify(
+                usps_http::verify::Config::default(),
+                usps_http::verify::Request {
+                    request: xml_with_userid.to_string(),
+                },
+            )?;
             let mut response_buffer: Vec<u8> = Vec::new();
-            while let Some(packet) = response_stream.next().await {
-                let packet = propagate_if_error!(packet, outputs, continue);
-                if packet.port() != "body" {
-                    continue;
-                }
-                if !packet.has_data() {
-                    continue;
-                }
-                let bytes: Bytes = propagate_if_error!(packet.decode(), outputs, break);
-                response_buffer.extend(&bytes);
+            while let Some(packet) = response_stream.body.next().await {
+                let body = propagate_if_error!(packet.decode(), outputs, continue);
+                response_buffer.extend(&body);
             }
 
             println!("response: {:?}", response_buffer);
