@@ -78,7 +78,7 @@ dependencies = [
  "serde_yaml",
  "wick-component",
  "wick-component-codegen",
- "wick-config",
+ "wick-config 0.27.0 (git+https://github.com/candlecorp/wick.git)",
 ]
 
 [[package]]
@@ -105,6 +105,7 @@ dependencies = [
 [[package]]
 name = "asset-container"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "bitflags 2.4.0",
  "futures 0.3.28",
@@ -147,6 +148,17 @@ name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
+
+[[package]]
+name = "azure-openai"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "serde",
+ "wick-component",
+ "wick-component-codegen",
+]
 
 [[package]]
 name = "backtrace"
@@ -731,6 +743,7 @@ dependencies = [
 [[package]]
 name = "derive-asset-container"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -911,27 +924,45 @@ dependencies = [
 [[package]]
 name = "flow-component"
 version = "0.6.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "anyhow",
  "futures 0.3.28",
- "seeded-random",
+ "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "serde",
  "serde_json",
  "tracing",
- "wick-interface-types",
+ "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "wick-packet",
 ]
 
 [[package]]
 name = "flow-expression-parser"
 version = "0.6.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "liquid-json 0.6.0",
  "nom",
  "once_cell",
  "parking_lot",
  "regex 1.10.0",
- "seeded-random",
+ "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "flow-expression-parser"
+version = "0.6.0"
+source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
+dependencies = [
+ "liquid-json 0.6.0",
+ "nom",
+ "once_cell",
+ "parking_lot",
+ "regex 1.10.0",
+ "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git)",
  "serde",
  "serde_json",
  "thiserror",
@@ -1996,7 +2027,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "base64 0.21.2",
+ "base64 0.21.4",
  "jsonpath_lib",
  "serde",
  "serde-xml-rs",
@@ -2609,9 +2640,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.38.18"
+version = "0.38.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a74ee2d7c2581cd139b42447d7d9389b889bdaad3a73f1ebb16f2a3237bb19c"
+checksum = "745ecfa778e66b2b63c88a61cb36e0eea109e803b0b86bf9879fbc77c70e86ed"
 dependencies = [
  "bitflags 2.4.0",
  "errno",
@@ -2701,6 +2732,18 @@ dependencies = [
 [[package]]
 name = "seeded-random"
 version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+dependencies = [
+ "parking_lot",
+ "rand 0.8.5",
+ "rand_chacha",
+ "uuid",
+]
+
+[[package]]
+name = "seeded-random"
+version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "parking_lot",
  "rand 0.8.5",
@@ -3700,6 +3743,7 @@ checksum = "14247bb57be4f377dfb94c72830b8ce8fc6beac03cf4bf7b9732eadd414123fc"
 [[package]]
 name = "wick-asset-reference"
 version = "0.4.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "asset-container",
  "bytes 1.5.0",
@@ -3716,6 +3760,7 @@ dependencies = [
 [[package]]
 name = "wick-component"
 version = "0.16.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -3739,6 +3784,7 @@ dependencies = [
 [[package]]
 name = "wick-component-codegen"
 version = "0.5.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "anyhow",
  "bitflags 2.4.0",
@@ -3752,20 +3798,21 @@ dependencies = [
  "serde_json",
  "syn 2.0.38",
  "tokio",
- "wick-config",
- "wick-interface-types",
+ "wick-config 0.27.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
 name = "wick-config"
 version = "0.27.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "asset-container",
  "async-recursion",
  "derive-asset-container",
  "derive_builder",
  "flow-component",
- "flow-expression-parser",
+ "flow-expression-parser 0.6.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "glob",
  "liquid-json 0.6.0",
  "normpath",
@@ -3783,14 +3830,45 @@ dependencies = [
  "tracing",
  "url",
  "wick-asset-reference",
- "wick-interface-types",
+ "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "wick-packet",
  "wildmatch",
 ]
 
 [[package]]
+name = "wick-config"
+version = "0.27.0"
+source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
+dependencies = [
+ "flow-expression-parser 0.6.0 (git+https://github.com/candlecorp/wick.git)",
+ "liquid-json 0.6.0",
+ "num-traits",
+ "serde",
+ "serde-value",
+ "serde_json",
+ "serde_with",
+ "serde_yaml",
+ "thiserror",
+ "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git)",
+]
+
+[[package]]
 name = "wick-interface-types"
 version = "0.16.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+dependencies = [
+ "derive_builder",
+ "nom",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "serde_yaml",
+]
+
+[[package]]
+name = "wick-interface-types"
+version = "0.16.0"
+source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "derive_builder",
  "nom",
@@ -3803,6 +3881,7 @@ dependencies = [
 [[package]]
 name = "wick-oci-utils"
 version = "0.4.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "bytes 1.5.0",
  "flate2",
@@ -3824,6 +3903,7 @@ dependencies = [
 [[package]]
 name = "wick-operation"
 version = "0.2.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -3834,6 +3914,7 @@ dependencies = [
 [[package]]
 name = "wick-packet"
 version = "0.16.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "anyhow",
  "base64 0.21.4",
@@ -3842,7 +3923,7 @@ dependencies = [
  "chrono",
  "parking_lot",
  "pin-project-lite",
- "seeded-random",
+ "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
  "serde",
  "serde_json",
  "thiserror",
@@ -3855,12 +3936,13 @@ dependencies = [
  "wasmrs-guest",
  "wasmrs-runtime",
  "wasmrs-rx",
- "wick-interface-types",
+ "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
 ]
 
 [[package]]
 name = "wick-xdg"
 version = "0.3.0"
+source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
 dependencies = [
  "getset",
  "thiserror",

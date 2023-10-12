@@ -3,20 +3,22 @@ mod wick {
 }
 use wick::*;
 
-#[async_trait::async_trait(?Send)]
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl parse_completion::Operation for Component {
     type Error = anyhow::Error;
+    type Inputs = parse_completion::Inputs;
     type Outputs = parse_completion::Outputs;
     type Config = parse_completion::Config;
 
     async fn parse_completion(
-        mut event: WickStream<types::http::HttpEvent>,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let mut count = 0;
-        while let Some(event) = event.next().await {
-            let event = propagate_if_error!(event, outputs, continue);
+        while let Some(event) = inputs.event.next().await {
+            let event = event.decode()?;
             println!("event: {:?}", event);
 
             if &event.data == "[DONE]" {
