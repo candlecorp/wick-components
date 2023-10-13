@@ -22,7 +22,7 @@ members = [
   "components/http-auth",
   "components/http-client-ip",
   "components/http-headers",
-  "components/infer",
+  "components/llama",
   "components/jinja",
   "components/liquid-json",
   "components/liquid",
