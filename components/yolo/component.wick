@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://github.com/candlecorp/wick/releases/download/nightly/schema.json
+---
+name: 'yolo'
+kind: wick/component@v1
+package:
+  registry:
+    namespace: candle_ml
+metadata:
+  version: '0.0.1'
+resources:
+  - name: MODEL_DIR
+    resource:
+      kind: wick/resource/volume@v1
+      path: '{{ctx.root_config.model_dir}}'
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  volumes:
+    - resource: MODEL_DIR
+      path: /
+  with:
+    - name: model_dir
+      type: string
+    - name: model
+      type: string
+  operations:
+    - name: detect
+      with:
+        - name: confidence
+          type: f32?
+        - name: iou
+          type: f32?
+
+      inputs:
+        - name: image_data
+          type: bytes
+      outputs:
+        - name: output
+          type: object

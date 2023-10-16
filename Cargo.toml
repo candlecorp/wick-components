@@ -38,6 +38,7 @@ members = [
   "components/unzip",
   "components/usps",
   "components/xml",
+  "components/yolo",
   "components/azure-openai",
 ]
 

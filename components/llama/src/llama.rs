@@ -14,7 +14,7 @@ use model::Cache;
 use wick_component::{runtime::yield_now, FluxChannel, Observer};
 
 thread_local! {
-  static MODEL : std::cell::UnsafeCell<Option<Llama>> = std::cell::UnsafeCell::new(None);
+  static WEIGHTS : std::cell::UnsafeCell<Option<(Config,TransformerWeights)>> = std::cell::UnsafeCell::new(None);
   static TOKENIZER : std::cell::UnsafeCell<Option<Tokenizer>> = std::cell::UnsafeCell::new(None);
 }
 
@@ -39,25 +39,28 @@ pub(crate) struct Args {
 }
 
 pub(super) fn load_model(file: &str) -> Result<Llama> {
-    MODEL.with(|model| {
-        let model = unsafe { &mut *model.get() };
-        if model.is_none() {
-            *model = Some(load_model_inner(file)?);
+    WEIGHTS.with(|weights| {
+        let weights = unsafe { &mut *weights.get() };
+        if weights.is_none() {
+            *weights = Some(load_weights(file)?);
         }
-        Ok(model.as_ref().unwrap().clone())
+        let (config, weights) = weights.as_ref().unwrap();
+        let device = candle_core::Device::Cpu;
+        let vb = weights.var_builder(&config, &device)?;
+        let cache = Cache::new(true, &config, vb.pp("rot"))?;
+        let model = Llama::load(vb, &cache, config.clone())?;
+
+        Ok(model)
     })
 }
 
-fn load_model_inner(file: &str) -> Result<Llama> {
+fn load_weights(file: &str) -> Result<(Config, TransformerWeights)> {
     println!("opening file: {}", file);
     let mut file = std::fs::File::open(file)?;
     let config = Config::from_reader(&mut file)?;
     let device = candle_core::Device::Cpu;
     let weights = TransformerWeights::from_reader(&mut file, &config, &device)?;
-    let vb = weights.var_builder(&config, &device)?;
-    let cache = Cache::new(true, &config, vb.pp("rot"))?;
-    let model = Llama::load(vb, &cache, config)?;
-    Ok(model)
+    Ok((config, weights))
 }
 
 pub(super) fn load_tokenizer(file: &str) -> Result<Tokenizer> {
