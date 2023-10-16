@@ -6,7 +6,7 @@ package:
   registry:
     namespace: candle_ml
 metadata:
-  version: '0.0.1'
+  version: '0.0.2'
 resources:
   - name: MODEL_DIR
     resource:
@@ -30,7 +30,6 @@ component:
           type: f32?
         - name: iou
           type: f32?
-
       inputs:
         - name: image_data
           type: bytes
