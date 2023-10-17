@@ -1,0 +1,5 @@
+{
+  "model_dir": "{{ctx.env.PWD}}",
+  "model": "stories15M.bin",
+  "tokenizer": "tokenizer.json"
+}

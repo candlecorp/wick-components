@@ -1,0 +1,4 @@
+{
+  "model_dir": "{{ctx.env.PWD}}",
+  "model": "yolov8n.safetensors"
+}

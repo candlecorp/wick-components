@@ -15,8 +15,6 @@ component:
       with:
         - name: patterns
           type: string[]
-        - name: append_hash
-          type: bool
       inputs:
         - name: input
           type: string
@@ -29,7 +27,6 @@ tests:
         with:
           patterns:
             - '\d\d\d-\d\d-\d\d\d\d'
-          append_hash: true
         inputs:
           - name: input
             value: 'My Social Security Number is 333-22-4444'
