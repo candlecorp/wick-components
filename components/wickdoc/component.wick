@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: 'wickdoc'
+kind: wick/component@v1
+metadata:
+  description: 'A documentation generator for wick component definitions.'
+  authors: ['Candle Corporation']
+  licenses: ['Apache-2.0']
+  documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components.
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: generate_readme
+      inputs:
+        - name: input
+          type: string
+          description: 'The wick configuration YAML to render.'
+      outputs:
+        - name: output
+          type: string
+          description: 'The generated readme.'
+tests:
+  - cases:
+      - name: liquid
+        operation: generate_readme
+        inputs:
+          - name: input
+            value: |
+              # yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+              ---
+              name: 'wickdoc'
+              kind: wick/component@v1
+              metadata:
+                description: 'A documentation generator for wick component definitions.'
+                authors: ['Candle Corporation']
+                licenses: ['Apache-2.0']
+                documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components.
+                version: '0.1.0'
+              package:
+                registry:
+                  host: registry.candle.dev
+                  namespace: common
+              component:
+                kind: wick/component/wasmrs@v1
+                ref: build/component.signed.wasm
+                operations:
+                  - name: generate_readme
+                    inputs:
+                      - name: input
+                        type: string
+                        description: 'The wick configuration YAML to render.'
+                    outputs:
+                      - name: output
+                        type: string
+                        description: 'The generated readme.'
+        outputs:
+          - name: output
+            assertions:
+              - operator: Regex
+                value: '# common/wickdoc(.|\n)*A documentation generator for wick component definitions.'

@@ -11,7 +11,7 @@ metadata:
 import: []
 component:
   kind: wick/component/wasmrs@v1
-  ref: ./build/unzip.signed.wasm
+  ref: ./build/component.signed.wasm
   operations:
     - name: unzip
       inputs:

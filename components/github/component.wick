@@ -59,7 +59,7 @@ types:
         type: string
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/github.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: get_stargazers
       inputs:

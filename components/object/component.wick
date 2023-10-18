@@ -14,7 +14,7 @@ package:
     namespace: common
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/object.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: serialize
       with:
@@ -235,7 +235,7 @@ tests:
                   { 'city': 'New York', 'state': 'NY', 'country': 'USA' },
               }
           - name: value
-            value: ['44444','55555']
+            value: ['44444', '55555']
         outputs:
           - name: output
             value:
@@ -247,7 +247,7 @@ tests:
                     'city': 'New York',
                     'state': 'NY',
                     'country': 'USA',
-                    'zip': ['44444','55555'],
+                    'zip': ['44444', '55555'],
                   },
               }
           - name: output

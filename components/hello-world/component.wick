@@ -11,7 +11,7 @@ package:
 
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/hello_world.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: greet
       inputs:
