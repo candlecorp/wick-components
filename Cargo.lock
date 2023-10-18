@@ -104,7 +104,9 @@ dependencies = [
 
 [[package]]
 name = "asset-container"
-version = "0.3.0"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb9705d249fc307781ff3f9de883df5860f04431c29221c12361f931d6ca44f0"
 dependencies = [
  "bitflags 2.4.0",
  "futures 0.3.28",
@@ -753,7 +755,9 @@ dependencies = [
 
 [[package]]
 name = "derive-asset-container"
-version = "0.3.0"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d09624741d1b38e15be1783a5c1ea14e2fb840256355527e5333bfe098992db"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -958,7 +962,9 @@ dependencies = [
 
 [[package]]
 name = "flow-component"
-version = "0.6.0"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e852e5c6ef860e08631083f0506693f88ed8c642b419473a57dc8d98ba91749"
 dependencies = [
  "anyhow",
  "futures 0.3.28",
@@ -972,9 +978,11 @@ dependencies = [
 
 [[package]]
 name = "flow-expression-parser"
-version = "0.6.0"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac0c24edf9e9188f4d4fa00e134171b4874d1bfed007e6534ad242fa0014f17e"
 dependencies = [
- "liquid-json 0.6.0",
+ "liquid-json 0.6.1",
  "nom",
  "once_cell",
  "parking_lot",
@@ -1799,9 +1807,9 @@ dependencies = [
 
 [[package]]
 name = "liquid-json"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fda1293f31a41ad176e3010dd595a2546185d03d698953d77e6b270e39df3ce"
+checksum = "1993e6fd1ce6b2f708440a6d11f9b3e1fc2065135f485316103a1fd18d9df8cd"
 dependencies = [
  "base64 0.21.4",
  "loose-liquid",
@@ -2878,7 +2886,9 @@ dependencies = [
 
 [[package]]
 name = "seeded-random"
-version = "0.5.0"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "237b344c25622ede58b1196b3c9d5387cad2743b2b86c450f886100d8751f256"
 dependencies = [
  "parking_lot",
  "rand 0.8.5",
@@ -3900,7 +3910,9 @@ checksum = "9193164d4de03a926d909d3bc7c30543cecb35400c02114792c2cae20d5e2dbb"
 
 [[package]]
 name = "wick-asset-reference"
-version = "0.4.0"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a549050fe456a1107c1101798ef358faf0445f8560ec1d8147fba5b5cd0edffc"
 dependencies = [
  "asset-container",
  "bytes 1.5.0",
@@ -3916,7 +3928,9 @@ dependencies = [
 
 [[package]]
 name = "wick-component"
-version = "0.16.0"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbe0ff58433a77b3783bc65417166162961d9d23485c98bfb8ec75bacdc8269d"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -3939,7 +3953,9 @@ dependencies = [
 
 [[package]]
 name = "wick-component-codegen"
-version = "0.5.0"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "91275a6573d63c056c67df827f8efd72b83dec3a0bda9777b23b13706b34e2a6"
 dependencies = [
  "anyhow",
  "bitflags 2.4.0",
@@ -3959,7 +3975,9 @@ dependencies = [
 
 [[package]]
 name = "wick-config"
-version = "0.27.0"
+version = "0.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d7f5686d6f124f2542e280ad23603b9fddde030e810db1d82aa65c3197ebbf8"
 dependencies = [
  "asset-container",
  "async-recursion",
@@ -3968,7 +3986,7 @@ dependencies = [
  "flow-component",
  "flow-expression-parser",
  "glob",
- "liquid-json 0.6.0",
+ "liquid-json 0.6.1",
  "normpath",
  "num-traits",
  "once_cell",
@@ -3991,7 +4009,9 @@ dependencies = [
 
 [[package]]
 name = "wick-interface-types"
-version = "0.16.0"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "14a6b8e90b51ae078feb08638bd2bf4a23b5c9c0330f8f6b2ea59a38abf3ff40"
 dependencies = [
  "derive_builder",
  "nom",
@@ -4003,7 +4023,9 @@ dependencies = [
 
 [[package]]
 name = "wick-oci-utils"
-version = "0.4.0"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4cba058f135da0ef899268a6e81bd877bddfaad666791e60c743678bc971f73"
 dependencies = [
  "bytes 1.5.0",
  "flate2",
@@ -4024,7 +4046,9 @@ dependencies = [
 
 [[package]]
 name = "wick-operation"
-version = "0.2.0"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32e233242c505faaa99d82987f34c66f468129738113993c2c28e05f983cbd1e"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -4034,7 +4058,9 @@ dependencies = [
 
 [[package]]
 name = "wick-packet"
-version = "0.16.0"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfc964b970e7f632a6c8566f09e9a95eec6dcbae05e6aa5dbd81d8c948e876ea"
 dependencies = [
  "anyhow",
  "base64 0.21.4",
@@ -4061,7 +4087,9 @@ dependencies = [
 
 [[package]]
 name = "wick-xdg"
-version = "0.3.0"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c404e0b07e8a4e6c7754db0e9db16163bb02e45c3afb259c9773acb988409b0"
 dependencies = [
  "getset",
  "thiserror",
