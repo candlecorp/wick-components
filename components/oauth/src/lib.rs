@@ -409,14 +409,16 @@ impl auth::Operation for Component {
                     let mut resp_cookies: Vec<Cookie> = vec![];
                     resp_cookies.push(session_cookie);
 
-                    let mut get_login_hint_response = ctx
-                        .provided()
-                        .dbclient
-                        .get_login_hint_claim(once(cookies.session_id.unwrap().to_string()))?;
+                    let mut res = ctx.provided().dbclient.get_login_hint_claim(
+                        dbclient::get_login_hint_claim::Config::default(),
+                        dbclient::get_login_hint_claim::Request {
+                            session_id: cookies.session_id.unwrap(),
+                        },
+                    )?;
 
-                    while let Some(login_hint_response) = get_login_hint_response.next().await {
+                    while let Some(login_hint_response) = res.output.next().await {
                         let login_hint =
-                            propagate_if_error!(login_hint_response, outputs, continue);
+                            propagate_if_error!(login_hint_response.decode(), outputs, continue);
                         println!("insert_response: {:?}", login_hint);
 
                         let login_hint_val = match login_hint.get("login_hint") {
