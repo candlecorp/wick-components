@@ -43,7 +43,5 @@ members = [
 ]
 
 [workspace.dependencies]
-wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main", features = [
-  "datetime",
-] }
-wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
+wick-component = { version = "0.17.0", features = ["datetime"] }
+wick-component-codegen = { version = "0.6.0" }
