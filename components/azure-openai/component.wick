@@ -3,7 +3,7 @@
 name: 'azure-openai'
 kind: wick/component@v1
 metadata:
-  version: '0.2.2'
+  version: '0.2.3'
 package:
   registry:
     host: registry.candle.dev
