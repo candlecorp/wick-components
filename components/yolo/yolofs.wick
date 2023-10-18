@@ -1,0 +1,147 @@
+kind: wick/component@v1
+name: yolofs
+package:
+  registry:
+    namespace: candle_ml
+metadata:
+  version: 0.1.0
+import:
+  - name: component
+    component:
+      kind: wick/component/manifest@v1
+      ref: ./component.wick
+      with:
+        model_dir: '{{ctx.root_config.model_dir}}'
+        model: '{{ctx.root_config.model}}'
+  - name: fs
+    component:
+      kind: wick/component/manifest@v1
+      ref: candle/wasi-fs:0.1.0
+      with:
+        root: '{{ctx.root_config.image_dir}}'
+component:
+  kind: wick/component/composite@v1
+  with:
+    - name: image_dir
+      type: string
+    - name: model_dir
+      type: string
+    - name: model
+      type: string
+  operations:
+    - name: detect
+      uses:
+        - name: OP
+          operation: component::detect
+          with:
+            confidence: 0.25
+            iou: 0.45
+      flow:
+        - <>.file -> fs::read_bytes -> OP -> <>
+tests:
+  - with:
+      model_dir: '{{ctx.env.PWD}}'
+      image_dir: '{{ctx.env.PWD}}'
+      model: 'yolov8n.safetensors'
+    cases:
+      - operation: detect
+        name: custom-confidence
+        with:
+          confidence: .25
+          iou: .45
+        inputs:
+          - name: file
+            value: soccer.jpg
+        outputs:
+          - name: output
+            value:
+              [
+                [
+                  'person',
+                  {
+                    'confidence': 0.9256853461265564,
+                    'keypoints': [],
+                    'xmax': 235.46990966796875,
+                    'xmin': 69.84808349609375,
+                    'ymax': 385.51068115234375,
+                    'ymin': 70.73658752441406,
+                  },
+                ],
+                [
+                  'person',
+                  {
+                    'confidence': 0.915441632270813,
+                    'keypoints': [],
+                    'xmax': 396.18756103515625,
+                    'xmin': 186.54446411132812,
+                    'ymax': 392.3243408203125,
+                    'ymin': 37.34172058105469,
+                  },
+                ],
+                [
+                  'person',
+                  {
+                    'confidence': 0.9087674617767334,
+                    'keypoints': [],
+                    'xmax': 613.0,
+                    'xmin': 462.0843505859375,
+                    'ymax': 373.789306640625,
+                    'ymin': 23.754322052001953,
+                  },
+                ],
+                [
+                  'person',
+                  {
+                    'confidence': 0.5383780598640442,
+                    'keypoints': [],
+                    'xmax': 363.3480224609375,
+                    'xmin': 325.07373046875,
+                    'ymax': 143.68850708007812,
+                    'ymin': 60.6527099609375,
+                  },
+                ],
+                [
+                  'person',
+                  {
+                    'confidence': 0.2716786563396454,
+                    'keypoints': [],
+                    'xmax': 562.831787109375,
+                    'xmin': 466.9012756347656,
+                    'ymax': 224.91604614257812,
+                    'ymin': 22.33010482788086,
+                  },
+                ],
+                [
+                  'car',
+                  {
+                    'confidence': 0.7425552010536194,
+                    'keypoints': [],
+                    'xmax': 482.6632995605469,
+                    'xmin': 355.2928771972656,
+                    'ymax': 137.7826385498047,
+                    'ymin': 68.53266143798828,
+                  },
+                ],
+                [
+                  'car',
+                  {
+                    'confidence': 0.6876348853111267,
+                    'keypoints': [],
+                    'xmax': 241.87548828125,
+                    'xmin': 141.7071075439453,
+                    'ymax': 136.73696899414062,
+                    'ymin': 76.62179565429688,
+                  },
+                ],
+                [
+                  'sports ball',
+                  {
+                    'confidence': 0.9567586183547974,
+                    'keypoints': [],
+                    'xmax': 126.02123260498047,
+                    'xmin': 66.91826629638672,
+                    'ymax': 425.0271301269531,
+                    'ymin': 370.4414367675781,
+                  },
+                ],
+              ]

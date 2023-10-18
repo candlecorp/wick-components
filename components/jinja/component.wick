@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: 'jinja'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: ./build/component.signed.wasm
+  operations:
+    - name: render
+      with:
+        - name: template
+          type: string
+      inputs:
+        - name: data
+          type: object
+      outputs:
+        - name: output
+          type: string
+tests:
+  - name: basic
+    cases:
+      - name: basic
+        operation: render
+        with:
+          template: 'Hello {%raw%}{{ name }}{%endraw%}!'
+        inputs:
+          - name: data
+            value:
+              name: 'jinja'
+        outputs:
+          - name: output
+            value: 'Hello jinja!'
+          - name: output
+            flags:
+              done: true

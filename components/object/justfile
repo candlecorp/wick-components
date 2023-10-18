@@ -9,20 +9,22 @@ crate_name := `wick query -f Cargo.toml '.package.name'`
 project_name := snakecase(crate_name)
 
 # The target to build for release.
-build_target := "wasm32-wasi"
+build_target := "wasm32-unknown-unknown"
 # The target to build for debug (wasm32-wasi can give easy access to println & STDIO for debugging)
 debug_target := "wasm32-wasi"
+
+root_dir:=`cargo metadata --format-version=1 | wick query --type json -r '.workspace_root'`
 
 # Build and sign a WebAssembly component implementation
 build: setup
     cargo build --release --target="{{build_target}}"
-    cp "../../target/{{build_target}}/release/{{project_name}}.wasm" ./build/component.wasm
+    cp "{{root_dir}}/target/{{build_target}}/release/{{project_name}}.wasm" ./build/component.wasm
     {{wick}} wasm sign ./build/component.wasm component.wick
 
 # Build a debug version of a WebAssembly component
 debug: setup
     cargo +nightly build --target="{{debug_target}}"
-    cp "../../target/{{debug_target}}/debug/{{project_name}}.wasm" ./build/component.wasm
+    cp "{{root_dir}}/target/{{debug_target}}/debug/{{project_name}}.wasm" ./build/component.wasm
     {{wick}} wasm sign ./build/component.wasm component.wick
 
 # Echo variables used by this justfile
@@ -38,9 +40,6 @@ debug-justfile:
 # Setup any environment needed for the build
 setup:
     mkdir -p build
-
-model:
-  curl -L https://huggingface.co/karpathy/tinyllamas/resolve/main/stories15M.bin -o stories15M.bin
 
 # Run tests
 test: build

@@ -1,0 +1,245 @@
+---
+name: oauth_engine
+kind: wick/component@v1
+metadata:
+  version: 0.1.0
+  description: Oauth Middleware component.
+import:
+  - name: http
+    component:
+      kind: wick/component/types@v1
+      ref: registry.candle.dev/types/http:0.4.0
+types:
+  - name: UserInfo
+    kind: wick/type/struct@v1
+    fields:
+      - name: sub
+        type: string
+      - name: email
+        type: string
+      - name: groups
+        type: string[]
+  - name: OAuthTokenResponse
+    kind: wick/type/struct@v1
+    fields:
+      - name: access_token
+        type: string
+      - name: expires_in
+        type: u32?
+      - name: token_type
+        type: string
+      - name: id_token
+        type: string?
+  - name: SessionDetails
+    kind: wick/type/struct@v1
+    fields:
+      - name: expires_at
+        type: datetime
+      - name: access_token
+        type: string
+  - name: IdToken
+    kind: wick/type/struct@v1
+    fields:
+      - name: id_token
+        type: string
+requires:
+  - name: dbclient
+    interface:
+      operations:
+        - name: insert_token
+          inputs:
+            - name: session_id
+              type: string
+            - name: token_type
+              type: string
+            - name: access_token
+              type: string
+            - name: id_token
+              type: string
+            - name: refresh_token
+              type: string
+            - name: expires_at
+              type: datetime
+          outputs:
+            - name: output
+              type: object
+        - name: insert_claims
+          inputs:
+            - name: session_id
+              type: string
+            - name: claims
+              type: string
+          outputs:
+            - name: output
+              type: object
+        - name: get_session
+          inputs:
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: SessionDetails
+        - name: get_id_token
+          inputs:
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: IdToken
+        - name: get_oidc_claims
+          inputs:
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: object
+        - name: update_session
+          inputs:
+            - name: expires_at
+              type: datetime
+            - name: access_token
+              type: string
+            - name: refresh_token
+              type: string
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: object
+        - name: delete_session
+          inputs:
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: object
+        - name: get_login_hint_claim
+          inputs:
+            - name: session_id
+              type: string
+          outputs:
+            - name: output
+              type: object
+  - name: httpclient
+    interface:
+      operations:
+        - name: get_token
+          inputs:
+            - name: access_code
+              type: string
+            - name: redirect_uri
+              type: string
+          outputs:
+            - name: response
+              type: http::HttpResponse
+            - name: body
+              type: OAuthTokenResponse
+        - name: refresh_token
+          inputs:
+            - name: refresh_token
+              type: string
+          outputs:
+            - name: response
+              type: http::HttpResponse
+            - name: body
+              type: OAuthTokenResponse
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  with:
+    - name: auth_endpoint
+      type: string
+    - name: logout_endpoint
+      type: string
+    - name: redirect_uri
+      type: string
+    - name: session_cookie_name
+      type: string
+    - name: client_id
+      type: string
+    - name: scope
+      type: string
+    - name: email_claim
+      type: string
+    - name: logout_redirect_uri
+      type: string
+    - name: redirect_logout
+      type: string
+    - name: groups_claim
+      type: string?
+  operations:
+    - name: auth
+      inputs:
+        - name: request
+          type: http::HttpRequest
+      outputs:
+        - name: output
+          type: http::RequestMiddlewareResponse
+    - name: oidc
+      inputs:
+        - name: request
+          type: http::HttpRequest
+      outputs:
+        - name: output
+          type: http::RequestMiddlewareResponse
+    - name: get_user
+      inputs:
+        - name: request
+          type: http::HttpRequest
+      outputs:
+        - name: response
+          type: http::HttpResponse
+        - name: body
+          type: UserInfo
+# tests:
+#   - name: auth
+#     with:
+#       auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
+#       redirect_uri: http://localhost:8080/oidc/callback
+#       session_cookie_name: sid
+#       client_id: '1234567'
+#       client_secret: 'abc123'
+#       scope: 'openid profile email'
+#       email_claim: 'email'
+#       groups_claim: 'groups'
+#     cases:
+#       - name: no cookie
+#         operation: auth
+#         inherent:
+#           seed: 1234567
+#           timestamp: 1689015106
+#         inputs:
+#           - name: request
+#             value:
+#               method: Get
+#               scheme: Http
+#               path: '/'
+#               uri: 'http://localhost:8080/'
+#               version: Http11
+#               authority: 'localhost:8080'
+#               remote_addr: '127.0.0.1'
+#               query_parameters: {}
+#               headers:
+#                 host:
+#                   - 'localhost:8080'
+#                 user-agent:
+#                   - 'curl/7.64.1'
+#                 accept:
+#                   - '*/*'
+#         outputs:
+#           - name: output
+#             value:
+#               version: '1.1'
+#               status: '307'
+#               headers:
+#                 location:
+#                   - 'https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email&state=17b66ba8-38f7-9361-5068-fb22b0c72353'
+#                 'set-cookie':
+#                   [
+#                     'auth_state=17b66ba8-38f7-9361-5068-fb22b0c72353; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:54:58 GMT',
+#                     'return_url=http://localhost:8080/; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:54:58 GMT',
+#                     'sid=expired; HttpOnly; Path=/; Expires=Mon, 10 Jul 2023 18:49:57 GMT',
+#                   ]
+#           - name: output
+#             flags:
+#               done: true

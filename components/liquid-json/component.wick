@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: 'liquid-json'
+kind: wick/component@v1
+metadata:
+  description: 'A component for rendering liquid templates as structured JSON.'
+  authors: ['Candle Corporation']
+  licenses: ['Apache-2.0']
+  documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components
+  version: '0.2.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: render
+      with:
+        - name: template
+          type: object
+      inputs:
+        - name: input
+          type: object
+      outputs:
+        - name: output
+          type: object
+tests:
+  - cases:
+      - name: render
+        operation: render
+        with:
+          template:
+            status: '{% raw %}{{status}}{% endraw %}'
+            body:
+              result: '{% raw %}{{ result }}{% endraw %}'
+        inputs:
+          - name: input
+            value:
+              result: 'This is my result'
+              status: 200
+        outputs:
+          - name: output
+            value:
+              status: 200
+              body:
+                result: 'This is my result'
+          - name: output
+            flags:
+              done: true

@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: 'liquid'
+kind: wick/component@v1
+metadata:
+  description: 'A template engine for creating strings using Liquid syntax.'
+  authors: ['Candle Corporation']
+  licenses: ['Apache-2.0']
+  documentation: Source code available at https://github.com/candlecorp/wick-components/tree/main/components.  Liquid template documentation available at https://shopify.github.io/liquid/.
+  version: '0.3.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: render
+      with:
+        - name: template
+          type: string
+      inputs:
+        - name: context
+          type: object
+      outputs:
+        - name: output
+          type: string
+tests:
+  - cases:
+      - name: liquid
+        operation: render
+        with:
+          template: '{%raw%}This is a {{ input.adjective }} string. It is {{ input.length }} very long.{%endraw%}'
+        inputs:
+          - name: context
+            value: { 'adjective': 'nice', 'length': 'not' }
+        outputs:
+          - name: output
+            value: 'This is a nice string. It is not very long.'
+      - name: liquid
+        operation: render
+        with:
+          template: '{%raw%}I passed in a value of "{{ input }}".{%endraw%}'
+        inputs:
+          - name: context
+            value: 'Simple String'
+        outputs:
+          - name: output
+            value: 'I passed in a value of "Simple String".'
+      - name: liquid
+        operation: render
+        with:
+          template: '{%raw%}This is a {{ input.adjective }} string. It is {{ input.length }} very long.{%endraw%}'
+        inputs:
+          - name: context
+            flag: Open
+          - name: context
+            value: { 'adjective': 'nice', 'length': 'not' }
+          - name: context
+            flag: Close
+        outputs:
+          - name: output
+            flag: Open
+          - name: output
+            value: 'This is a nice string. It is not very long.'
+          - name: output
+            flag: Close
+          - name: output
+            flags:
+              done: true

@@ -4,7 +4,7 @@ metadata:
   version: 0.3.0
   description: Oauth composite middleware component. This requires a mssql database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
   licenses:
-  - Apache-2.0
+    - Apache-2.0
 package:
   registry:
     host: registry.candle.dev
@@ -27,7 +27,7 @@ import:
   - name: oauth_engine
     component:
       kind: wick/component/manifest@v1
-      ref: ./oauth-engine.wick
+      ref: ./component.wick
       with:
         client_id: '{{ ctx.root_config.client_id }}'
         auth_endpoint: '{{ ctx.root_config.auth_endpoint }}'
@@ -72,47 +72,47 @@ component:
     - name: groups_claim
       type: string?
   operations:
-  - name: initialize_db
-    uses:
-      - name: INITIALIZE
-        operation: OAUTHDB::initialize
-    flow:
-      - <>.request -> drop
-      - INITIALIZE.output -> <>.output
-  - name: auth
-    uses:
-      - name: AUTH
-        operation: oauth_engine::auth
-    flow:
-      - <>.request -> AUTH.request
-      - AUTH.output -> <>.output
-  - name: oidc
-    uses:
-      - name: OIDC
-        operation: oauth_engine::oidc
-    flow:
-      - <>.request -> OIDC.request
-      - OIDC.output -> <>.output
-  - name: get_user
-    uses:
-      - name: GETUSER
-        operation: oauth_engine::get_user
-    flow:
-      - <>.request -> GETUSER.request
-      - <>.body -> drop
-      - GETUSER.response -> <>.response
-      - GETUSER.body -> <>.body
+    - name: initialize_db
+      uses:
+        - name: INITIALIZE
+          operation: OAUTHDB::initialize
+      flow:
+        - <>.request -> drop
+        - INITIALIZE.output -> <>.output
+    - name: auth
+      uses:
+        - name: AUTH
+          operation: oauth_engine::auth
+      flow:
+        - <>.request -> AUTH.request
+        - AUTH.output -> <>.output
+    - name: oidc
+      uses:
+        - name: OIDC
+          operation: oauth_engine::oidc
+      flow:
+        - <>.request -> OIDC.request
+        - OIDC.output -> <>.output
+    - name: get_user
+      uses:
+        - name: GETUSER
+          operation: oauth_engine::get_user
+      flow:
+        - <>.request -> GETUSER.request
+        - <>.body -> drop
+        - GETUSER.response -> <>.response
+        - GETUSER.body -> <>.body
 tests:
   - name: auth
     with:
-        auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
-        token_endpoint: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
-        redirect_uri: http://localhost:8081/oidc/callback
-        session_cookie_name: sid
-        client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
-        client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
-        scope: "openid profile email"
-        db_url: '{{ ctx.env.OAUTH_DB_URL }}'
+      auth_endpoint: https://login.microsoftonline.com/organizations/oauth2/authorize
+      token_endpoint: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
+      redirect_uri: http://localhost:8081/oidc/callback
+      session_cookie_name: sid
+      client_id: '{{ ctx.env.OAUTH_CLIENT_ID }}'
+      client_secret: '{{ ctx.env.OAUTH_CLIENT_SECRET }}'
+      scope: 'openid profile email'
+      db_url: '{{ ctx.env.OAUTH_DB_URL }}'
     cases:
       - name: no cookie
         operation: auth
@@ -121,26 +121,26 @@ tests:
             value:
               method: Get
               scheme: Http
-              path: "/"
-              uri: "http://localhost:8080/"
+              path: '/'
+              uri: 'http://localhost:8080/'
               version: Http11
-              authority: "localhost:8080"
+              authority: 'localhost:8080'
               query_parameters: {}
               headers:
                 host:
-                  - "localhost:8080"
+                  - 'localhost:8080'
                 user-agent:
-                  - "curl/7.64.1"
+                  - 'curl/7.64.1'
                 accept:
-                  - "*/*"
+                  - '*/*'
         outputs:
           - name: output
             value:
-              version: "1.1"
-              status: "307"
+              version: '1.1'
+              status: '307'
               headers:
                 location:
-                  - "https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email"
+                  - 'https://login.microsoftonline.com/organizations/oauth2/authorize?response_type=code&client_id=1234567&redirect_uri=http://localhost:8080/oidc/callback&scope=openid%20profile%20email'
           - name: output
             flags:
               done: true

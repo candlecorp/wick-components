@@ -22,7 +22,7 @@ members = [
   "components/http-auth",
   "components/http-client-ip",
   "components/http-headers",
-  "components/infer",
+  "components/llama",
   "components/jinja",
   "components/liquid-json",
   "components/liquid",
@@ -37,12 +37,12 @@ members = [
   "components/string",
   "components/unzip",
   "components/usps",
+  "components/wickdoc",
   "components/xml",
+  "components/yolo",
   "components/azure-openai",
 ]
 
 [workspace.dependencies]
-wick-component = { git = "https://github.com/candlecorp/wick.git", branch = "main", features = [
-  "datetime",
-] }
-wick-component-codegen = { git = "https://github.com/candlecorp/wick.git", branch = "main" }
+wick-component = { version = "0.17.0", features = ["datetime"] }
+wick-component-codegen = { version = "0.6.0" }

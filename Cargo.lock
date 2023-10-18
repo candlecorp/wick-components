@@ -78,7 +78,7 @@ dependencies = [
  "serde_yaml",
  "wick-component",
  "wick-component-codegen",
- "wick-config 0.27.0 (git+https://github.com/candlecorp/wick.git)",
+ "wick-config",
 ]
 
 [[package]]
@@ -104,8 +104,9 @@ dependencies = [
 
 [[package]]
 name = "asset-container"
-version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb9705d249fc307781ff3f9de883df5860f04431c29221c12361f931d6ca44f0"
 dependencies = [
  "bitflags 2.4.0",
  "futures 0.3.28",
@@ -222,6 +223,12 @@ name = "bit-vec"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
+
+[[package]]
+name = "bit_field"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc827186963e592360843fb5ba4b973e145841266c1357f7180c43526f2e5b61"
 
 [[package]]
 name = "bitflags"
@@ -494,6 +501,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "color_quant"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d7b894f5411737b7867f4827955924d7c254fc9f4d91a6aad6b097804b1018b"
+
+[[package]]
 name = "cookie"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -742,8 +755,9 @@ dependencies = [
 
 [[package]]
 name = "derive-asset-container"
-version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d09624741d1b38e15be1783a5c1ea14e2fb840256355527e5333bfe098992db"
 dependencies = [
  "asset-container",
  "proc-macro2",
@@ -884,6 +898,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d817e038c30374a4bcb22f94d0a8a0e216958d4c3dcde369b1439fec4bdda6e6"
 
 [[package]]
+name = "exr"
+version = "1.6.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "279d3efcc55e19917fff7ab3ddd6c14afb6a90881a0078465196fe2f99d08c56"
+dependencies = [
+ "bit_field",
+ "flume",
+ "half",
+ "lebe",
+ "miniz_oxide",
+ "rayon-core",
+ "smallvec",
+ "zune-inflate",
+]
+
+[[package]]
 name = "fancy-regex"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -891,6 +921,15 @@ checksum = "0678ab2d46fa5195aaf59ad034c083d351377d4af57f3e073c074d0da3e3c766"
 dependencies = [
  "bit-set",
  "regex 1.10.0",
+]
+
+[[package]]
+name = "fdeflate"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d329bdeac514ee06249dabc27877490f17f5d371ec693360768b838e19f3ae10"
+dependencies = [
+ "simd-adler32",
 ]
 
 [[package]]
@@ -923,49 +962,48 @@ dependencies = [
 
 [[package]]
 name = "flow-component"
-version = "0.6.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e852e5c6ef860e08631083f0506693f88ed8c642b419473a57dc8d98ba91749"
 dependencies = [
  "anyhow",
  "futures 0.3.28",
- "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "seeded-random",
  "serde",
  "serde_json",
  "tracing",
- "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-interface-types",
  "wick-packet",
 ]
 
 [[package]]
 name = "flow-expression-parser"
-version = "0.6.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac0c24edf9e9188f4d4fa00e134171b4874d1bfed007e6534ad242fa0014f17e"
 dependencies = [
- "liquid-json 0.6.0",
+ "liquid-json 0.6.1",
  "nom",
  "once_cell",
  "parking_lot",
  "regex 1.10.0",
- "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "seeded-random",
  "serde",
  "serde_json",
  "thiserror",
 ]
 
 [[package]]
-name = "flow-expression-parser"
-version = "0.6.0"
-source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
+name = "flume"
+version = "0.10.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1657b4441c3403d9f7b3409e47575237dac27b1b5726df654a6ecbf92f0f7577"
 dependencies = [
- "liquid-json 0.6.0",
- "nom",
- "once_cell",
- "parking_lot",
- "regex 1.10.0",
- "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git)",
- "serde",
- "serde_json",
- "thiserror",
+ "futures-core",
+ "futures-sink",
+ "nanorand",
+ "pin-project",
+ "spin 0.9.8",
 ]
 
 [[package]]
@@ -1113,6 +1151,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "gif"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80792593675e051cf94a4b111980da2ba60d4a83e43e0048c5693baab3977045"
+dependencies = [
+ "color_quant",
+ "weezl",
 ]
 
 [[package]]
@@ -1412,6 +1460,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "image"
+version = "0.24.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f3dfdbdd72063086ff443e297b61695500514b1e41095b6fb9a5ab48a70a711"
+dependencies = [
+ "bytemuck",
+ "byteorder",
+ "color_quant",
+ "exr",
+ "gif",
+ "jpeg-decoder",
+ "num-rational",
+ "num-traits",
+ "png",
+ "qoi",
+ "tiff",
+]
+
+[[package]]
 name = "indexmap"
 version = "1.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1540,6 +1607,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "jpeg-decoder"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc0000e42512c92e31c2252315bda326620a4e034105e900c98ec492fa077b3e"
+dependencies = [
+ "rayon",
+]
+
+[[package]]
 name = "js-sys"
 version = "0.3.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1620,6 +1696,12 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
+name = "lebe"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03087c2bad5e1034e8cace5926dec053fb3790248370865f5117a7d0213354c8"
 
 [[package]]
 name = "libc"
@@ -1725,9 +1807,9 @@ dependencies = [
 
 [[package]]
 name = "liquid-json"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fda1293f31a41ad176e3010dd595a2546185d03d698953d77e6b270e39df3ce"
+checksum = "1993e6fd1ce6b2f708440a6d11f9b3e1fc2065135f485316103a1fd18d9df8cd"
 dependencies = [
  "base64 0.21.4",
  "loose-liquid",
@@ -1919,6 +2001,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e7810e0be55b428ada41041c41f32c9f1a42817901b4ccf45fa3d4b6561e74c7"
 dependencies = [
  "adler",
+ "simd-adler32",
 ]
 
 [[package]]
@@ -1954,6 +2037,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "nanorand"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a51313c5820b0b02bd422f4b44776fbf47961755c74ce64afc73bfad10226c3"
+dependencies = [
+ "getrandom",
+]
+
+[[package]]
 name = "new_debug_unreachable"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1984,6 +2076,27 @@ version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ba157ca0885411de85d6ca030ba7e2a83a28636056c7c699b07c8b6f7383214"
 dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "num-integer"
+version = "0.1.45"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "225d3389fb3509a24c93f5c29eb6bde2586b98d9f016636dff58d7c6f7569cd9"
+dependencies = [
+ "autocfg",
+ "num-traits",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
+dependencies = [
+ "autocfg",
+ "num-integer",
  "num-traits",
 ]
 
@@ -2217,6 +2330,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "pin-project"
+version = "1.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fda4ed1c6c173e3fc7a83629421152e01d7b1f9b7f65fb301e490e8cfc656422"
+dependencies = [
+ "pin-project-internal",
+]
+
+[[package]]
+name = "pin-project-internal"
+version = "1.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4359fd9c9171ec6e8c62926d6faaf553a8dc3f64e1507e76da7911b4f6a04405"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.38",
+]
+
+[[package]]
 name = "pin-project-lite"
 version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2227,6 +2360,19 @@ name = "pin-utils"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+
+[[package]]
+name = "png"
+version = "0.17.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd75bf2d8dd3702b9707cdbc56a5b9ef42cec752eb8b3bafc01234558442aa64"
+dependencies = [
+ "bitflags 1.3.2",
+ "crc32fast",
+ "fdeflate",
+ "flate2",
+ "miniz_oxide",
+]
 
 [[package]]
 name = "ppv-lite86"
@@ -2302,6 +2448,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "qoi"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f6d64c71eb498fe9eae14ce4ec935c555749aef511cca85b5568910d6e48001"
+dependencies = [
+ "bytemuck",
 ]
 
 [[package]]
@@ -2731,19 +2886,9 @@ dependencies = [
 
 [[package]]
 name = "seeded-random"
-version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
-dependencies = [
- "parking_lot",
- "rand 0.8.5",
- "rand_chacha",
- "uuid",
-]
-
-[[package]]
-name = "seeded-random"
-version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "237b344c25622ede58b1196b3c9d5387cad2743b2b86c450f886100d8751f256"
 dependencies = [
  "parking_lot",
  "rand 0.8.5",
@@ -2904,6 +3049,12 @@ dependencies = [
  "hex",
  "sha2",
 ]
+
+[[package]]
+name = "simd-adler32"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
 
 [[package]]
 name = "siphasher"
@@ -3149,6 +3300,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.38",
+]
+
+[[package]]
+name = "tiff"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d172b0f4d3fba17ba89811858b9d3d97f928aece846475bbda076ca46736211"
+dependencies = [
+ "flate2",
+ "jpeg-decoder",
+ "weezl",
 ]
 
 [[package]]
@@ -3741,9 +3903,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14247bb57be4f377dfb94c72830b8ce8fc6beac03cf4bf7b9732eadd414123fc"
 
 [[package]]
+name = "weezl"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9193164d4de03a926d909d3bc7c30543cecb35400c02114792c2cae20d5e2dbb"
+
+[[package]]
 name = "wick-asset-reference"
-version = "0.4.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a549050fe456a1107c1101798ef358faf0445f8560ec1d8147fba5b5cd0edffc"
 dependencies = [
  "asset-container",
  "bytes 1.5.0",
@@ -3759,8 +3928,9 @@ dependencies = [
 
 [[package]]
 name = "wick-component"
-version = "0.16.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbe0ff58433a77b3783bc65417166162961d9d23485c98bfb8ec75bacdc8269d"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -3783,8 +3953,9 @@ dependencies = [
 
 [[package]]
 name = "wick-component-codegen"
-version = "0.5.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "91275a6573d63c056c67df827f8efd72b83dec3a0bda9777b23b13706b34e2a6"
 dependencies = [
  "anyhow",
  "bitflags 2.4.0",
@@ -3798,23 +3969,24 @@ dependencies = [
  "serde_json",
  "syn 2.0.38",
  "tokio",
- "wick-config 0.27.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
- "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-config",
+ "wick-interface-types",
 ]
 
 [[package]]
 name = "wick-config"
-version = "0.27.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d7f5686d6f124f2542e280ad23603b9fddde030e810db1d82aa65c3197ebbf8"
 dependencies = [
  "asset-container",
  "async-recursion",
  "derive-asset-container",
  "derive_builder",
  "flow-component",
- "flow-expression-parser 0.6.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "flow-expression-parser",
  "glob",
- "liquid-json 0.6.0",
+ "liquid-json 0.6.1",
  "normpath",
  "num-traits",
  "once_cell",
@@ -3830,45 +4002,16 @@ dependencies = [
  "tracing",
  "url",
  "wick-asset-reference",
- "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-interface-types",
  "wick-packet",
  "wildmatch",
 ]
 
 [[package]]
-name = "wick-config"
-version = "0.27.0"
-source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
-dependencies = [
- "flow-expression-parser 0.6.0 (git+https://github.com/candlecorp/wick.git)",
- "liquid-json 0.6.0",
- "num-traits",
- "serde",
- "serde-value",
- "serde_json",
- "serde_with",
- "serde_yaml",
- "thiserror",
- "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git)",
-]
-
-[[package]]
 name = "wick-interface-types"
-version = "0.16.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
-dependencies = [
- "derive_builder",
- "nom",
- "serde",
- "serde_json",
- "serde_repr",
- "serde_yaml",
-]
-
-[[package]]
-name = "wick-interface-types"
-version = "0.16.0"
-source = "git+https://github.com/candlecorp/wick.git#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "14a6b8e90b51ae078feb08638bd2bf4a23b5c9c0330f8f6b2ea59a38abf3ff40"
 dependencies = [
  "derive_builder",
  "nom",
@@ -3880,8 +4023,9 @@ dependencies = [
 
 [[package]]
 name = "wick-oci-utils"
-version = "0.4.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4cba058f135da0ef899268a6e81bd877bddfaad666791e60c743678bc971f73"
 dependencies = [
  "bytes 1.5.0",
  "flate2",
@@ -3902,8 +4046,9 @@ dependencies = [
 
 [[package]]
 name = "wick-operation"
-version = "0.2.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32e233242c505faaa99d82987f34c66f468129738113993c2c28e05f983cbd1e"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -3913,8 +4058,9 @@ dependencies = [
 
 [[package]]
 name = "wick-packet"
-version = "0.16.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfc964b970e7f632a6c8566f09e9a95eec6dcbae05e6aa5dbd81d8c948e876ea"
 dependencies = [
  "anyhow",
  "base64 0.21.4",
@@ -3923,7 +4069,7 @@ dependencies = [
  "chrono",
  "parking_lot",
  "pin-project-lite",
- "seeded-random 0.5.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "seeded-random",
  "serde",
  "serde_json",
  "thiserror",
@@ -3936,16 +4082,30 @@ dependencies = [
  "wasmrs-guest",
  "wasmrs-runtime",
  "wasmrs-rx",
- "wick-interface-types 0.16.0 (git+https://github.com/candlecorp/wick.git?branch=main)",
+ "wick-interface-types",
 ]
 
 [[package]]
 name = "wick-xdg"
-version = "0.3.0"
-source = "git+https://github.com/candlecorp/wick.git?branch=main#cefb8859caa612b76f276d258697057ab50425dd"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c404e0b07e8a4e6c7754db0e9db16163bb02e45c3afb259c9773acb988409b0"
 dependencies = [
  "getset",
  "thiserror",
+]
+
+[[package]]
+name = "wickdoc"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "loose-liquid",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "wick-component",
+ "wick-component-codegen",
 ]
 
 [[package]]
@@ -4123,6 +4283,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "yolo"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "byteorder",
+ "candle-core",
+ "candle-nn",
+ "candle-transformers",
+ "image",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "wick-component",
+ "wick-component-codegen",
+]
+
+[[package]]
 name = "zerofrom"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4152,4 +4330,13 @@ dependencies = [
  "byteorder",
  "crc32fast",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "zune-inflate"
+version = "0.2.54"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73ab332fe2f6680068f3582b16a24f90ad7096d5d39b974d1c0aff0125116f02"
+dependencies = [
+ "simd-adler32",
 ]

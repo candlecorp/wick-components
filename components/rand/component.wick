@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/candlecorp/wick/main/crates/wick/wick-config/json-schema/manifest.json
+---
+name: 'rand'
+kind: wick/component@v1
+metadata:
+  version: '0.1.0'
+package:
+  registry:
+    host: registry.candle.dev
+    namespace: common
+component:
+  kind: wick/component/wasmrs@v1
+  ref: build/component.signed.wasm
+  operations:
+    - name: int
+      inputs:
+        - name: min
+          type: u32
+        - name: max
+          type: u32
+      outputs:
+        - name: output
+          type: u32
