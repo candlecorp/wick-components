@@ -131,7 +131,7 @@ requires:
               type: OAuthTokenResponse
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/oauth_engine.signed.wasm
+  ref: build/component.signed.wasm
   with:
     - name: auth_endpoint
       type: string

@@ -14,7 +14,7 @@ package:
     namespace: common
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/regex.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: match
       with:
@@ -60,7 +60,7 @@ tests:
             value: true
           - name: result
             flags:
-              done: true  
+              done: true
       - name: regex_capture
         operation: capture
         with:
@@ -70,7 +70,7 @@ tests:
             value: 'This is a string.  It is not very long.'
         outputs:
           - name: result
-            value: ["This ","This ","This"]
+            value: ['This ', 'This ', 'This']
           - name: result
             flags:
               done: true
@@ -83,7 +83,7 @@ tests:
             value: 'https://mycontainer.blob.core.windows.net/pvc-abc123/bla/Store0044/20230220.zip'
         outputs:
           - name: result
-            value: ["Store0044/20230220.zip", "0044","20230220.zip"]
+            value: ['Store0044/20230220.zip', '0044', '20230220.zip']
           - name: result
             flags:
               done: true

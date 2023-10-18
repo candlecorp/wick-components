@@ -4096,6 +4096,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "wickdoc"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "loose-liquid",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "wick-component",
+ "wick-component-codegen",
+]
+
+[[package]]
 name = "wildmatch"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

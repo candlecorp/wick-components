@@ -21,6 +21,19 @@ run-child-task task:
     fi
   done
 
+wickdoc:
+  #!/usr/bin/env bash
+  shopt -s nocaseglob
+  for i in components/*; do
+    pushd $i > /dev/null
+    if test -f "component.wick"; then
+      wick invoke -q ../wickdoc/component.wick generate_readme --values -- --input=@component.wick > README.md
+    else
+      echo "Warning: component $i does not have a component.wick file. Skipping wickdoc..."
+    fi
+    popd > /dev/null
+  done
+
 build:
   just run-child-task build
 

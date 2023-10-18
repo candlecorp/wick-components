@@ -10,7 +10,7 @@ package:
     namespace: common
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/rand.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: int
       inputs:

@@ -11,7 +11,7 @@ package:
     namespace: common
 component:
   kind: wick/component/wasmrs@v1
-  ref: build/loop.signed.wasm
+  ref: build/component.signed.wasm
   operations:
     - name: each
       inputs:
@@ -27,7 +27,7 @@ tests:
         operation: each
         inputs:
           - name: input
-            value: [1,2,3]
+            value: [1, 2, 3]
         outputs:
           - name: output
             value: 1
@@ -42,10 +42,10 @@ tests:
         operation: each
         inputs:
           - name: input
-            value: [{a: 1}]
+            value: [{ a: 1 }]
         outputs:
           - name: output
-            value: {a: 1}
+            value: { a: 1 }
           - name: output
             flags:
               done: true

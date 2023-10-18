@@ -6,7 +6,7 @@ wick := "wick"
 # Get the crate name from the Cargo.toml file (this uses wick instead of {{wick}} due to justfile limitations)
 crate_name := `wick query -f Cargo.toml '.package.name'`
 # Convert crate name to snake case for rust naming conventions.
-project_name := "log"
+project_name := snakecase(crate_name)
 
 # The target to build for release.
 build_target := "wasm32-wasi"
@@ -26,7 +26,6 @@ debug: setup
     cargo +nightly build --target="{{debug_target}}"
     cp "{{root_dir}}/target/{{debug_target}}/debug/{{project_name}}.wasm" ./build/component.wasm
     {{wick}} wasm sign ./build/component.wasm component.wick
-
 
 # Echo variables used by this justfile
 debug-justfile:

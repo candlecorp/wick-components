@@ -1,0 +1,115 @@
+# {{ data.package.registry.namespace | default: "<missing>"}}/{{ data.name }}
+{%- if data.metadata.description %}
+
+{{data.metadata.description}}
+{% else %}
+
+This is generated documentation for the {{data.name}} component.
+{% endif %}
+
+{%- if data.component.with %}
+
+## Component-wide configuration
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+{% assign fields = data.component.with -%}
+{% for field in fields -%}
+| `{{field.name}}` | {{field.type}} | {{field.description | default: ""}} |
+{% endfor %}
+{%- endif %}
+
+## Operations
+{%- for operation in data.component.operations %}
+
+### `{{operation.name}}`
+{%- if operation.description %}
+
+  {{operation.description}}
+{% endif %}
+
+{%- if operation.with %}
+
+#### Operation Configuration
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+{% assign fields = operation.with -%}
+{% for field in fields -%}
+| `{{field.name}}` | {{field.type}} | {{field.description | default: ""}} |
+{% endfor %}
+{%- endif %}
+
+
+{%- if operation.inputs %}
+
+#### Inputs
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+{% assign fields = operation.inputs -%}
+{% for field in fields -%}
+| `{{field.name}}` | {{field.type}} | {{field.description | default: ""}} |
+{% endfor %}
+{%-  endif %}
+
+{%- if operation.outputs%}
+
+#### Outputs
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+{% assign fields = operation.outputs -%}
+{% for field in fields -%}
+| `{{field.name}}` | {{field.type}} | {{field.description | default: ""}} |
+{% endfor %}
+{%-  endif %}
+#### Usage
+{%- if data.component.with or operation.with %}
+
+Given the following configuration:
+{%- if data.component.with %}
+
+Component-wide configuration as `config.json`:
+
+```json
+{ {% for field in data.component.with %}
+  "{{field.name}}": "XXX"{%if forloop.last == false %},{% endif %}
+{%- endfor %}
+}
+```
+{%- endif %}
+{%- if operation.with %}
+
+Operation configuration as `op-config.json`:
+
+```json
+{ {% for field in operation.with %}
+  "{{field.name}}": "XXX"{%if forloop.last == false %},{% endif %}
+  {%- endfor %}
+}
+```
+{%- endif %}
+{%- endif %}
+
+```bash
+$ wick invoke {{data.package.registry.namespace | default: "<missing>"}}/{{ data.name }}:{{ data.metadata.version }} {{operation.name}}
+  {%- if data.component.with %} --with=@config.json{% endif %}
+  {%- if operation.with %} --op-with=@op-config.json{% endif %}
+  {%- if operation.inputs %} -- {% for field in operation.inputs %}--{{ field.name }}="XXX"{% endfor %}{% endif %}
+```
+{%- if data.component.with or operation.with %}
+
+Or with inline configuration:
+
+```bash
+$ wick invoke {{data.package.registry.namespace | default: "<missing>"}}/{{ data.name }}:{{ data.metadata.version }} {{operation.name}}
+  {%- if data.component.with %} \
+  --with='{ {% for field in data.component.with %}"{{field.name}}":"XXX"{%if forloop.last == false %},{% endif %}{% endfor %} }'{% endif %}
+  {%- if operation.with %} \
+  --op-with='{ {% for field in operation.with %}"{{field.name}}":"XXX"{%if forloop.last == false %},{% endif %}{% endfor %} }'{% endif %}
+  {%- if data.component.with or operation.with %} \
+  {% else %} {% endif %}{% if operation.inputs %}-- {% for field in operation.inputs %}--{{ field.name }}="XXX"{% endfor %}{% endif %}
+```
+{%- endif %}
+{%- endfor %}
