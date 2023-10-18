@@ -27,6 +27,7 @@ component:
           id NVARCHAR(50) PRIMARY KEY,
           token_type NVARCHAR(255) NOT NULL,
           access_token NVARCHAR(MAX) NOT NULL,
+          id_token NVARCHAR(MAX) NOT NULL,
           refresh_token NVARCHAR(MAX) NOT NULL,
           expires_at DATETIME2 NOT NULL,
           created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
@@ -49,6 +50,8 @@ component:
           type: string
         - name: access_token
           type: string
+        - name: id_token
+          type: string
         - name: refresh_token
           type: string
         - name: expires_at
@@ -57,12 +60,13 @@ component:
         - name: output
           type: object
       query: |
-        INSERT INTO oauth_sessions (id, token_type, access_token, refresh_token, expires_at)
-        VALUES (@p1, @p2, @p3, @p4, @p5)
+        INSERT INTO oauth_sessions (id, token_type, access_token, id_token, refresh_token, expires_at)
+        VALUES (@p1, @p2, @p3, @p4, @p5, @p6)
       arguments:
         - session_id
         - token_type
         - access_token
+        - id_token
         - refresh_token
         - expires_at
     - name: insert_claims
@@ -89,6 +93,17 @@ component:
           type: object
       query: |
         SELECT expires_at, access_token FROM oauth_sessions WHERE id = @p1
+      arguments:
+        - session_id
+    - name: get_id_token
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        SELECT id_token FROM oauth_sessions WHERE id = @p1
       arguments:
         - session_id
     - name: get_oidc_claims

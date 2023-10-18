@@ -17,6 +17,7 @@ impl parse_completion::Operation for Component {
         _ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let mut count = 0;
+        println!("parse_completion started");
         while let Some(event) = inputs.event.next().await {
             let event = event.decode()?;
             println!("event: {:?}", event);
@@ -43,9 +44,9 @@ impl parse_completion::Operation for Component {
             let data = content.unwrap();
 
             let event_obj = types::http::HttpEvent {
-                event: Some("message".to_string()),
+                event: "message".to_string(),
                 data: data,
-                id: None,
+                id: "".to_string(),
                 retry: None,
             };
 
@@ -54,17 +55,17 @@ impl parse_completion::Operation for Component {
         }
 
         let event_obj = types::http::HttpEvent {
-            event: Some("tokens".to_string()),
+            event: "tokens".to_string(),
             data: count.to_string(),
-            id: None,
+            id: "".to_string(),
             retry: None,
         };
         outputs.event.send(&event_obj);
 
         let event_obj = types::http::HttpEvent {
-            event: Some("message".to_string()),
+            event: "message".to_string(),
             data: "[DONE]".to_string(),
-            id: None,
+            id: "".to_string(),
             retry: None,
         };
 

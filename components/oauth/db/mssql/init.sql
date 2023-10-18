@@ -4,6 +4,7 @@ CREATE TABLE dbo.oauth_sessions (
   id NVARCHAR(50) PRIMARY KEY,
   token_type NVARCHAR(255) NOT NULL,
   access_token NVARCHAR(MAX) NOT NULL,
+  id_token NVARCHAR(MAX) NOT NULL,
   refresh_token NVARCHAR(MAX) NOT NULL,
   expires_at DATETIME2 NOT NULL,
   created_at DATETIME2 NOT NULL DEFAULT GETDATE(),

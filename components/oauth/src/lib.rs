@@ -140,7 +140,8 @@ fn get_oidc_claims(id_token: &str) -> Result<String, anyhow::Error> {
     Ok(claims)
 }
 
-#[async_trait::async_trait(?Send)]
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl auth::Operation for Component {
     type Error = anyhow::Error;
     type Inputs = auth::Inputs;
@@ -284,7 +285,7 @@ impl auth::Operation for Component {
                         Err(_) => "{}".to_string(),
                     };
                     println!("body: {:?}", body);
-                    let claims_id = match body.id_token {
+                    let claims_id = match body.id_token.clone() {
                         Some(id_token) => get_oidc_claims(id_token.as_str())?,
                         None => "{}".to_string(),
                     };
@@ -331,6 +332,7 @@ impl auth::Operation for Component {
                             session_id: session_id.to_string(),
                             token_type: body.token_type,
                             access_token: body.access_token,
+                            id_token: body.id_token.unwrap_or("".to_string()),
                             refresh_token: "".to_string(),
                             expires_at: expires_at,
                         },
@@ -409,24 +411,70 @@ impl auth::Operation for Component {
                     let mut resp_cookies: Vec<Cookie> = vec![];
                     resp_cookies.push(session_cookie);
 
-                    let mut get_login_hint_response = ctx
-                        .provided()
-                        .dbclient
-                        .get_login_hint_claim(once(cookies.session_id.unwrap().to_string()))?;
+                    let redirect_logout = config.redirect_logout.clone();
 
-                    while let Some(login_hint_response) = get_login_hint_response.next().await {
-                        let login_hint =
-                            propagate_if_error!(login_hint_response, outputs, continue);
-                        println!("insert_response: {:?}", login_hint);
+                    if redirect_logout == "true" {
+                        let logout_redirect_uri = config.logout_redirect_uri.clone();
+                        let mut location = format!(
+                            "{}?post_logout_redirect_uri={}",
+                            location, logout_redirect_uri
+                        );
 
-                        let login_hint_val = match login_hint.get("login_hint") {
-                            Some(login_hint) => login_hint.as_str().unwrap(),
-                            None => "",
-                        };
+                        let mut get_login_hint_response =
+                            ctx.provided().dbclient.get_login_hint_claim(
+                                dbclient::get_login_hint_claim::Config::default(),
+                                dbclient::get_login_hint_claim::Request {
+                                    session_id: cookies.session_id.clone().unwrap().to_string(),
+                                },
+                            )?;
 
-                        //append login_hint to logout endpoint
-                        let location = format!("{}?logout_hint={}", location, login_hint_val);
+                        while let Some(login_hint_response) =
+                            get_login_hint_response.output.next().await
+                        {
+                            let login_hint = login_hint_response.decode()?;
+                            println!("insert_response: {:?}", login_hint);
 
+                            let login_hint_val = match login_hint.get("login_hint") {
+                                Some(login_hint) => {
+                                    let login_hint = login_hint.as_str();
+                                    match login_hint {
+                                        Some(login_hint) => login_hint,
+                                        None => "",
+                                    }
+                                }
+                                None => "",
+                            };
+
+                            if login_hint_val != "" {
+                                //append login_hint to logout endpoint
+                                location = format!("{}&logout_hint={}", location, login_hint_val);
+
+                                let response =
+                                    build_redirect_response(&location, Some(resp_cookies.clone()));
+                                println!("response: {:?}", response);
+                                outputs.output.send(
+                                    &types::http::RequestMiddlewareResponse::HttpResponse(response),
+                                );
+                                outputs.output.done();
+                                return Ok(());
+                            }
+                            continue;
+                        }
+
+                        let mut get_id_token_response = ctx.provided().dbclient.get_id_token(
+                            dbclient::get_id_token::Config::default(),
+                            dbclient::get_id_token::Request {
+                                session_id: cookies.session_id.clone().unwrap().to_string(),
+                            },
+                        )?;
+
+                        while let Some(id_token) = get_id_token_response.output.next().await {
+                            let id_token: types::IdToken = id_token.decode()?;
+                            location =
+                                format!("{}&id_token_hint={}", location, id_token.id_token.clone());
+                        }
+
+                        //if login hint does not exist redirect to logout endpoint
                         let response =
                             build_redirect_response(&location, Some(resp_cookies.clone()));
                         println!("response: {:?}", response);
@@ -435,8 +483,10 @@ impl auth::Operation for Component {
                             .send(&types::http::RequestMiddlewareResponse::HttpResponse(
                                 response,
                             ));
-                        continue;
+                        outputs.output.done();
+                        return Ok(());
                     }
+
                     //if login hint does not exist redirect to logout endpoint
                     let response = build_redirect_response(&location, Some(resp_cookies.clone()));
                     println!("response: {:?}", response);
@@ -445,13 +495,15 @@ impl auth::Operation for Component {
                         .send(&types::http::RequestMiddlewareResponse::HttpResponse(
                             response,
                         ));
-                    continue;
+                    outputs.output.done();
+                    return Ok(());
                 }
                 _ => {
                     //handle all other requests
 
                     //session cookie does not exist redirect to login
                     if cookies.session_id.is_none() {
+                        println!("No Session Cookie. Redirecting to auth.");
                         //create state cookie
                         let state = rng.uuid().to_string();
                         // redirect to auth endpoint
@@ -545,7 +597,8 @@ impl auth::Operation for Component {
     }
 }
 
-#[async_trait::async_trait(?Send)]
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl oidc::Operation for Component {
     type Error = anyhow::Error;
     type Inputs = oidc::Inputs;
@@ -678,7 +731,8 @@ impl oidc::Operation for Component {
     }
 }
 
-#[async_trait::async_trait(?Send)]
+#[cfg_attr(target_family = "wasm",async_trait::async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait::async_trait)]
 impl get_user::Operation for Component {
     type Error = anyhow::Error;
     type Inputs = get_user::Inputs;

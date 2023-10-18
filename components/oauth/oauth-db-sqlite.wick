@@ -15,10 +15,13 @@ component:
   operations:
     - name: initialize
       exec: |
+        BEGIN TRANSACTION;
+
         CREATE TABLE IF NOT EXISTS oauth_sessions (
           id TEXT PRIMARY KEY,
           token_type TEXT NOT NULL,
           access_token TEXT NOT NULL,
+          id_token TEXT NOT NULL,
           refresh_token TEXT NOT NULL,
           expires_at TIMESTAMP NOT NULL,
           created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -29,6 +32,8 @@ component:
           session_id TEXT PRIMARY KEY REFERENCES oauth_sessions(id),
           claims TEXT
         );
+        
+        commit;
     - name: insert_token
       inputs:
         - name: session_id
@@ -37,6 +42,8 @@ component:
           type: string
         - name: access_token
           type: string
+        - name: id_token
+          type: string
         - name: refresh_token
           type: string
         - name: expires_at
@@ -44,14 +51,15 @@ component:
       outputs:
         - name: output
           type: object
-      exec: |
-        INSERT INTO oauth_sessions (id, token_type, access_token, refresh_token, expires_at)
-        VALUES ($1, $2, $3, $4, $5)
+      query: |
+        INSERT INTO oauth_sessions (id, token_type, access_token, id_token, refresh_token, expires_at)
+        VALUES ($1, $2, $3, $4, $5, $6)
         returning id;
       arguments:
         - session_id
         - token_type
         - access_token
+        - id_token
         - refresh_token
         - expires_at
     - name: insert_claims
@@ -63,7 +71,7 @@ component:
       outputs:
         - name: output
           type: object
-      exec: |
+      query: |
         INSERT INTO oidc_claims (session_Id, claims)
         VALUES ($1, $2::json)
         returning session_id;
@@ -79,6 +87,17 @@ component:
           type: object
       query: |
         select expires_at, access_token from oauth_sessions where id = $1
+      arguments:
+        - session_id
+    - name: get_id_token
+      inputs:
+        - name: session_id
+          type: string
+      outputs:
+        - name: output
+          type: object
+      query: |
+        select id_token from oauth_sessions where id = $1
       arguments:
         - session_id
     - name: get_oidc_claims
@@ -105,7 +124,7 @@ component:
       outputs:
         - name: output
           type: object
-      exec: |
+      query: |
         update oauth_sessions set expires_at = $1, access_token = $2, updated_at = datetime('now'), refresh_token=$3 where session_id = $4
         returning session_id;
       arguments:
@@ -120,7 +139,7 @@ component:
       outputs:
         - name: output
           type: object
-      exec: |
+      query: |
         delete from oauth_sessions where session_id = $1
         returning session_id;
       arguments:

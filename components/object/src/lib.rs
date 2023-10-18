@@ -81,7 +81,7 @@ impl serialize::Operation for Component {
         ctx: Context<Self::Config>,
     ) -> anyhow::Result<()> {
         let content_type_string = ctx.config.content_type.clone();
-        while let Some(Ok(content_string)) = inputs.content.next().await {
+        while let Some(content_string) = inputs.content.next().await {
             let content_string = propagate_if_error!(content_string.decode(), outputs, continue);
             let content_string = match base64::decode(&content_string) {
                 Ok(bytes) => String::from_utf8(bytes).map_err(|e| {
