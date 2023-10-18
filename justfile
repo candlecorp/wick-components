@@ -34,6 +34,13 @@ wickdoc:
     popd > /dev/null
   done
 
+readme:
+  echo "# Wick components" > README.md
+  echo "" >> README.md
+  echo "This repository contains the following components:" >> README.md
+  echo "" >> README.md
+  for i in components/*; do echo "- [$(wick query -f $i/component.wick --type yaml name)](./$i)" >> README.md; done
+
 build:
   just run-child-task build
 
