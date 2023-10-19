@@ -324,6 +324,10 @@ impl auth::Operation for Component {
                         expires = body.expires_in.unwrap();
                     }
 
+                    if config.session_cookie_duration_minutes > 0 {
+                        expires = config.session_cookie_duration_minutes * 60;
+                    }
+
                     let expires_at = timestamp + Duration::seconds(expires as _);
 
                     let mut insert_token_response = ctx.provided().dbclient.insert_token(
@@ -531,7 +535,8 @@ impl auth::Operation for Component {
                     )?;
 
                     while let Some(response) = get_session_response.output.next().await {
-                        let response = propagate_if_error!(response.decode(), outputs, continue);
+                        let response: types::SessionDetails =
+                            propagate_if_error!(response.decode(), outputs, continue);
 
                         //session does not exist redirect to login
                         if response.access_token.is_empty() {

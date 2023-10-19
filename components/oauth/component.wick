@@ -155,6 +155,8 @@ component:
       type: string
     - name: session_cookie_name
       type: string
+    - name: session_cookie_duration_minutes
+      type: u32
     - name: client_id
       type: string
     - name: scope
