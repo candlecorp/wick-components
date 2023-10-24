@@ -9,7 +9,7 @@ crate_name := `wick query -f Cargo.toml '.package.name'`
 project_name := snakecase(crate_name)
 
 # The target to build for release.
-build_target := "wasm32-wasi"
+build_target := "wasm32-unknown-unknown"
 # The target to build for debug (wasm32-wasi can give easy access to println & STDIO for debugging)
 debug_target := "wasm32-wasi"
 

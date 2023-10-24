@@ -34,7 +34,7 @@ import:
         logout_endpoint: '{{ ctx.root_config.logout_endpoint }}'
         redirect_uri: '{{ ctx.root_config.redirect_uri }}'
         session_cookie_name: '{{ ctx.root_config.session_cookie_name }}'
-        session_cookie_duration_minutes: '{{ ctx.root_config.session_cookie_duration_minutes }}'
+        session_cookie_duration_minutes: '{{ ctx.root_config.session_cookie_duration_minutes | output }}'
         scope: '{{ ctx.root_config.scope }}'
         email_claim: '{{ ctx.root_config.email_claim }}'
         logout_redirect_uri: '{{ ctx.root_config.logout_redirect_uri }}'
