@@ -3,7 +3,7 @@
 name: 'http-headers'
 kind: wick/component@v1
 metadata:
-  version: '0.1.0'
+  version: '0.2.0'
   description: "Operations to manipulate HTTP headers for both request and response"
 package:
   registry:
@@ -13,7 +13,7 @@ import:
   - name: http
     component:
       kind: wick/component/types@v1
-      ref: registry.candle.dev/types/http:0.4.0
+      ref: registry.candle.dev/types/http:0.5.0
 types:
     - name: Strings
       kind: wick/type/union@v1
@@ -25,6 +25,18 @@ component:
   kind: wick/component/wasmrs@v1
   ref: build/component.signed.wasm
   operations:
+    - name: update
+      with:
+        - name: header
+          type: string
+      inputs:
+        - name: input
+          type: http::RequestMiddlewareResponse
+        - name: value
+          type: Strings
+      outputs:
+        - name: output
+          type: http::RequestMiddlewareResponse
     - name: add
       with:
         - name: header
@@ -38,7 +50,7 @@ component:
         - name: output
           type: http::RequestMiddlewareResponse
 tests:
-  - name: add
+  - name: headers_test
     cases:
       - name: add_string
         operation: add
@@ -118,6 +130,52 @@ tests:
                   - "*/*"
                 foo:
                   - "bar"
+                  - "baz"
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+              method: Get
+              path: "/"
+              remote_addr: "91.108.2.98"
+              scheme: Http
+              uri: "http://localhost:8080/"
+              version: "1.1"
+      - name: update
+        operation: update
+        with:
+          header: "foo"
+        inputs:
+          - name: input
+            value:
+              method: Get
+              scheme: Http
+              path: "/"
+              uri: "http://localhost:8080/"
+              version: Http11
+              authority: "localhost:8080"
+              query_parameters: {}
+              headers:
+                host:
+                  - "localhost:8080"
+                user-agent:
+                  - "curl/7.64.1"
+                accept:
+                  - "*/*"
+              foo:
+                - "bar"
+              remote_addr: "91.108.2.98"
+          - name: value
+            value: 
+             - "baz"
+        outputs:
+          - name: output
+            value:
+              authority: "localhost:8080"
+              headers:
+                accept:
+                  - "*/*"
+                foo:
                   - "baz"
                 host:
                   - "localhost:8080"

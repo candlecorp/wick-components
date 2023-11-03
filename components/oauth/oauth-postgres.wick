@@ -1,7 +1,7 @@
 kind: wick/component@v1
 name: oauth-postgres
 metadata:
-  version: 0.3.1
+  version: 0.3.3
   description: Oauth composite middleware component. This requires a postgres database with specific schema. You can see the schema here - https://github.com/candlecorp/wick-components/tree/main/components/oauth/db
   licenses:
     - Apache-2.0
@@ -38,7 +38,7 @@ import:
         scope: '{{ ctx.root_config.scope }}'
         email_claim: '{{ ctx.root_config.email_claim }}'
         logout_redirect_uri: '{{ ctx.root_config.logout_redirect_uri }}'
-        redirect_logout: '{{ ctx.root_config.redirect_logout | output }}'
+        redirect_logout: '{{ ctx.root_config.redirect_logout  }}'
         groups_claim: '{% if ctx.root_config contains "group_claims" %}{{ ctx.root_config.group_claims | output }}{% endif %}{% unless ctx.root_config contains "group_claims" %}{{ nil | output }}{% endunless %}'
       provide:
         dbclient: OAUTHDB

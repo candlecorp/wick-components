@@ -628,11 +628,8 @@ impl oidc::Operation for Component {
             let cookies = parse_cookies_header(input.headers.clone(), &config.session_cookie_name);
 
             if cookies.session_id.is_none() {
-                //create state cookie
-                let state = rng.uuid().to_string();
                 // redirect to auth endpoint
-                let response =
-                    build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
+                let response = build_error_response("Session Cookie does not exist");
                 outputs
                     .output
                     .send(&types::http::RequestMiddlewareResponse::HttpResponse(
@@ -663,10 +660,8 @@ impl oidc::Operation for Component {
                 let claims = response.get("claims");
                 if claims.is_none() {
                     //create state cookie
-                    let state = rng.uuid().to_string();
                     // redirect to auth endpoint
-                    let response =
-                        build_auth_redirect_response(config.clone(), &state, &input.uri, timestamp);
+                    let response = build_error_response("Claims do not exist");
                     outputs
                         .output
                         .send(&types::http::RequestMiddlewareResponse::HttpResponse(

@@ -9,8 +9,12 @@ fn process_headers(
     headers: &mut HashMap<String, Vec<String>>,
     header: &str,
     value: &types::Strings,
+    replace: bool,
 ) {
     if let Some(values) = headers.get_mut(header) {
+        if replace {
+            values.clear();
+        }
         match value {
             types::Strings::String(value) => {
                 values.push(value.clone());
@@ -39,25 +43,67 @@ impl add::Operation for Component {
     type Config = add::Config;
 
     async fn add(
-      mut inputs: Self::Inputs,
+        mut inputs: Self::Inputs,
         mut outputs: Self::Outputs,
         ctx: Context<Self::Config>,
     ) -> Result<(), Self::Error> {
         let header = ctx.config.header.clone();
         println!("header: {}", header);
-        while let (Some(input), Some(value)) = (inputs.input.next().await, inputs.value.next().await) {
+        while let (Some(input), Some(value)) =
+            (inputs.input.next().await, inputs.value.next().await)
+        {
             let input = propagate_if_error!(input.decode(), outputs, continue);
             let value = propagate_if_error!(value.decode(), outputs, continue);
 
             match input {
                 types::http::RequestMiddlewareResponse::HttpRequest(mut req) => {
-                    process_headers(&mut req.headers, &header, &value);
+                    process_headers(&mut req.headers, &header, &value, false);
                     outputs
                         .output
                         .send(&types::http::RequestMiddlewareResponse::HttpRequest(req));
                 }
                 types::http::RequestMiddlewareResponse::HttpResponse(mut res) => {
-                    process_headers(&mut res.headers, &header, &value);
+                    process_headers(&mut res.headers, &header, &value, false);
+                    outputs
+                        .output
+                        .send(&types::http::RequestMiddlewareResponse::HttpResponse(res));
+                }
+            }
+        }
+        outputs.output.done();
+        Ok(())
+    }
+}
+
+#[async_trait::async_trait(?Send)]
+impl update::Operation for Component {
+    type Error = anyhow::Error;
+    type Inputs = update::Inputs;
+    type Outputs = update::Outputs;
+    type Config = update::Config;
+
+    async fn update(
+        mut inputs: Self::Inputs,
+        mut outputs: Self::Outputs,
+        ctx: Context<Self::Config>,
+    ) -> Result<(), Self::Error> {
+        let header = ctx.config.header.clone();
+        println!("header: {}", header);
+        while let (Some(input), Some(value)) =
+            (inputs.input.next().await, inputs.value.next().await)
+        {
+            let input = propagate_if_error!(input.decode(), outputs, continue);
+            let value = propagate_if_error!(value.decode(), outputs, continue);
+
+            match input {
+                types::http::RequestMiddlewareResponse::HttpRequest(mut req) => {
+                    process_headers(&mut req.headers, &header, &value, true);
+                    outputs
+                        .output
+                        .send(&types::http::RequestMiddlewareResponse::HttpRequest(req));
+                }
+                types::http::RequestMiddlewareResponse::HttpResponse(mut res) => {
+                    process_headers(&mut res.headers, &header, &value, true);
                     outputs
                         .output
                         .send(&types::http::RequestMiddlewareResponse::HttpResponse(res));
